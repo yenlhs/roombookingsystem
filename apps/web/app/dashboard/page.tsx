@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ProtectedRoute } from '@/lib/auth/protected-route';
 import { useAuth } from '@/lib/auth/context';
 import { createBookingService, createRoomService, supabase } from '@workspace/supabase';
@@ -9,6 +10,8 @@ import type { User as UserType } from '@workspace/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, DoorOpen, Calendar, Users, User, Activity, Loader2 } from 'lucide-react';
+import { useKeyboardShortcuts } from '@/lib/hooks/use-keyboard-shortcuts';
+import { KeyboardShortcutsButton } from '@/components/keyboard-shortcuts-dialog';
 
 export default function DashboardPage() {
   return (
@@ -19,6 +22,7 @@ export default function DashboardPage() {
 }
 
 function DashboardContent() {
+  const router = useRouter();
   const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -29,9 +33,45 @@ function DashboardContent() {
     totalUsers: 0,
     activeUsers: 0,
   });
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   const bookingService = createBookingService(supabase);
   const roomService = createRoomService(supabase);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'd',
+      description: 'Go to Dashboard',
+      action: () => router.push('/dashboard'),
+    },
+    {
+      key: 'r',
+      description: 'Go to Rooms',
+      action: () => router.push('/dashboard/rooms'),
+    },
+    {
+      key: 'b',
+      description: 'Go to Bookings',
+      action: () => router.push('/dashboard/bookings'),
+    },
+    {
+      key: 'u',
+      description: 'Go to Users',
+      action: () => router.push('/dashboard/users'),
+    },
+    {
+      key: 'p',
+      description: 'Go to Profile',
+      action: () => router.push('/dashboard/profile'),
+    },
+    {
+      key: '?',
+      shiftKey: true,
+      description: 'Show keyboard shortcuts',
+      action: () => setShowShortcuts(true),
+    },
+  ]);
 
   useEffect(() => {
     loadDashboardStats();
@@ -80,18 +120,20 @@ function DashboardContent() {
       <header className="border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <h1 className="text-xl font-bold">Room Booking System</h1>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <KeyboardShortcutsButton />
             <Link href="/dashboard/profile">
               <Button variant="ghost" size="sm">
                 <User className="mr-2 h-4 w-4" />
-                Profile
+                <span className="hidden sm:inline">Profile</span>
               </Button>
             </Link>
-            <span className="text-sm text-muted-foreground">
+            <span className="hidden text-sm text-muted-foreground md:inline">
               {user?.email}
             </span>
-            <Button variant="outline" onClick={signOut}>
-              Sign Out
+            <Button variant="outline" size="sm" onClick={signOut}>
+              <span className="hidden sm:inline">Sign Out</span>
+              <span className="sm:hidden">Exit</span>
             </Button>
           </div>
         </div>
@@ -187,67 +229,67 @@ function DashboardContent() {
         <div className="mb-8">
           <h3 className="mb-4 text-lg font-semibold">Quick Actions</h3>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Link href="/dashboard/rooms">
-            <Card className="cursor-pointer transition-shadow hover:shadow-md">
+          <Link href="/dashboard/rooms" className="group">
+            <Card className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-blue-200">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-blue-100 p-2">
-                    <DoorOpen className="h-6 w-6 text-blue-600" />
+                  <div className="rounded-lg bg-blue-100 p-2 transition-colors group-hover:bg-blue-200">
+                    <DoorOpen className="h-6 w-6 text-blue-600 transition-transform group-hover:scale-110" />
                   </div>
-                  <CardTitle>Rooms</CardTitle>
+                  <CardTitle className="transition-colors group-hover:text-blue-600">Rooms</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
                   Manage meeting rooms and spaces
                 </p>
-                <div className="mt-4 flex items-center text-sm font-semibold text-blue-600">
+                <div className="mt-4 flex items-center text-sm font-semibold text-blue-600 transition-transform group-hover:translate-x-1">
                   Manage Rooms
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </CardContent>
             </Card>
           </Link>
 
-          <Link href="/dashboard/bookings">
-            <Card className="cursor-pointer transition-shadow hover:shadow-md">
+          <Link href="/dashboard/bookings" className="group">
+            <Card className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-green-200">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-green-100 p-2">
-                    <Calendar className="h-6 w-6 text-green-600" />
+                  <div className="rounded-lg bg-green-100 p-2 transition-colors group-hover:bg-green-200">
+                    <Calendar className="h-6 w-6 text-green-600 transition-transform group-hover:scale-110" />
                   </div>
-                  <CardTitle>Bookings</CardTitle>
+                  <CardTitle className="transition-colors group-hover:text-green-600">Bookings</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
                   View and manage room bookings
                 </p>
-                <div className="mt-4 flex items-center text-sm font-semibold text-green-600">
+                <div className="mt-4 flex items-center text-sm font-semibold text-green-600 transition-transform group-hover:translate-x-1">
                   Manage Bookings
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </CardContent>
             </Card>
           </Link>
 
-          <Link href="/dashboard/users">
-            <Card className="cursor-pointer transition-shadow hover:shadow-md">
+          <Link href="/dashboard/users" className="group">
+            <Card className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-purple-200">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-purple-100 p-2">
-                    <Users className="h-6 w-6 text-purple-600" />
+                  <div className="rounded-lg bg-purple-100 p-2 transition-colors group-hover:bg-purple-200">
+                    <Users className="h-6 w-6 text-purple-600 transition-transform group-hover:scale-110" />
                   </div>
-                  <CardTitle>Users</CardTitle>
+                  <CardTitle className="transition-colors group-hover:text-purple-600">Users</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
                   Manage user accounts and permissions
                 </p>
-                <div className="mt-4 flex items-center text-sm font-semibold text-purple-600">
+                <div className="mt-4 flex items-center text-sm font-semibold text-purple-600 transition-transform group-hover:translate-x-1">
                   Manage Users
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </CardContent>
             </Card>
