@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
-  ScrollView,
+  FlatList,
   TouchableOpacity,
   TextInput,
   ActivityIndicator,
-  RefreshControl,
+  ListRenderItem,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
@@ -15,6 +15,7 @@ import { createRoomService } from '@workspace/supabase';
 import type { Room, RoomStatus } from '@workspace/types';
 import { useFadeIn, useListItemAnimation } from '../../lib/animations';
 import { lightImpact, selectionFeedback } from '../../lib/haptics';
+import { FLATLIST_CONFIG, debounce } from '../../lib/performance';
 
 // Room Card Component with animations
 function RoomCard({ room, index, onPress }: { room: Room; index: number; onPress: () => void }) {
@@ -93,11 +94,21 @@ export default function RoomsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | RoomStatus>('all');
   const [minCapacity, setMinCapacity] = useState<number | null>(null);
 
   const roomService = createRoomService(supabase);
   const headerAnimation = useFadeIn();
+
+  // Debounced search handler
+  const debouncedSetSearch = useMemo(
+    () =>
+      debounce((query: string) => {
+        setDebouncedSearchQuery(query);
+      }, 300),
+    []
+  );
 
   // Load rooms
   useEffect(() => {
@@ -127,10 +138,15 @@ export default function RoomsScreen() {
     };
   }, []);
 
+  // Update debounced search when search query changes
+  useEffect(() => {
+    debouncedSetSearch(searchQuery);
+  }, [searchQuery, debouncedSetSearch]);
+
   // Filter rooms when search or filters change
   useEffect(() => {
     applyFilters();
-  }, [rooms, searchQuery, statusFilter, minCapacity]);
+  }, [rooms, debouncedSearchQuery, statusFilter, minCapacity]);
 
   const loadRooms = async () => {
     try {
@@ -154,8 +170,8 @@ export default function RoomsScreen() {
     let filtered = [...rooms];
 
     // Search by name or description
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
       filtered = filtered.filter(
         (room) =>
           room.name.toLowerCase().includes(query) ||
@@ -179,9 +195,148 @@ export default function RoomsScreen() {
   const clearFilters = () => {
     lightImpact();
     setSearchQuery('');
+    setDebouncedSearchQuery('');
     setStatusFilter('all');
     setMinCapacity(null);
   };
+
+  const renderRoomCard: ListRenderItem<Room> = ({ item, index }) => (
+    <RoomCard room={item} index={index} onPress={() => router.push(`/room-details/${item.id}`)} />
+  );
+
+  const renderListHeader = () => (
+    <View>
+      {/* Header */}
+      <Animated.View style={headerAnimation} className="mb-6">
+        <Text className="text-3xl font-bold text-gray-900 mb-2">Browse Rooms</Text>
+        <Text className="text-base text-gray-600">Find the perfect space for your meeting</Text>
+      </Animated.View>
+
+      {/* Error Message */}
+      {error && (
+        <View className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <Text className="text-sm text-red-800">{error}</Text>
+        </View>
+      )}
+
+      {/* Search Bar */}
+      <View className="mb-4">
+        <TextInput
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white text-gray-900"
+          placeholder="Search rooms by name..."
+          placeholderTextColor="#9CA3AF"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+
+      {/* Filters */}
+      <View className="mb-4">
+        <Text className="text-sm font-semibold text-gray-900 mb-2">Filters</Text>
+        <View className="flex-row flex-wrap gap-2">
+          {/* Status Filter */}
+          <TouchableOpacity
+            onPress={() => {
+              lightImpact();
+              setStatusFilter('all');
+            }}
+            className={`px-4 py-2 rounded-full border ${
+              statusFilter === 'all' ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'
+            }`}
+            activeOpacity={0.7}
+          >
+            <Text
+              className={`text-sm font-medium ${
+                statusFilter === 'all' ? 'text-white' : 'text-gray-700'
+              }`}
+            >
+              All Rooms
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              lightImpact();
+              setStatusFilter('active' as RoomStatus);
+            }}
+            className={`px-4 py-2 rounded-full border ${
+              statusFilter === 'active' ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'
+            }`}
+            activeOpacity={0.7}
+          >
+            <Text
+              className={`text-sm font-medium ${
+                statusFilter === 'active' ? 'text-white' : 'text-gray-700'
+              }`}
+            >
+              Active
+            </Text>
+          </TouchableOpacity>
+
+          {/* Capacity Filters */}
+          {[5, 10, 20].map((capacity) => (
+            <TouchableOpacity
+              key={capacity}
+              onPress={() => {
+                lightImpact();
+                setMinCapacity(minCapacity === capacity ? null : capacity);
+              }}
+              className={`px-4 py-2 rounded-full border ${
+                minCapacity === capacity
+                  ? 'bg-blue-600 border-blue-600'
+                  : 'bg-white border-gray-300'
+              }`}
+              activeOpacity={0.7}
+            >
+              <Text
+                className={`text-sm font-medium ${
+                  minCapacity === capacity ? 'text-white' : 'text-gray-700'
+                }`}
+              >
+                {capacity}+ seats
+              </Text>
+            </TouchableOpacity>
+          ))}
+
+          {/* Clear Filters */}
+          {(searchQuery || statusFilter !== 'all' || minCapacity !== null) && (
+            <TouchableOpacity
+              onPress={clearFilters}
+              className="px-4 py-2 rounded-full bg-gray-100 border border-gray-300"
+            >
+              <Text className="text-sm font-medium text-gray-700">Clear All</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      {/* Results Count */}
+      <View className="mb-4">
+        <Text className="text-sm text-gray-600">
+          {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'} found
+        </Text>
+      </View>
+    </View>
+  );
+
+  const renderListEmpty = () => (
+    <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-200 mx-6">
+      <Text className="text-4xl mb-3">🔍</Text>
+      <Text className="text-xl font-bold text-gray-900 mb-2 text-center">No rooms found</Text>
+      <Text className="text-sm text-gray-600 text-center mb-4">
+        Try adjusting your search or filters
+      </Text>
+      {(searchQuery || statusFilter !== 'all' || minCapacity !== null) && (
+        <TouchableOpacity
+          onPress={clearFilters}
+          className="bg-blue-600 rounded-lg px-6 py-3"
+          activeOpacity={0.7}
+        >
+          <Text className="text-white font-bold">Clear Filters</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
 
   if (loading) {
     return (
@@ -194,164 +349,21 @@ export default function RoomsScreen() {
 
   return (
     <View className="flex-1 bg-slate-50">
-      <ScrollView
-        className="flex-1"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563eb" />
-        }
-      >
-        <View className="p-6 pb-24">
-          {/* Header */}
-          <Animated.View style={headerAnimation} className="mb-6">
-            <Text className="text-3xl font-bold text-gray-900 mb-2">Browse Rooms</Text>
-            <Text className="text-base text-gray-600">
-              Find the perfect space for your meeting
-            </Text>
-          </Animated.View>
-
-          {/* Error Message */}
-          {error && (
-            <View className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <Text className="text-sm text-red-800">{error}</Text>
-            </View>
-          )}
-
-          {/* Search Bar */}
-          <View className="mb-4">
-            <TextInput
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-base bg-white text-gray-900"
-              placeholder="Search rooms by name..."
-              placeholderTextColor="#9CA3AF"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-
-          {/* Filters */}
-          <View className="mb-4">
-            <Text className="text-sm font-semibold text-gray-900 mb-2">Filters</Text>
-            <View className="flex-row flex-wrap gap-2">
-              {/* Status Filter */}
-              <TouchableOpacity
-                onPress={() => {
-                  lightImpact();
-                  setStatusFilter('all');
-                }}
-                className={`px-4 py-2 rounded-full border ${
-                  statusFilter === 'all'
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'bg-white border-gray-300'
-                }`}
-                activeOpacity={0.7}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    statusFilter === 'all' ? 'text-white' : 'text-gray-700'
-                  }`}
-                >
-                  All Rooms
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  lightImpact();
-                  setStatusFilter('active' as RoomStatus);
-                }}
-                className={`px-4 py-2 rounded-full border ${
-                  statusFilter === 'active'
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'bg-white border-gray-300'
-                }`}
-                activeOpacity={0.7}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    statusFilter === 'active' ? 'text-white' : 'text-gray-700'
-                  }`}
-                >
-                  Active
-                </Text>
-              </TouchableOpacity>
-
-              {/* Capacity Filters */}
-              {[5, 10, 20].map((capacity) => (
-                <TouchableOpacity
-                  key={capacity}
-                  onPress={() => {
-                    lightImpact();
-                    setMinCapacity(minCapacity === capacity ? null : capacity);
-                  }}
-                  className={`px-4 py-2 rounded-full border ${
-                    minCapacity === capacity
-                      ? 'bg-blue-600 border-blue-600'
-                      : 'bg-white border-gray-300'
-                  }`}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    className={`text-sm font-medium ${
-                      minCapacity === capacity ? 'text-white' : 'text-gray-700'
-                    }`}
-                  >
-                    {capacity}+ seats
-                  </Text>
-                </TouchableOpacity>
-              ))}
-
-              {/* Clear Filters */}
-              {(searchQuery || statusFilter !== 'all' || minCapacity !== null) && (
-                <TouchableOpacity
-                  onPress={clearFilters}
-                  className="px-4 py-2 rounded-full bg-gray-100 border border-gray-300"
-                >
-                  <Text className="text-sm font-medium text-gray-700">Clear All</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-
-          {/* Results Count */}
-          <View className="mb-4">
-            <Text className="text-sm text-gray-600">
-              {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'} found
-            </Text>
-          </View>
-
-          {/* Room Cards */}
-          {filteredRooms.length > 0 ? (
-            <View className="gap-4">
-              {filteredRooms.map((room, index) => (
-                <RoomCard
-                  key={room.id}
-                  room={room}
-                  index={index}
-                  onPress={() => router.push(`/room-details/${room.id}`)}
-                />
-              ))}
-            </View>
-          ) : (
-            <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-200">
-              <Text className="text-4xl mb-3">🔍</Text>
-              <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
-                No rooms found
-              </Text>
-              <Text className="text-sm text-gray-600 text-center mb-4">
-                Try adjusting your search or filters
-              </Text>
-              {(searchQuery || statusFilter !== 'all' || minCapacity !== null) && (
-                <TouchableOpacity
-                  onPress={clearFilters}
-                  className="bg-blue-600 rounded-lg px-6 py-3"
-                  activeOpacity={0.7}
-                >
-                  <Text className="text-white font-bold">Clear Filters</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-        </View>
-      </ScrollView>
+      <FlatList
+        data={filteredRooms}
+        renderItem={renderRoomCard}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderListHeader}
+        ListEmptyComponent={renderListEmpty}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 96 }}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        {...FLATLIST_CONFIG}
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+      />
     </View>
   );
 }

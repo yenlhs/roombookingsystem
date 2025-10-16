@@ -16,14 +16,23 @@
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "com.roombooking.mobile"
+			"bundleIdentifier": "com.roombooking.mobile",
+			"infoPlist": {
+				"UIBackgroundModes": ["fetch"],
+				"NSAppTransportSecurity": {
+					"NSAllowsArbitraryLoads": false
+				}
+			}
 		},
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.roombooking.mobile"
+			"package": "com.roombooking.mobile",
+			"permissions": [],
+			"enableProguardInReleaseBuilds": true,
+			"enableShrinkResourcesInReleaseBuilds": true
 		},
 		"web": {
 			"favicon": "./assets/favicon.png",
@@ -32,6 +41,15 @@
 		"plugins": ["expo-router", "expo-secure-store", "expo-haptics"],
 		"experiments": {
 			"typedRoutes": true
-		}
+		},
+		"extra": {
+			"eas": {
+				"projectId": "placeholder"
+			}
+		},
+		"updates": {
+			"fallbackToCacheTimeout": 0
+		},
+		"jsEngine": "hermes"
 	}
 }

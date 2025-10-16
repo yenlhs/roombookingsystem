@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  ScrollView,
+  FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  RefreshControl,
   Alert,
+  ListRenderItem,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
@@ -15,6 +15,7 @@ import { createBookingService } from '@workspace/supabase';
 import type { BookingWithDetails, BookingStatus } from '@workspace/types';
 import { useFadeIn, useListItemAnimation } from '../../lib/animations';
 import { lightImpact, mediumImpact, warningFeedback } from '../../lib/haptics';
+import { FLATLIST_CONFIG } from '../../lib/performance';
 
 // Helper functions
 const formatDate = (dateString: string): string => {
@@ -248,6 +249,142 @@ export default function BookingsScreen() {
     );
   };
 
+  const renderBookingCard: ListRenderItem<BookingWithDetails> = ({ item, index }) => (
+    <BookingCard booking={item} index={index} onCancel={handleCancelBooking} />
+  );
+
+  const renderListHeader = () => (
+    <View>
+      {/* Header */}
+      <Animated.View style={headerAnimation} className="mb-6">
+        <Text className="text-3xl font-bold text-gray-900 mb-2">My Bookings</Text>
+        <Text className="text-base text-gray-600">Manage your room reservations</Text>
+      </Animated.View>
+
+      {/* Error Message */}
+      {error && (
+        <View className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <Text className="text-sm text-red-800">{error}</Text>
+        </View>
+      )}
+
+      {/* Filters */}
+      <View className="mb-4">
+        <Text className="text-sm font-semibold text-gray-900 mb-2">Filter by Status</Text>
+        <View className="flex-row flex-wrap gap-2">
+          <TouchableOpacity
+            onPress={() => {
+              lightImpact();
+              setFilterStatus('all');
+            }}
+            className={`px-4 py-2 rounded-full border ${
+              filterStatus === 'all' ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'
+            }`}
+            activeOpacity={0.7}
+          >
+            <Text
+              className={`text-sm font-medium ${
+                filterStatus === 'all' ? 'text-white' : 'text-gray-700'
+              }`}
+            >
+              All
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              lightImpact();
+              setFilterStatus('confirmed' as BookingStatus);
+            }}
+            className={`px-4 py-2 rounded-full border ${
+              filterStatus === 'confirmed'
+                ? 'bg-blue-600 border-blue-600'
+                : 'bg-white border-gray-300'
+            }`}
+            activeOpacity={0.7}
+          >
+            <Text
+              className={`text-sm font-medium ${
+                filterStatus === 'confirmed' ? 'text-white' : 'text-gray-700'
+              }`}
+            >
+              Upcoming
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              lightImpact();
+              setFilterStatus('completed' as BookingStatus);
+            }}
+            className={`px-4 py-2 rounded-full border ${
+              filterStatus === 'completed'
+                ? 'bg-blue-600 border-blue-600'
+                : 'bg-white border-gray-300'
+            }`}
+            activeOpacity={0.7}
+          >
+            <Text
+              className={`text-sm font-medium ${
+                filterStatus === 'completed' ? 'text-white' : 'text-gray-700'
+              }`}
+            >
+              Completed
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              lightImpact();
+              setFilterStatus('cancelled' as BookingStatus);
+            }}
+            className={`px-4 py-2 rounded-full border ${
+              filterStatus === 'cancelled'
+                ? 'bg-blue-600 border-blue-600'
+                : 'bg-white border-gray-300'
+            }`}
+            activeOpacity={0.7}
+          >
+            <Text
+              className={`text-sm font-medium ${
+                filterStatus === 'cancelled' ? 'text-white' : 'text-gray-700'
+              }`}
+            >
+              Cancelled
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Results Count */}
+      <View className="mb-4">
+        <Text className="text-sm text-gray-600">
+          {filteredBookings.length} {filteredBookings.length === 1 ? 'booking' : 'bookings'} found
+        </Text>
+      </View>
+    </View>
+  );
+
+  const renderListEmpty = () => (
+    <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-200 mx-6">
+      <Text className="text-4xl mb-3">📅</Text>
+      <Text className="text-xl font-bold text-gray-900 mb-2 text-center">No bookings found</Text>
+      <Text className="text-sm text-gray-600 text-center mb-4">
+        You haven't made any bookings yet. Browse rooms to get started!
+      </Text>
+      <TouchableOpacity
+        onPress={() => {
+          mediumImpact();
+          router.push('/rooms' as any);
+        }}
+        className="bg-blue-600 rounded-lg px-6 py-3"
+        activeOpacity={0.7}
+      >
+        <Text className="text-white font-bold">Browse Rooms</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-slate-50">
@@ -259,159 +396,21 @@ export default function BookingsScreen() {
 
   return (
     <View className="flex-1 bg-slate-50">
-      <ScrollView
-        className="flex-1"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563eb" />
-        }
-      >
-        <View className="p-6 pb-24">
-          {/* Header */}
-          <Animated.View style={headerAnimation} className="mb-6">
-            <Text className="text-3xl font-bold text-gray-900 mb-2">My Bookings</Text>
-            <Text className="text-base text-gray-600">Manage your room reservations</Text>
-          </Animated.View>
-
-          {/* Error Message */}
-          {error && (
-            <View className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <Text className="text-sm text-red-800">{error}</Text>
-            </View>
-          )}
-
-          {/* Filters */}
-          <View className="mb-4">
-            <Text className="text-sm font-semibold text-gray-900 mb-2">Filter by Status</Text>
-            <View className="flex-row flex-wrap gap-2">
-              <TouchableOpacity
-                onPress={() => {
-                  lightImpact();
-                  setFilterStatus('all');
-                }}
-                className={`px-4 py-2 rounded-full border ${
-                  filterStatus === 'all'
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'bg-white border-gray-300'
-                }`}
-                activeOpacity={0.7}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    filterStatus === 'all' ? 'text-white' : 'text-gray-700'
-                  }`}
-                >
-                  All
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  lightImpact();
-                  setFilterStatus('confirmed' as BookingStatus);
-                }}
-                className={`px-4 py-2 rounded-full border ${
-                  filterStatus === 'confirmed'
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'bg-white border-gray-300'
-                }`}
-                activeOpacity={0.7}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    filterStatus === 'confirmed' ? 'text-white' : 'text-gray-700'
-                  }`}
-                >
-                  Upcoming
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  lightImpact();
-                  setFilterStatus('completed' as BookingStatus);
-                }}
-                className={`px-4 py-2 rounded-full border ${
-                  filterStatus === 'completed'
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'bg-white border-gray-300'
-                }`}
-                activeOpacity={0.7}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    filterStatus === 'completed' ? 'text-white' : 'text-gray-700'
-                  }`}
-                >
-                  Completed
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  lightImpact();
-                  setFilterStatus('cancelled' as BookingStatus);
-                }}
-                className={`px-4 py-2 rounded-full border ${
-                  filterStatus === 'cancelled'
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'bg-white border-gray-300'
-                }`}
-                activeOpacity={0.7}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    filterStatus === 'cancelled' ? 'text-white' : 'text-gray-700'
-                  }`}
-                >
-                  Cancelled
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Results Count */}
-          <View className="mb-4">
-            <Text className="text-sm text-gray-600">
-              {filteredBookings.length} {filteredBookings.length === 1 ? 'booking' : 'bookings'}{' '}
-              found
-            </Text>
-          </View>
-
-          {/* Booking Cards */}
-          {filteredBookings.length > 0 ? (
-            <View className="gap-4">
-              {filteredBookings.map((booking, index) => (
-                <BookingCard
-                  key={booking.id}
-                  booking={booking}
-                  index={index}
-                  onCancel={handleCancelBooking}
-                />
-              ))}
-            </View>
-          ) : (
-            <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-200">
-              <Text className="text-4xl mb-3">📅</Text>
-              <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
-                No bookings found
-              </Text>
-              <Text className="text-sm text-gray-600 text-center mb-4">
-                You haven't made any bookings yet. Browse rooms to get started!
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  mediumImpact();
-                  router.push('/rooms' as any);
-                }}
-                className="bg-blue-600 rounded-lg px-6 py-3"
-                activeOpacity={0.7}
-              >
-                <Text className="text-white font-bold">Browse Rooms</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      </ScrollView>
+      <FlatList
+        data={filteredBookings}
+        renderItem={renderBookingCard}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={renderListHeader}
+        ListEmptyComponent={renderListEmpty}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 96 }}
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        {...FLATLIST_CONFIG}
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+      />
     </View>
   );
 }
