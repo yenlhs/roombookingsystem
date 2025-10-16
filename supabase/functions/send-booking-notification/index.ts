@@ -241,7 +241,7 @@ async function sendEmailNotification(
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: 'Room Booking System <notifications@roombooking.com>',
+      from: 'Room Booking System <onboarding@resend.dev>',
       to: booking.user.email,
       subject: emailTemplate.subject,
       html: emailTemplate.html,
