@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ProtectedRoute } from '@/lib/auth/protected-route';
 import { useAuth } from '@/lib/auth/context';
 import { createBookingService, createRoomService, supabase } from '@workspace/supabase';
+import type { User as UserType } from '@workspace/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, DoorOpen, Calendar, Users, User, Activity, Loader2 } from 'lucide-react';
@@ -56,7 +57,7 @@ function DashboardContent() {
 
       // Load users
       const { data: users } = await supabase.from('users').select('*');
-      const activeUsers = users?.filter((u) => u.status === 'active') || [];
+      const activeUsers = (users as UserType[])?.filter((u) => u.status === 'active') || [];
 
       setStats({
         totalRooms: rooms.length,
