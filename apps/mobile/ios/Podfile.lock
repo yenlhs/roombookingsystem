@@ -1,9 +1,13 @@
 PODS:
+  - EXApplication (7.0.7):
+    - ExpoModulesCore
   - EXConstants (18.0.9):
     - ExpoModulesCore
   - EXImageLoader (6.0.0):
     - ExpoModulesCore
     - React-Core
+  - EXNotifications (0.32.12):
+    - ExpoModulesCore
   - Expo (54.0.13):
     - ExpoModulesCore
     - hermes-engine
@@ -31,9 +35,13 @@ PODS:
     - Yoga
   - ExpoAsset (12.0.9):
     - ExpoModulesCore
+  - ExpoDevice (8.0.9):
+    - ExpoModulesCore
   - ExpoFileSystem (19.0.17):
     - ExpoModulesCore
   - ExpoFont (14.0.9):
+    - ExpoModulesCore
+  - ExpoHaptics (15.0.7):
     - ExpoModulesCore
   - ExpoHead (6.0.12):
     - ExpoModulesCore
@@ -1968,12 +1976,16 @@ PODS:
   - Yoga (0.0.0)
 
 DEPENDENCIES:
+  - "EXApplication (from `../../../node_modules/.pnpm/expo-application@7.0.7_expo@54.0.13/node_modules/expo-application/ios`)"
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@18.0.9_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0_/node_modules/expo-constants/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo@54.0.13/node_modules/expo-image-loader/ios`)"
+  - "EXNotifications (from `../../../node_modules/.pnpm/expo-notifications@0.32.12_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+r_acb2e2750b644cbefff178c8f0587fe6/node_modules/expo-notifications/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@54.0.13_@babel+core@7.28.4_@expo+metro-runtime@6.1.2_expo-router@6.0.12_react-nati_a9f6bd46bc0f490a69647fe5276e752e/node_modules/expo`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@12.0.9_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-asset/ios`)"
+  - "ExpoDevice (from `../../../node_modules/.pnpm/expo-device@8.0.9_expo@54.0.13/node_modules/expo-device/ios`)"
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@19.0.17_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0_/node_modules/expo-file-system/ios`)"
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@14.0.9_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-font/ios`)"
+  - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@15.0.7_expo@54.0.13/node_modules/expo-haptics/ios`)"
   - "ExpoHead (from `../../../node_modules/.pnpm/expo-router@6.0.12_@expo+metro-runtime@6.1.2_@types+react-dom@19.2.2_@types+react@19.1._64c2155cb788922d4cb2cbe250f56d46/node_modules/expo-router/ios`)"
   - "ExpoImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@17.0.8_expo@54.0.13/node_modules/expo-image-picker/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@15.0.7_expo@54.0.13_react@19.1.0/node_modules/expo-keep-awake/ios`)"
@@ -2055,18 +2067,26 @@ DEPENDENCIES:
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0/node_modules/react-native/ReactCommon/yoga`)"
 
 EXTERNAL SOURCES:
+  EXApplication:
+    :path: "../../../node_modules/.pnpm/expo-application@7.0.7_expo@54.0.13/node_modules/expo-application/ios"
   EXConstants:
     :path: "../../../node_modules/.pnpm/expo-constants@18.0.9_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0_/node_modules/expo-constants/ios"
   EXImageLoader:
     :path: "../../../node_modules/.pnpm/expo-image-loader@6.0.0_expo@54.0.13/node_modules/expo-image-loader/ios"
+  EXNotifications:
+    :path: "../../../node_modules/.pnpm/expo-notifications@0.32.12_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+r_acb2e2750b644cbefff178c8f0587fe6/node_modules/expo-notifications/ios"
   Expo:
     :path: "../../../node_modules/.pnpm/expo@54.0.13_@babel+core@7.28.4_@expo+metro-runtime@6.1.2_expo-router@6.0.12_react-nati_a9f6bd46bc0f490a69647fe5276e752e/node_modules/expo"
   ExpoAsset:
     :path: "../../../node_modules/.pnpm/expo-asset@12.0.9_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-asset/ios"
+  ExpoDevice:
+    :path: "../../../node_modules/.pnpm/expo-device@8.0.9_expo@54.0.13/node_modules/expo-device/ios"
   ExpoFileSystem:
     :path: "../../../node_modules/.pnpm/expo-file-system@19.0.17_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0_/node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../../../node_modules/.pnpm/expo-font@14.0.9_expo@54.0.13_react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/expo-font/ios"
+  ExpoHaptics:
+    :path: "../../../node_modules/.pnpm/expo-haptics@15.0.7_expo@54.0.13/node_modules/expo-haptics/ios"
   ExpoHead:
     :path: "../../../node_modules/.pnpm/expo-router@6.0.12_@expo+metro-runtime@6.1.2_@types+react-dom@19.2.2_@types+react@19.1._64c2155cb788922d4cb2cbe250f56d46/node_modules/expo-router/ios"
   ExpoImagePicker:
@@ -2226,12 +2246,16 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.28.4_@types+react@19.1.17_react@19.1.0/node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  EXApplication: 296622817d459f46b6c5fe8691f4aac44d2b79e7
   EXConstants: a95804601ee4a6aa7800645f9b070d753b1142b3
   EXImageLoader: 189e3476581efe3ad4d1d3fb4735b7179eb26f05
+  EXNotifications: 7cff475adb5d7a255a9ea46bbd2589cb3b454506
   Expo: 6580dbf21d94626792b38a95cddb2fb369ec6b0c
   ExpoAsset: 9ba6fbd677fb8e241a3899ac00fa735bc911eadf
+  ExpoDevice: 148accb4071873d19fba80a2506c58ffa433d620
   ExpoFileSystem: b79eadbda7b7f285f378f95f959cc9313a1c9c61
   ExpoFont: cf9d90ec1d3b97c4f513211905724c8171f82961
+  ExpoHaptics: 807476b0c39e9d82b7270349d6487928ce32df84
   ExpoHead: 7141e494b0773a8f0dc5ca3366ce91b1300f5a9d
   ExpoImagePicker: d251aab45a1b1857e4156fed88511b278b4eee1c
   ExpoKeepAwake: 1a2e820692e933c94a565ec3fbbe38ac31658ffe

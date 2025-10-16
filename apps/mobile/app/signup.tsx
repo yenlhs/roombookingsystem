@@ -43,7 +43,8 @@ export default function SignupScreen() {
 
     try {
       await signUp(data);
-      router.push("/(tabs)");
+      console.log("[Signup] Sign up successful, redirecting to app");
+      router.replace("/(tabs)/rooms");
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

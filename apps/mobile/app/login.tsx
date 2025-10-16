@@ -40,7 +40,8 @@ export default function LoginScreen() {
 
 		try {
 			await signIn(data);
-			router.push("/(tabs)");
+			console.log("[Login] Sign in successful, redirecting to app");
+			router.replace("/(tabs)/rooms");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "An error occurred");
 		} finally {

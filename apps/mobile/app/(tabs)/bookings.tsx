@@ -36,27 +36,46 @@ const formatTime = (timeString: string): string => {
   return `${hour12}:${minutes} ${ampm}`;
 };
 
-const getStatusColor = (status: BookingStatus) => {
-  switch (status) {
-    case 'confirmed':
-      return 'bg-green-100';
+const getDisplayStatus = (booking: BookingWithDetails): string => {
+  const bookingDateTime = new Date(`${booking.booking_date}T${booking.start_time}`);
+  const now = new Date();
+
+  if (booking.status === 'cancelled') {
+    return 'Cancelled';
+  }
+
+  if (booking.status === 'completed' || (booking.status === 'confirmed' && bookingDateTime < now)) {
+    return 'Past';
+  }
+
+  if (booking.status === 'confirmed' && bookingDateTime > now) {
+    return 'Upcoming';
+  }
+
+  return booking.status;
+};
+
+const getStatusColor = (displayStatus: string) => {
+  switch (displayStatus.toLowerCase()) {
+    case 'upcoming':
+      return 'bg-blue-100';
+    case 'past':
+      return 'bg-gray-100';
     case 'cancelled':
       return 'bg-red-100';
-    case 'completed':
-      return 'bg-gray-100';
     default:
       return 'bg-gray-100';
   }
 };
 
-const getStatusTextColor = (status: BookingStatus) => {
-  switch (status) {
-    case 'confirmed':
-      return 'text-green-800';
+const getStatusTextColor = (displayStatus: string) => {
+  switch (displayStatus.toLowerCase()) {
+    case 'upcoming':
+      return 'text-blue-800';
+    case 'past':
+      return 'text-gray-800';
     case 'cancelled':
       return 'text-red-800';
-    case 'completed':
-      return 'text-gray-800';
     default:
       return 'text-gray-800';
   }
@@ -72,12 +91,16 @@ function BookingCard({
   booking,
   index,
   onCancel,
+  onEdit,
 }: {
   booking: BookingWithDetails;
   index: number;
   onCancel: (booking: BookingWithDetails) => void;
+  onEdit: (booking: BookingWithDetails) => void;
 }) {
   const animatedStyle = useListItemAnimation(index);
+
+  const displayStatus = getDisplayStatus(booking);
 
   return (
     <Animated.View style={animatedStyle}>
@@ -90,11 +113,11 @@ function BookingCard({
             </Text>
             <Text className="text-sm text-gray-600">{formatDate(booking.booking_date)}</Text>
           </View>
-          <View className={`px-3 py-1 rounded-full ${getStatusColor(booking.status)}`}>
+          <View className={`px-3 py-1 rounded-full ${getStatusColor(displayStatus)}`}>
             <Text
-              className={`text-xs font-semibold ${getStatusTextColor(booking.status)} uppercase`}
+              className={`text-xs font-semibold ${getStatusTextColor(displayStatus)} uppercase`}
             >
-              {booking.status}
+              {displayStatus}
             </Text>
           </View>
         </View>
@@ -127,16 +150,26 @@ function BookingCard({
 
         {/* Actions */}
         {isUpcoming(booking) && (
-          <View className="mt-3 pt-3 border-t border-gray-100">
+          <View className="mt-3 pt-3 border-t border-gray-100 flex-row gap-2">
+            <TouchableOpacity
+              onPress={() => {
+                lightImpact();
+                onEdit(booking);
+              }}
+              className="flex-1 bg-blue-50 border border-blue-200 rounded-lg py-3 items-center"
+              activeOpacity={0.7}
+            >
+              <Text className="text-blue-700 font-semibold">Edit</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 warningFeedback();
                 onCancel(booking);
               }}
-              className="bg-red-50 border border-red-200 rounded-lg py-3 items-center"
+              className="flex-1 bg-red-50 border border-red-200 rounded-lg py-3 items-center"
               activeOpacity={0.7}
             >
-              <Text className="text-red-700 font-semibold">Cancel Booking</Text>
+              <Text className="text-red-700 font-semibold">Cancel</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -249,8 +282,13 @@ export default function BookingsScreen() {
     );
   };
 
+  const handleEditBooking = (booking: BookingWithDetails) => {
+    lightImpact();
+    router.push(`/edit-booking/${booking.id}` as any);
+  };
+
   const renderBookingCard: ListRenderItem<BookingWithDetails> = ({ item, index }) => (
-    <BookingCard booking={item} index={index} onCancel={handleCancelBooking} />
+    <BookingCard booking={item} index={index} onCancel={handleCancelBooking} onEdit={handleEditBooking} />
   );
 
   const renderListHeader = () => (
@@ -329,7 +367,7 @@ export default function BookingsScreen() {
                 filterStatus === 'completed' ? 'text-white' : 'text-gray-700'
               }`}
             >
-              Completed
+              Past
             </Text>
           </TouchableOpacity>
 

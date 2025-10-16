@@ -1,8 +1,42 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { useEffect } from "react";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useAuth } from "../lib/auth/context";
 
 export default function Index() {
+	const { user, loading } = useAuth();
+	const router = useRouter();
+
+	useEffect(() => {
+		// If user is authenticated, redirect to main app
+		if (!loading && user) {
+			console.log("[Index] User is authenticated, redirecting to main app");
+			router.replace("/(tabs)/rooms");
+		}
+	}, [user, loading, router]);
+
+	// Show loading state while checking authentication
+	if (loading) {
+		return (
+			<View className="flex-1 items-center justify-center bg-slate-50">
+				<ActivityIndicator size="large" color="#2563eb" />
+				<Text className="text-gray-600 mt-4">Loading...</Text>
+			</View>
+		);
+	}
+
+	// If user is authenticated, don't render the landing page
+	// (the useEffect will redirect them)
+	if (user) {
+		return (
+			<View className="flex-1 items-center justify-center bg-slate-50">
+				<ActivityIndicator size="large" color="#2563eb" />
+				<Text className="text-gray-600 mt-4">Redirecting...</Text>
+			</View>
+		);
+	}
+
 	return (
 		<SafeAreaView className="flex-1 bg-slate-50">
 			{/* Header with Sign In/Sign Up buttons */}
