@@ -284,7 +284,7 @@ function EditRoomContent() {
                   <p className="text-sm text-red-600">{errors.status.message}</p>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Inactive rooms won't be available for new bookings
+                  Inactive rooms won&apos;t be available for new bookings
                 </p>
               </div>
 

@@ -1,6 +1,11 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { UpdateProfileInput } from '@workspace/validation';
 import type { UserProfile } from '@workspace/types';
+
+interface UpdateProfileInput {
+  full_name: string;
+  phone?: string;
+  avatar_url?: string;
+}
 
 /**
  * Profile Service

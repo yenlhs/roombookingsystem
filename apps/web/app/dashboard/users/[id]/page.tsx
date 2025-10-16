@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { ProtectedRoute } from '@/lib/auth/protected-route';
 import { useAuth } from '@/lib/auth/context';
 import { createBookingService, supabase } from '@workspace/supabase';
-import type { User, BookingWithDetails } from '@workspace/types';
+import type { User, BookingWithDetails, Database } from '@workspace/types';
+import { UserStatus } from '@workspace/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -92,17 +93,21 @@ function UserDetailsContent() {
   const handleToggleStatus = async () => {
     if (!user) return;
 
-    const newStatus = user.status === 'active' ? 'inactive' : 'active';
-    const action = newStatus === 'active' ? 'activate' : 'deactivate';
+    const newStatus = user.status === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
+    const action = newStatus === UserStatus.ACTIVE ? 'activate' : 'deactivate';
 
     if (!confirm(`Are you sure you want to ${action} this user?`)) {
       return;
     }
 
     try {
-      const { error: updateError } = await supabase
+      const updateData: Database['public']['Tables']['users']['Update'] = {
+        status: newStatus
+      };
+      const { error: updateError} = await supabase
         .from('users')
-        .update({ status: newStatus })
+        // @ts-expect-error - Supabase type inference issue with update method
+        .update(updateData)
         .eq('id', userId);
 
       if (updateError) throw updateError;
@@ -130,8 +135,8 @@ function UserDetailsContent() {
     return `${hour12}:${minutes} ${ampm}`;
   };
 
-  const getStatusBadge = (status: string) => {
-    return status === 'active'
+  const getStatusBadge = (status: UserStatus) => {
+    return status === UserStatus.ACTIVE
       ? 'bg-green-100 text-green-800'
       : 'bg-gray-100 text-gray-800';
   };
@@ -214,7 +219,7 @@ function UserDetailsContent() {
               </div>
               {user.id !== currentUser?.id && (
                 <Button variant="outline" onClick={handleToggleStatus}>
-                  {user.status === 'active' ? (
+                  {user.status === UserStatus.ACTIVE ? (
                     <>
                       <UserX className="mr-2 h-4 w-4" />
                       Deactivate User

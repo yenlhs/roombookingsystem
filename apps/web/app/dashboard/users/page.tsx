@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { ProtectedRoute } from '@/lib/auth/protected-route';
 import { useAuth } from '@/lib/auth/context';
 import { supabase } from '@workspace/supabase';
-import type { User, UserStatus } from '@workspace/types';
+import type { User, Database } from '@workspace/types';
+import { UserStatus } from '@workspace/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -70,7 +71,7 @@ function UsersContent() {
       setLoading(true);
       setError(null);
 
-      let query = supabase
+      const query = supabase
         .from('users')
         .select('*')
         .order('created_at', { ascending: false });
@@ -88,17 +89,21 @@ function UsersContent() {
   };
 
   const handleToggleStatus = async (userId: string, currentStatus: UserStatus) => {
-    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    const action = newStatus === 'active' ? 'activate' : 'deactivate';
+    const newStatus = currentStatus === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
+    const action = newStatus === UserStatus.ACTIVE ? 'activate' : 'deactivate';
 
     if (!confirm(`Are you sure you want to ${action} this user?`)) {
       return;
     }
 
     try {
+      const updateData: Database['public']['Tables']['users']['Update'] = {
+        status: newStatus
+      };
       const { error: updateError } = await supabase
         .from('users')
-        .update({ status: newStatus })
+        // @ts-expect-error - Supabase type inference issue with update method
+        .update(updateData)
         .eq('id', userId);
 
       if (updateError) throw updateError;
@@ -138,7 +143,7 @@ function UsersContent() {
   });
 
   const getStatusBadge = (status: UserStatus) => {
-    return status === 'active'
+    return status === UserStatus.ACTIVE
       ? 'bg-green-100 text-green-800'
       : 'bg-gray-100 text-gray-800';
   };
@@ -151,8 +156,8 @@ function UsersContent() {
 
   const stats = {
     total: users.length,
-    active: users.filter((u) => u.status === 'active').length,
-    inactive: users.filter((u) => u.status === 'inactive').length,
+    active: users.filter((u) => u.status === UserStatus.ACTIVE).length,
+    inactive: users.filter((u) => u.status === UserStatus.INACTIVE).length,
     admins: users.filter((u) => u.role === 'admin').length,
   };
 
@@ -332,7 +337,7 @@ function UsersContent() {
                           size="sm"
                           onClick={() => handleToggleStatus(user.id, user.status)}
                         >
-                          {user.status === 'active' ? (
+                          {user.status === UserStatus.ACTIVE ? (
                             <>
                               <UserX className="mr-2 h-4 w-4" />
                               Deactivate

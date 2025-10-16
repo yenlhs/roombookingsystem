@@ -1,6 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Room, RoomStatus, RoomFilters } from '@workspace/types';
-import type { CreateRoomInput, UpdateRoomInput } from '@workspace/validation';
+import type { Room, RoomStatus, RoomFilters, CreateRoomInput, UpdateRoomInput } from '@workspace/types';
 
 /**
  * Room Service

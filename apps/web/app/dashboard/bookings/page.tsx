@@ -75,7 +75,7 @@ function BookingsContent() {
       setLoading(true);
       setError(null);
 
-      const filters: any = {};
+      const filters: Record<string, string> = {};
       if (statusFilter !== 'all') {
         filters.status = statusFilter;
       }

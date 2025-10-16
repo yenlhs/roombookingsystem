@@ -18,10 +18,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { showErrorToast, showSuccessToast } from '@/lib/errors';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -34,16 +34,17 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginInput) => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const { authService } = await import('@/lib/auth/service');
       await authService.signIn(data);
 
+      showSuccessToast('Welcome back!', 'You have been successfully signed in.');
+
       // Redirect to dashboard on success
       router.push('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during sign in');
+      showErrorToast(err, 'Failed to sign in');
     } finally {
       setIsLoading(false);
     }
@@ -96,12 +97,6 @@ export default function LoginPage() {
                 <p className="text-sm text-red-500">{errors.password.message}</p>
               )}
             </div>
-
-            {error && (
-              <div className="rounded-md bg-red-50 p-3">
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-            )}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (

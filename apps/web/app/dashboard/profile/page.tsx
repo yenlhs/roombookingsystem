@@ -30,7 +30,12 @@ function ProfileContent() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<{
+    full_name: string;
+    email: string;
+    phone?: string | null;
+    avatar_url?: string | null;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -197,7 +202,7 @@ function ProfileContent() {
             <div className="mb-6 flex items-center gap-6">
               <div className="relative">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={profile?.avatar_url} alt={profile?.full_name} />
+                  <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name} />
                   <AvatarFallback className="bg-blue-100 text-2xl text-blue-600">
                     {profile?.full_name ? getInitials(profile.full_name) : '?'}
                   </AvatarFallback>

@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createBookingSchema, type CreateBookingInput } from '@workspace/validation';
 import type { Room, User, TimeSlot } from '@workspace/types';
+import { RoomStatus } from '@workspace/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -68,7 +69,7 @@ function NewBookingContent() {
     try {
       setLoadingRooms(true);
       const [roomsData, usersData] = await Promise.all([
-        roomService.getRooms({ status: 'active' }),
+        roomService.getRooms({ status: RoomStatus.ACTIVE }),
         loadUsers(),
       ]);
       setRooms(roomsData);
