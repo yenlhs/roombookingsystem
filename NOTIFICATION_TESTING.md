@@ -5,6 +5,24 @@
 ✅ Database tables created (push_tokens, notification_preferences, notification_log)
 ✅ Mobile app integrated with notification hooks
 ✅ Expo notification plugin configured
+✅ Test notification buttons added to Profile screen
+
+## iOS Simulator vs Physical Device
+
+### ⚠️ Important: iOS Simulator Limitations
+
+**What WORKS on iOS Simulator:**
+- ✅ Local notifications (what we use for testing)
+- ✅ Notification permissions
+- ✅ Token registration
+- ✅ Notification UI/UX testing
+- ✅ Foreground notifications
+
+**What DOESN'T WORK on iOS Simulator:**
+- ❌ Remote push notifications from Expo Push Service
+- ❌ APNS (Apple Push Notification Service)
+
+**Solution:** We've set up **local notification testing** that perfectly simulates the notification experience on the simulator!
 
 ## Quick Start Testing
 
@@ -27,22 +45,34 @@ When prompted:
 npx expo start
 ```
 
-### Step 3: Test Notification Flow
+### Step 3: Test Notifications (iOS Simulator)
 
-1. **Launch the app** on your iOS simulator or device
+**Easy Testing via Profile Screen:**
+
+1. **Launch the app** on your iOS simulator
 2. **Grant notification permissions** when prompted
-3. **Check the console logs** - you should see:
-   ```
-   [Notifications] Initializing...
-   [Notifications] Got push token: ExponentPushToken[xxxxx]
-   [Notifications] Token registered with backend
-   ```
+3. **Go to Profile tab** (bottom right)
+4. **Scroll down** to "Test Notifications" section
+5. **Tap any test button**:
+   - "Send Test Notification" - Immediate test
+   - "Test Booking Confirmed" - Confirmation notification
+   - "Test Booking Cancelled" - Cancellation notification
+   - "Test Booking Reminder" - Reminder notification
 
-4. **Create a booking**:
-   - Go to Rooms tab
-   - Select a room
-   - Book it for a future time
-   - You should receive a notification confirming the booking
+6. **Wait 2 seconds** - notification will appear! 🎉
+
+**What happens:**
+- Notification appears in notification center
+- You'll see the notification banner
+- Tap it to test navigation
+- Works perfectly on simulator!
+
+### Step 4: Test Real Bookings (Physical Device Only)
+
+For testing actual booking notifications from the backend:
+1. Use a physical iPhone (not simulator)
+2. Create a booking via the app
+3. You'll receive a real push notification from Expo's servers
 
 ### Step 4: Verify in Database
 
