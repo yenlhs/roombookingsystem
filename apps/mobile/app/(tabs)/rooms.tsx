@@ -8,10 +8,82 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
 import { createRoomService } from '@workspace/supabase';
 import type { Room, RoomStatus } from '@workspace/types';
+import { useFadeIn, useListItemAnimation } from '../../lib/animations';
+import { lightImpact, selectionFeedback } from '../../lib/haptics';
+
+// Room Card Component with animations
+function RoomCard({ room, index, onPress }: { room: Room; index: number; onPress: () => void }) {
+  const animatedStyle = useListItemAnimation(index);
+
+  const getRoomStatusColor = (status: RoomStatus) => {
+    return status === 'active' ? 'bg-green-100' : 'bg-gray-100';
+  };
+
+  const getRoomStatusTextColor = (status: RoomStatus) => {
+    return status === 'active' ? 'text-green-800' : 'text-gray-800';
+  };
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        onPress={() => {
+          selectionFeedback();
+          onPress();
+        }}
+        className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200"
+        activeOpacity={0.7}
+      >
+        <View className="flex-row justify-between items-start mb-3">
+          <View className="flex-1 mr-4">
+            <Text className="text-xl font-bold text-gray-900 mb-1">{room.name}</Text>
+            {room.description && (
+              <Text className="text-sm text-gray-600" numberOfLines={2}>
+                {room.description}
+              </Text>
+            )}
+          </View>
+          <View className={`px-3 py-1 rounded-full ${getRoomStatusColor(room.status)}`}>
+            <Text
+              className={`text-xs font-semibold ${getRoomStatusTextColor(room.status)} uppercase`}
+            >
+              {room.status}
+            </Text>
+          </View>
+        </View>
+
+        <View className="border-t border-gray-100 pt-3 flex-row flex-wrap gap-4">
+          <View className="flex-row items-center">
+            <Text className="text-2xl mr-2">👥</Text>
+            <Text className="text-sm text-gray-700 font-medium">{room.capacity} seats</Text>
+          </View>
+
+          <View className="flex-row items-center">
+            <Text className="text-2xl mr-2">🕐</Text>
+            <Text className="text-sm text-gray-700 font-medium">
+              {room.operating_hours_start} - {room.operating_hours_end}
+            </Text>
+          </View>
+
+          <View className="flex-row items-center">
+            <Text className="text-2xl mr-2">⏱️</Text>
+            <Text className="text-sm text-gray-700 font-medium">
+              {room.slot_duration_minutes} min slots
+            </Text>
+          </View>
+        </View>
+
+        <View className="mt-3 pt-3 border-t border-gray-100">
+          <Text className="text-blue-600 font-semibold text-sm">View Details →</Text>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
 
 export default function RoomsScreen() {
   const router = useRouter();
@@ -25,6 +97,7 @@ export default function RoomsScreen() {
   const [minCapacity, setMinCapacity] = useState<number | null>(null);
 
   const roomService = createRoomService(supabase);
+  const headerAnimation = useFadeIn();
 
   // Load rooms
   useEffect(() => {
@@ -104,17 +177,10 @@ export default function RoomsScreen() {
   };
 
   const clearFilters = () => {
+    lightImpact();
     setSearchQuery('');
     setStatusFilter('all');
     setMinCapacity(null);
-  };
-
-  const getRoomStatusColor = (status: RoomStatus) => {
-    return status === 'active' ? 'bg-green-100' : 'bg-gray-100';
-  };
-
-  const getRoomStatusTextColor = (status: RoomStatus) => {
-    return status === 'active' ? 'text-green-800' : 'text-gray-800';
   };
 
   if (loading) {
@@ -136,12 +202,12 @@ export default function RoomsScreen() {
       >
         <View className="p-6 pb-24">
           {/* Header */}
-          <View className="mb-6">
+          <Animated.View style={headerAnimation} className="mb-6">
             <Text className="text-3xl font-bold text-gray-900 mb-2">Browse Rooms</Text>
             <Text className="text-base text-gray-600">
               Find the perfect space for your meeting
             </Text>
-          </View>
+          </Animated.View>
 
           {/* Error Message */}
           {error && (
@@ -167,12 +233,16 @@ export default function RoomsScreen() {
             <View className="flex-row flex-wrap gap-2">
               {/* Status Filter */}
               <TouchableOpacity
-                onPress={() => setStatusFilter('all')}
+                onPress={() => {
+                  lightImpact();
+                  setStatusFilter('all');
+                }}
                 className={`px-4 py-2 rounded-full border ${
                   statusFilter === 'all'
                     ? 'bg-blue-600 border-blue-600'
                     : 'bg-white border-gray-300'
                 }`}
+                activeOpacity={0.7}
               >
                 <Text
                   className={`text-sm font-medium ${
@@ -184,12 +254,16 @@ export default function RoomsScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => setStatusFilter('active' as RoomStatus)}
+                onPress={() => {
+                  lightImpact();
+                  setStatusFilter('active' as RoomStatus);
+                }}
                 className={`px-4 py-2 rounded-full border ${
                   statusFilter === 'active'
                     ? 'bg-blue-600 border-blue-600'
                     : 'bg-white border-gray-300'
                 }`}
+                activeOpacity={0.7}
               >
                 <Text
                   className={`text-sm font-medium ${
@@ -204,12 +278,16 @@ export default function RoomsScreen() {
               {[5, 10, 20].map((capacity) => (
                 <TouchableOpacity
                   key={capacity}
-                  onPress={() => setMinCapacity(minCapacity === capacity ? null : capacity)}
+                  onPress={() => {
+                    lightImpact();
+                    setMinCapacity(minCapacity === capacity ? null : capacity);
+                  }}
                   className={`px-4 py-2 rounded-full border ${
                     minCapacity === capacity
                       ? 'bg-blue-600 border-blue-600'
                       : 'bg-white border-gray-300'
                   }`}
+                  activeOpacity={0.7}
                 >
                   <Text
                     className={`text-sm font-medium ${
@@ -243,65 +321,13 @@ export default function RoomsScreen() {
           {/* Room Cards */}
           {filteredRooms.length > 0 ? (
             <View className="gap-4">
-              {filteredRooms.map((room) => (
-                <TouchableOpacity
+              {filteredRooms.map((room, index) => (
+                <RoomCard
                   key={room.id}
+                  room={room}
+                  index={index}
                   onPress={() => router.push(`/room-details/${room.id}`)}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200"
-                >
-                  <View className="flex-row justify-between items-start mb-3">
-                    <View className="flex-1 mr-4">
-                      <Text className="text-xl font-bold text-gray-900 mb-1">{room.name}</Text>
-                      {room.description && (
-                        <Text className="text-sm text-gray-600" numberOfLines={2}>
-                          {room.description}
-                        </Text>
-                      )}
-                    </View>
-                    <View
-                      className={`px-3 py-1 rounded-full ${getRoomStatusColor(room.status)}`}
-                    >
-                      <Text
-                        className={`text-xs font-semibold ${getRoomStatusTextColor(
-                          room.status
-                        )} uppercase`}
-                      >
-                        {room.status}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View className="border-t border-gray-100 pt-3 flex-row flex-wrap gap-4">
-                    {/* Capacity */}
-                    <View className="flex-row items-center">
-                      <Text className="text-2xl mr-2">👥</Text>
-                      <Text className="text-sm text-gray-700 font-medium">
-                        {room.capacity} seats
-                      </Text>
-                    </View>
-
-                    {/* Operating Hours */}
-                    <View className="flex-row items-center">
-                      <Text className="text-2xl mr-2">🕐</Text>
-                      <Text className="text-sm text-gray-700 font-medium">
-                        {room.operating_hours_start} - {room.operating_hours_end}
-                      </Text>
-                    </View>
-
-                    {/* Slot Duration */}
-                    <View className="flex-row items-center">
-                      <Text className="text-2xl mr-2">⏱️</Text>
-                      <Text className="text-sm text-gray-700 font-medium">
-                        {room.slot_duration_minutes} min slots
-                      </Text>
-                    </View>
-                  </View>
-
-                  {/* View Details Link */}
-                  <View className="mt-3 pt-3 border-t border-gray-100">
-                    <Text className="text-blue-600 font-semibold text-sm">View Details →</Text>
-                  </View>
-                </TouchableOpacity>
+                />
               ))}
             </View>
           ) : (
@@ -317,6 +343,7 @@ export default function RoomsScreen() {
                 <TouchableOpacity
                   onPress={clearFilters}
                   className="bg-blue-600 rounded-lg px-6 py-3"
+                  activeOpacity={0.7}
                 >
                   <Text className="text-white font-bold">Clear Filters</Text>
                 </TouchableOpacity>
