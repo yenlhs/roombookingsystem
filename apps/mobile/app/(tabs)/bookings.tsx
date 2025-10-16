@@ -11,7 +11,7 @@ import {
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabase';
-import { createBookingService } from '@workspace/supabase';
+import { createBookingService, createNotificationService } from '@workspace/supabase';
 import type { BookingWithDetails, BookingStatus } from '@workspace/types';
 import { useFadeIn, useListItemAnimation } from '../../lib/animations';
 import { lightImpact, mediumImpact, warningFeedback } from '../../lib/haptics';
@@ -195,6 +195,7 @@ export default function BookingsScreen() {
   const [filterStatus, setFilterStatus] = useState<'all' | BookingStatus>('all');
 
   const bookingService = createBookingService(supabase);
+  const notificationService = createNotificationService(supabase);
   const headerAnimation = useFadeIn();
 
   useEffect(() => {
@@ -271,6 +272,18 @@ export default function BookingsScreen() {
             try {
               mediumImpact();
               await bookingService.cancelBooking({ id: booking.id });
+
+              // Send cancellation notification
+              try {
+                await notificationService.sendBookingNotification({
+                  bookingId: booking.id,
+                  notificationType: 'booking_cancelled',
+                });
+                console.log('[Booking] Cancellation notification sent');
+              } catch (notifError) {
+                console.warn('[Booking] Failed to send cancellation notification:', notifError);
+              }
+
               Alert.alert('Success', 'Booking cancelled successfully');
               loadBookings();
             } catch (err) {

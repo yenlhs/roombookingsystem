@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../../lib/supabase';
-import { createBookingService, createRoomService } from '@workspace/supabase';
+import { createBookingService, createRoomService, createNotificationService } from '@workspace/supabase';
 import type { Room, TimeSlot, RoomAvailability } from '@workspace/types';
 
 export default function BookRoomScreen() {
@@ -34,6 +34,7 @@ export default function BookRoomScreen() {
 
   const roomService = createRoomService(supabase);
   const bookingService = createBookingService(supabase);
+  const notificationService = createNotificationService(supabase);
 
   useEffect(() => {
     loadRoom();
@@ -133,7 +134,7 @@ export default function BookRoomScreen() {
         return;
       }
 
-      await bookingService.createBooking({
+      const newBooking = await bookingService.createBooking({
         user_id: user.id,
         room_id: roomId as string,
         booking_date: selectedDate,
@@ -141,6 +142,18 @@ export default function BookRoomScreen() {
         end_time: selectedSlot.end_time,
         notes: notes.trim() || undefined,
       });
+
+      // Send booking confirmation notification
+      try {
+        await notificationService.sendBookingNotification({
+          bookingId: newBooking.id,
+          notificationType: 'booking_confirmed',
+        });
+        console.log('[Booking] Notification sent successfully');
+      } catch (notifError) {
+        // Don't fail the booking if notification fails
+        console.warn('[Booking] Failed to send notification:', notifError);
+      }
 
       Alert.alert('Success!', 'Your booking has been confirmed', [
         {

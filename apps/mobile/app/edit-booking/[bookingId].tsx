@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../../lib/supabase';
-import { createBookingService, createRoomService } from '@workspace/supabase';
+import { createBookingService, createRoomService, createNotificationService } from '@workspace/supabase';
 import type { BookingWithDetails, TimeSlot, RoomAvailability } from '@workspace/types';
 
 export default function EditBookingScreen() {
@@ -34,6 +34,7 @@ export default function EditBookingScreen() {
 
   const bookingService = createBookingService(supabase);
   const roomService = createRoomService(supabase);
+  const notificationService = createNotificationService(supabase);
 
   useEffect(() => {
     loadBooking();
@@ -134,6 +135,12 @@ export default function EditBookingScreen() {
       setUpdating(true);
       setError(null);
 
+      // Check if date/time changed to determine if we should send update notification
+      const hasDateTimeChanged =
+        selectedDate !== booking.booking_date ||
+        selectedSlot.start_time !== booking.start_time ||
+        selectedSlot.end_time !== booking.end_time;
+
       await bookingService.updateBooking({
         id: bookingId as string,
         booking_date: selectedDate,
@@ -141,6 +148,19 @@ export default function EditBookingScreen() {
         end_time: selectedSlot.end_time,
         notes: notes.trim() || undefined,
       });
+
+      // Send update notification only if date/time changed
+      if (hasDateTimeChanged) {
+        try {
+          await notificationService.sendBookingNotification({
+            bookingId: bookingId as string,
+            notificationType: 'booking_updated',
+          });
+          console.log('[Booking] Update notification sent');
+        } catch (notifError) {
+          console.warn('[Booking] Failed to send update notification:', notifError);
+        }
+      }
 
       Alert.alert('Success!', 'Your booking has been updated', [
         {
