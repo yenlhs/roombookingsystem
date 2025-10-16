@@ -73,24 +73,27 @@ function DashboardContent() {
             </Card>
           </Link>
 
-          <Card className="opacity-60">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-2">
-                  <Calendar className="h-6 w-6 text-green-600" />
+          <Link href="/dashboard/bookings">
+            <Card className="cursor-pointer transition-shadow hover:shadow-md">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-green-100 p-2">
+                    <Calendar className="h-6 w-6 text-green-600" />
+                  </div>
+                  <CardTitle>Bookings</CardTitle>
                 </div>
-                <CardTitle>Bookings</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                View and manage room bookings
-              </p>
-              <p className="mt-4 text-xs text-muted-foreground">
-                (Coming in Phase 3)
-              </p>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  View and manage room bookings
+                </p>
+                <div className="mt-4 flex items-center text-sm font-semibold text-green-600">
+                  Manage Bookings
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           <Card className="opacity-60">
             <CardHeader>
@@ -122,12 +125,21 @@ function DashboardContent() {
             </p>
           </div>
 
+          <div className="rounded-lg bg-green-50 p-4">
+            <p className="text-sm font-semibold text-green-800">
+              ✅ Phase 2 Complete: Room Management
+            </p>
+            <p className="mt-1 text-xs text-green-700">
+              Full room management available on web and mobile!
+            </p>
+          </div>
+
           <div className="rounded-lg bg-blue-50 p-4">
             <p className="text-sm font-semibold text-blue-800">
-              🚀 Phase 2 In Progress: Room Management
+              🚀 Phase 3 Complete: Booking System
             </p>
             <p className="mt-1 text-xs text-blue-700">
-              Admin room management is now available. Click "Manage Rooms" above to get started!
+              Full booking management is now available. Users can book rooms on mobile, and admins can manage all bookings on web!
             </p>
           </div>
         </div>
