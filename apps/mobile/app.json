@@ -30,15 +30,28 @@
 				"backgroundColor": "#ffffff"
 			},
 			"package": "com.roombooking.mobile",
-			"permissions": [],
+			"permissions": ["NOTIFICATIONS", "VIBRATE"],
 			"enableProguardInReleaseBuilds": true,
-			"enableShrinkResourcesInReleaseBuilds": true
+			"enableShrinkResourcesInReleaseBuilds": true,
+			"googleServicesFile": "./google-services.json"
 		},
 		"web": {
 			"favicon": "./assets/favicon.png",
 			"bundler": "metro"
 		},
-		"plugins": ["expo-router", "expo-secure-store", "expo-haptics"],
+		"plugins": [
+			"expo-router",
+			"expo-secure-store",
+			"expo-haptics",
+			[
+				"expo-notifications",
+				{
+					"icon": "./assets/icon.png",
+					"color": "#ffffff",
+					"sounds": []
+				}
+			]
+		],
 		"experiments": {
 			"typedRoutes": true
 		},
