@@ -16,7 +16,7 @@
 		"assetBundlePatterns": ["**/*"],
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "com.roombooking.mobile",
+			"bundleIdentifier": "com.yenlhs.roombooking",
 			"infoPlist": {
 				"UIBackgroundModes": ["fetch"],
 				"NSAppTransportSecurity": {
@@ -29,7 +29,7 @@
 				"foregroundImage": "./assets/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.roombooking.mobile",
+			"package": "com.yenlhs.roombooking",
 			"permissions": ["NOTIFICATIONS", "VIBRATE"],
 			"enableProguardInReleaseBuilds": true,
 			"enableShrinkResourcesInReleaseBuilds": true,
@@ -57,7 +57,7 @@
 		},
 		"extra": {
 			"eas": {
-				"projectId": "placeholder"
+				"projectId": "628d6894-73d6-48a1-a480-94de302e0c76"
 			}
 		},
 		"updates": {

@@ -13,9 +13,11 @@ import {
 } from '../notifications';
 import { createNotificationService } from '@workspace/supabase';
 import { supabase } from '../supabase';
+import { useAuth } from '../auth/context';
 
 export function useNotifications() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [pushToken, setPushToken] = useState<PushNotificationToken | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
 
@@ -38,6 +40,12 @@ export function useNotifications() {
         setPushToken(token);
         console.log('[Notifications] Got push token:', token.token);
 
+        // Only register with backend if user is authenticated
+        if (!user) {
+          console.log('[Notifications] User not authenticated, skipping backend registration');
+          return;
+        }
+
         // Register with backend
         try {
           await notificationService.registerPushToken({
@@ -56,6 +64,12 @@ export function useNotifications() {
         console.error('[Notifications] Setup failed:', error);
       }
     };
+
+    // Wait for auth to finish loading before setting up notifications
+    if (authLoading) {
+      console.log('[Notifications] Waiting for auth to load...');
+      return;
+    }
 
     setupNotifications();
 
@@ -89,7 +103,7 @@ export function useNotifications() {
       receivedSubscription.remove();
       responseSubscription.remove();
     };
-  }, []);
+  }, [user, authLoading, router]);
 
   return {
     pushToken,
