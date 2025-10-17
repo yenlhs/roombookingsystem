@@ -17,25 +17,12 @@
 		}
 	},
 	"submit": {
-		"production": {
-			"ios": {
-				"appleId": "yenlhs@gmail.com",
-				"ascAppId": "6738859833",
-				"appleTeamId": "T7KBVA29C4"
-			}
-		},
 		"development": {
 			"ios": {
 				"appleId": "yenlhs@gmail.com",
-				"ascAppId": "6738859833",
-				"appleTeamId": "T7KBVA29C4"
-			}
-		},
-		"preview": {
-			"ios": {
-				"appleId": "yenlhs@gmail.com",
-				"ascAppId": "6738859833",
-				"appleTeamId": "T7KBVA29C4"
+				"ascAppId": "6754128439",
+				"appleTeamId": "T7KBVA29C4",
+				"bundleIdentifier": "com.yenlhs.roombooking"
 			}
 		}
 	}
