@@ -16,6 +16,9 @@ export default {
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: "com.yenlhs.roombooking",
+			config: {
+				usesNonExemptEncryption: false,
+			},
 		},
 		android: {
 			adaptiveIcon: {

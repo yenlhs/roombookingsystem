@@ -17,6 +17,9 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.yenlhs.roombooking",
+			"config": {
+				"usesNonExemptEncryption": false
+			},
 			"infoPlist": {
 				"UIBackgroundModes": ["fetch"],
 				"NSAppTransportSecurity": {
