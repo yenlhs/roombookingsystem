@@ -7,16 +7,13 @@
 		"development": {
 			"developmentClient": false,
 			"distribution": "internal",
-			"autoIncrement": true,
-			"autoSubmit": true
+			"autoIncrement": true
 		},
 		"preview": {
-			"distribution": "internal",
-			"autoSubmit": true
+			"distribution": "internal"
 		},
 		"production": {
-			"autoIncrement": true,
-			"autoSubmit": true
+			"autoIncrement": true
 		}
 	},
 	"submit": {
