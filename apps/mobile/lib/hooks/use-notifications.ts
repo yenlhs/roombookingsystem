@@ -2,7 +2,7 @@
  * React Hook for managing push notifications
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -17,9 +17,15 @@ import { useAuth } from '../auth/context';
 
 export function useNotifications() {
   const router = useRouter();
+  const routerRef = useRef(router);
   const { user, loading: authLoading } = useAuth();
   const [pushToken, setPushToken] = useState<PushNotificationToken | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
+
+  // Keep router ref up to date
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
 
   useEffect(() => {
     const notificationService = createNotificationService(supabase);
@@ -94,7 +100,7 @@ export function useNotifications() {
       // Handle navigation based on notification type
       if (data?.bookingId) {
         // Navigate to booking details or bookings tab
-        router.push('/(tabs)/bookings');
+        routerRef.current.push('/(tabs)/bookings');
       }
     });
 
@@ -103,7 +109,7 @@ export function useNotifications() {
       receivedSubscription.remove();
       responseSubscription.remove();
     };
-  }, [user, authLoading, router]);
+  }, [user, authLoading]);
 
   return {
     pushToken,
