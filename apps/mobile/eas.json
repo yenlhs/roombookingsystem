@@ -6,9 +6,12 @@
 	"build": {
 		"development": {
 			"developmentClient": false,
-			"distribution": "internal",
-			"autoIncrement": true
+			"autoIncrement": true,
+			"ios": {
+				"enterpriseProvisioning": "universal"
+			}
 		},
+
 		"preview": {
 			"distribution": "internal"
 		},
