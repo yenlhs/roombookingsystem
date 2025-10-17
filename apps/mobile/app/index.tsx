@@ -14,7 +14,7 @@ export default function Index() {
 			console.log("[Index] User is authenticated, redirecting to main app");
 			router.replace("/(tabs)/rooms");
 		}
-	}, [user, loading, router]);
+	}, [user, loading]);
 
 	// Show loading state while checking authentication
 	if (loading) {

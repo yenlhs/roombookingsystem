@@ -22,63 +22,17 @@ export function useNotifications() {
   const [pushToken, setPushToken] = useState<PushNotificationToken | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
 
+  // Track if we've already initialized to prevent multiple setups
+  const hasInitialized = useRef(false);
+  const hasRegisteredToken = useRef(false);
+
   // Keep router ref up to date
   useEffect(() => {
     routerRef.current = router;
   }, [router]);
 
+  // Setup notification listeners once
   useEffect(() => {
-    const notificationService = createNotificationService(supabase);
-
-    // Initialize notifications and register token
-    const setupNotifications = async () => {
-      try {
-        console.log('[Notifications] Initializing...');
-
-        // Get push token
-        const token = await initializeNotifications();
-
-        if (!token) {
-          console.warn('[Notifications] Could not obtain push token');
-          return;
-        }
-
-        setPushToken(token);
-        console.log('[Notifications] Got push token:', token.token);
-
-        // Only register with backend if user is authenticated
-        if (!user) {
-          console.log('[Notifications] User not authenticated, skipping backend registration');
-          return;
-        }
-
-        // Register with backend
-        try {
-          await notificationService.registerPushToken({
-            token: token.token,
-            token_type: token.type,
-            platform: 'ios', // Or detect dynamically
-            app_version: '1.0.0',
-          });
-
-          setIsRegistered(true);
-          console.log('[Notifications] Token registered with backend');
-        } catch (error) {
-          console.error('[Notifications] Failed to register token:', error);
-        }
-      } catch (error) {
-        console.error('[Notifications] Setup failed:', error);
-      }
-    };
-
-    // Wait for auth to finish loading before setting up notifications
-    if (authLoading) {
-      console.log('[Notifications] Waiting for auth to load...');
-      return;
-    }
-
-    setupNotifications();
-
     // Listen for notifications when app is in foreground
     const receivedSubscription = addNotificationReceivedListener((notification) => {
       console.log('[Notifications] Received in foreground:', notification);
@@ -109,7 +63,65 @@ export function useNotifications() {
       receivedSubscription.remove();
       responseSubscription.remove();
     };
-  }, [user, authLoading]);
+  }, []);
+
+  // Initialize push token once
+  useEffect(() => {
+    if (hasInitialized.current || authLoading) {
+      return;
+    }
+
+    hasInitialized.current = true;
+
+    const initPushToken = async () => {
+      try {
+        console.log('[Notifications] Initializing...');
+        const token = await initializeNotifications();
+
+        if (!token) {
+          console.warn('[Notifications] Could not obtain push token');
+          return;
+        }
+
+        setPushToken(token);
+        console.log('[Notifications] Got push token:', token.token);
+      } catch (error) {
+        console.error('[Notifications] Setup failed:', error);
+      }
+    };
+
+    initPushToken();
+  }, [authLoading]);
+
+  // Register token with backend when user becomes available
+  useEffect(() => {
+    if (!user || !pushToken || hasRegisteredToken.current) {
+      return;
+    }
+
+    hasRegisteredToken.current = true;
+
+    const registerToken = async () => {
+      try {
+        const notificationService = createNotificationService(supabase);
+        await notificationService.registerPushToken({
+          token: pushToken.token,
+          token_type: pushToken.type,
+          platform: 'ios',
+          app_version: '1.0.0',
+        });
+
+        setIsRegistered(true);
+        console.log('[Notifications] Token registered with backend');
+      } catch (error) {
+        console.error('[Notifications] Failed to register token:', error);
+        // Reset flag to allow retry
+        hasRegisteredToken.current = false;
+      }
+    };
+
+    registerToken();
+  }, [user, pushToken]);
 
   return {
     pushToken,
