@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -10,6 +11,22 @@ import "../global.css";
 function AppContent() {
 	// Initialize notifications
 	useNotifications();
+
+	// Set up global error handlers
+	useEffect(() => {
+		const errorHandler = (error: Error) => {
+			console.error("[Global Error Handler]", error);
+			console.error("[Global Error Stack]", error.stack);
+		};
+
+		// Add global error listeners
+		(global as any).ErrorUtils?.setGlobalHandler?.(errorHandler);
+		console.log("[App] Global error handler installed");
+
+		return () => {
+			// Cleanup if needed
+		};
+	}, []);
 
 	return (
 		<>
