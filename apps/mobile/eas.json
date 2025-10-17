@@ -7,16 +7,39 @@
 		"development": {
 			"developmentClient": false,
 			"distribution": "internal",
-			"autoIncrement": true
+			"autoIncrement": true,
+			"autoSubmit": true
 		},
 		"preview": {
-			"distribution": "internal"
+			"distribution": "internal",
+			"autoSubmit": true
 		},
 		"production": {
-			"autoIncrement": true
+			"autoIncrement": true,
+			"autoSubmit": true
 		}
 	},
 	"submit": {
-		"production": {}
+		"production": {
+			"ios": {
+				"appleId": "yenlhs@gmail.com",
+				"ascAppId": "6738859833",
+				"appleTeamId": "T7KBVA29C4"
+			}
+		},
+		"development": {
+			"ios": {
+				"appleId": "yenlhs@gmail.com",
+				"ascAppId": "6738859833",
+				"appleTeamId": "T7KBVA29C4"
+			}
+		},
+		"preview": {
+			"ios": {
+				"appleId": "yenlhs@gmail.com",
+				"ascAppId": "6738859833",
+				"appleTeamId": "T7KBVA29C4"
+			}
+		}
 	}
 }
