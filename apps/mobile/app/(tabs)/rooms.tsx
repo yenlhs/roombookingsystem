@@ -112,7 +112,13 @@ export default function RoomsScreen() {
 
   // Load rooms
   useEffect(() => {
-    loadRooms();
+    console.log('[Rooms] Component mounted, loading rooms...');
+
+    loadRooms().catch((err) => {
+      console.error('[Rooms] Failed to load rooms:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load rooms');
+      setLoading(false);
+    });
 
     // Subscribe to real-time updates
     const channel = supabase
@@ -125,15 +131,18 @@ export default function RoomsScreen() {
           table: 'rooms',
         },
         (payload) => {
-          console.log('Room change received:', payload);
+          console.log('[Rooms] Room change received:', payload);
           // Reload rooms when changes occur
-          loadRooms();
+          loadRooms().catch((err) => {
+            console.error('[Rooms] Failed to reload rooms:', err);
+          });
         }
       )
       .subscribe();
 
     // Cleanup subscription on unmount
     return () => {
+      console.log('[Rooms] Component unmounting, cleaning up...');
       supabase.removeChannel(channel);
     };
   }, []);

@@ -12,7 +12,12 @@ export default function Index() {
 		// If user is authenticated, redirect to main app
 		if (!loading && user) {
 			console.log("[Index] User is authenticated, redirecting to main app");
-			router.replace("/(tabs)/rooms");
+			try {
+				router.replace("/(tabs)/rooms");
+				console.log("[Index] Navigation initiated successfully");
+			} catch (error) {
+				console.error("[Index] Navigation failed:", error);
+			}
 		}
 	}, [user, loading]);
 
