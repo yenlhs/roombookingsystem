@@ -41,22 +41,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: npm run type-check --workspace apps/web
+        run: pnpm run type-check --filter apps/web
 
       - name: Lint
-        run: npm run lint --workspace apps/web
+        run: pnpm run lint --filter apps/web
 
       - name: Build
-        run: npm run build --workspace apps/web
+        run: pnpm run build --filter apps/web
 
   # Type check and lint mobile app
   check-mobile:
@@ -67,19 +72,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: npm run type-check --workspace apps/mobile
+        run: pnpm run type-check --filter apps/mobile
 
       - name: Lint
-        run: npm run lint --workspace apps/mobile
+        run: pnpm run lint --filter apps/mobile
 
   # Check shared packages
   check-packages:
@@ -90,25 +100,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Type check types package
-        run: npm run type-check --workspace @workspace/types
+        run: pnpm run type-check --filter @workspace/types
 
       - name: Build types package
-        run: npm run build --workspace @workspace/types
+        run: pnpm run build --filter @workspace/types
 
       - name: Type check supabase package
-        run: npm run type-check --workspace @workspace/supabase
+        run: pnpm run type-check --filter @workspace/supabase
 
       - name: Build supabase package
-        run: npm run build --workspace @workspace/supabase
+        run: pnpm run build --filter @workspace/supabase
 
   # Validate Supabase migrations
   check-supabase:
