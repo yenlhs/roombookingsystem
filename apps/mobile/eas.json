@@ -5,22 +5,26 @@
 	},
 	"build": {
 		"development": {
-			"developmentClient": false,
+			"developmentClient": true,
 			"autoIncrement": true,
-			"ios": {
-				"enterpriseProvisioning": "universal"
-			}
+			"channel": "development",
+			"environment": "development",
+			"distribution": "internal"
 		},
-
 		"preview": {
 			"distribution": "internal"
 		},
 		"production": {
-			"autoIncrement": true
+			"autoIncrement": true,
+			"channel": "production",
+			"environment": "production",
+			"ios": {
+				"enterpriseProvisioning": "universal"
+			}
 		}
 	},
 	"submit": {
-		"development": {
+		"production": {
 			"ios": {
 				"appleId": "yenlhs@gmail.com",
 				"ascAppId": "6754128439",
