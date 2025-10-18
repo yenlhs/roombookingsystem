@@ -1,25 +1,32 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Linking, Alert } from "react-native";
 import { createSubscriptionService } from "@workspace/supabase";
-import { useSupabase } from "../auth/context";
+import { supabase } from "../supabase";
 
 /**
  * Hook to handle Stripe checkout flow
  */
 export function useCheckout() {
-	const supabase = useSupabase();
 	const queryClient = useQueryClient();
 	const subscriptionService = createSubscriptionService(supabase);
 
 	const checkoutMutation = useMutation({
 		mutationFn: async (tierId: string) => {
-			// Create checkout session via Edge Function
-			const session = await subscriptionService.createCheckoutSession({
+			// Get the Supabase URL for redirect URLs
+			const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://nladwgkecjkcjsdawzoc.supabase.co';
+
+			const checkoutParams = {
 				tier_id: tierId,
-				// For mobile, we'll open in browser and redirect back
-				success_url: "myapp://subscription/success",
-				cancel_url: "myapp://subscription/cancel",
-			});
+				// Stripe requires HTTPS URLs, not custom schemes
+				// The subscription status will be updated via webhooks, so users just need to close the browser
+				success_url: `${supabaseUrl}/functions/v1/subscription-success`,
+				cancel_url: `${supabaseUrl}/functions/v1/subscription-cancel`,
+			};
+
+			console.log('Creating checkout session with params:', checkoutParams);
+
+			// Create checkout session via Edge Function
+			const session = await subscriptionService.createCheckoutSession(checkoutParams);
 
 			// Open Stripe checkout in browser
 			if (session.url) {
@@ -38,6 +45,13 @@ export function useCheckout() {
 		onSuccess: () => {
 			// Invalidate subscription queries to refetch latest data
 			queryClient.invalidateQueries({ queryKey: ["user-subscription"] });
+
+			// Show helpful message
+			Alert.alert(
+				"Payment Processing",
+				"Your browser will open for payment. After completing the payment, you can return to the app. Your subscription will be activated automatically.",
+				[{ text: "OK" }]
+			);
 		},
 		onError: (error: Error) => {
 			Alert.alert("Checkout Error", error.message);
@@ -46,9 +60,12 @@ export function useCheckout() {
 
 	const portalMutation = useMutation({
 		mutationFn: async () => {
+			// Get the Supabase URL for return URL
+			const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://nladwgkecjkcjsdawzoc.supabase.co';
+
 			// Create billing portal session
 			const portal = await subscriptionService.createPortalSession({
-				return_url: "myapp://subscription",
+				return_url: `${supabaseUrl}/functions/v1/subscription-success`,
 			});
 
 			// Open Stripe portal in browser

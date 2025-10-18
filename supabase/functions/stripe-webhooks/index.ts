@@ -24,7 +24,7 @@ serve(async (req) => {
 
   try {
     const body = await req.text();
-    const event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET);
+    const event = await stripe.webhooks.constructEventAsync(body, signature, STRIPE_WEBHOOK_SECRET);
 
     console.log('Received Stripe event:', event.type, 'ID:', event.id);
 

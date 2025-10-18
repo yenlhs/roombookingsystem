@@ -6,8 +6,8 @@ import {
 	ActivityIndicator,
 } from "react-native";
 import { Stack, useRouter } from "expo-router";
-import { useSubscription } from "../lib/hooks/use-subscription";
-import { useCheckout } from "../lib/hooks/use-checkout";
+import { useSubscription } from "../../lib/hooks/use-subscription";
+import { useCheckout } from "../../lib/hooks/use-checkout";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 
@@ -18,6 +18,11 @@ export default function SubscriptionScreen() {
 	const { startCheckout, isCheckingOut, openBillingPortal, isOpeningPortal } =
 		useCheckout();
 	const [selectedTier, setSelectedTier] = useState<string | null>(null);
+
+	// Debug logging
+	console.log('Subscription screen - isPremium:', isPremium);
+	console.log('Subscription screen - subscription:', subscription);
+	console.log('Subscription screen - tier:', subscription?.tier);
 
 	if (isLoading) {
 		return (
