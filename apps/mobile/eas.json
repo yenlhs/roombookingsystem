@@ -9,15 +9,18 @@
 			"autoIncrement": true,
 			"channel": "development",
 			"environment": "development",
-			"distribution": "internal"
+			"distribution": "internal",
+			"node": "20.18.1"
 		},
 		"preview": {
-			"distribution": "internal"
+			"distribution": "internal",
+			"node": "20.18.1"
 		},
 		"production": {
 			"autoIncrement": true,
 			"channel": "production",
 			"environment": "production",
+			"node": "20.18.1",
 			"ios": {
 				"enterpriseProvisioning": "universal"
 			}
