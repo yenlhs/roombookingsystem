@@ -66,6 +66,7 @@ function EditRoomContent() {
         operating_hours_start: data.operating_hours_start.slice(0, 5), // HH:mm format
         operating_hours_end: data.operating_hours_end.slice(0, 5),
         slot_duration_minutes: data.slot_duration_minutes,
+        is_exclusive: data.is_exclusive,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load room');
@@ -266,6 +267,31 @@ function EditRoomContent() {
                 <p className="text-xs text-muted-foreground">
                   Note: Changing this may affect existing bookings
                 </p>
+              </div>
+
+              {/* Exclusive Room */}
+              <div className="flex items-start space-x-3 rounded-lg border border-input bg-background p-4">
+                <input
+                  type="checkbox"
+                  id="is_exclusive"
+                  {...register('is_exclusive')}
+                  disabled={loading}
+                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <div className="space-y-1 leading-none">
+                  <Label
+                    htmlFor="is_exclusive"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                  >
+                    <span>Premium Exclusive Room</span>
+                    <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+                      Premium
+                    </span>
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Only users with an active premium subscription can book this room
+                  </p>
+                </div>
               </div>
 
               {/* Status */}

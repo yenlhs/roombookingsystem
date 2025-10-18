@@ -35,6 +35,7 @@ export const createRoomSchema = z
       .max(480, 'Slot duration must be less than 8 hours')
       .default(60),
     image_urls: z.array(z.string().url('Invalid image URL')).optional(),
+    is_exclusive: z.boolean().default(false),
   })
   .refine(
     (data) => {
@@ -86,6 +87,7 @@ export const updateRoomSchema = z
       .max(480, 'Slot duration must be less than 8 hours')
       .optional(),
     image_urls: z.array(z.string().url('Invalid image URL')).optional(),
+    is_exclusive: z.boolean().optional(),
   })
   .refine(
     (data) => {

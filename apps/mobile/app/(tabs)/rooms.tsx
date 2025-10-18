@@ -10,15 +10,18 @@ import {
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { createRoomService } from '@workspace/supabase';
 import type { Room, RoomStatus } from '@workspace/types';
 import { useFadeIn, useListItemAnimation } from '../../lib/animations';
 import { lightImpact, selectionFeedback } from '../../lib/haptics';
 import { FLATLIST_CONFIG, debounce } from '../../lib/performance';
+import { SubscriptionBanner } from '../../components/SubscriptionBanner';
+import { useSubscription } from '../../lib/hooks/use-subscription';
 
 // Room Card Component with animations
-function RoomCard({ room, index, onPress }: { room: Room; index: number; onPress: () => void }) {
+function RoomCard({ room, index, onPress, isLocked }: { room: Room; index: number; onPress: () => void; isLocked?: boolean }) {
   const animatedStyle = useListItemAnimation(index);
 
   const getRoomStatusColor = (status: RoomStatus) => {
@@ -36,12 +39,25 @@ function RoomCard({ room, index, onPress }: { room: Room; index: number; onPress
           selectionFeedback();
           onPress();
         }}
-        className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200"
+        className={`bg-white rounded-2xl p-5 shadow-sm border border-gray-200 ${isLocked ? 'opacity-75' : ''}`}
         activeOpacity={0.7}
       >
         <View className="flex-row justify-between items-start mb-3">
           <View className="flex-1 mr-4">
-            <Text className="text-xl font-bold text-gray-900 mb-1">{room.name}</Text>
+            <View className="flex-row items-center mb-1">
+              <Text className="text-xl font-bold text-gray-900">{room.name}</Text>
+              {room.is_exclusive && (
+                <View className="ml-2 bg-purple-100 px-2 py-1 rounded-md flex-row items-center">
+                  <Ionicons name="star" size={12} color="#7c3aed" />
+                  <Text className="text-purple-700 text-xs ml-1 font-semibold">Premium</Text>
+                </View>
+              )}
+              {isLocked && (
+                <View className="ml-2">
+                  <Ionicons name="lock-closed" size={16} color="#9ca3af" />
+                </View>
+              )}
+            </View>
             {room.description && (
               <Text className="text-sm text-gray-600" numberOfLines={2}>
                 {room.description}
@@ -100,6 +116,7 @@ export default function RoomsScreen() {
 
   const roomService = createRoomService(supabase);
   const headerAnimation = useFadeIn();
+  const { isPremium } = useSubscription();
 
   // Debounced search handler
   const debouncedSetSearch = useMemo(
@@ -209,9 +226,23 @@ export default function RoomsScreen() {
     setMinCapacity(null);
   };
 
-  const renderRoomCard: ListRenderItem<Room> = ({ item, index }) => (
-    <RoomCard room={item} index={index} onPress={() => router.push(`/room-details/${item.id}`)} />
-  );
+  const renderRoomCard: ListRenderItem<Room> = ({ item, index }) => {
+    const isLocked = item.is_exclusive && !isPremium;
+    return (
+      <RoomCard
+        room={item}
+        index={index}
+        isLocked={isLocked}
+        onPress={() => {
+          if (isLocked) {
+            router.push('/subscription');
+          } else {
+            router.push(`/room-details/${item.id}`);
+          }
+        }}
+      />
+    );
+  };
 
   const renderListHeader = () => (
     <View>
@@ -220,6 +251,9 @@ export default function RoomsScreen() {
         <Text className="text-3xl font-bold text-gray-900 mb-2">Browse Rooms</Text>
         <Text className="text-base text-gray-600">Find the perfect space for your meeting</Text>
       </Animated.View>
+
+      {/* Subscription Banner */}
+      <SubscriptionBanner />
 
       {/* Error Message */}
       {error && (
