@@ -54,6 +54,7 @@ export interface Room {
   operating_hours_end: string; // Format: HH:mm:ss
   slot_duration_minutes: number;
   image_urls?: string[] | null;
+  is_exclusive: boolean;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -69,6 +70,7 @@ export interface CreateRoomInput {
   operating_hours_end: string;
   slot_duration_minutes?: number;
   image_urls?: string[];
+  is_exclusive?: boolean;
 }
 
 export interface UpdateRoomInput extends Partial<CreateRoomInput> {
@@ -232,6 +234,107 @@ export interface RoomFilters {
 }
 
 // ============================================
+// Subscription Types
+// ============================================
+
+export enum SubscriptionTierName {
+  FREE = 'free',
+  PREMIUM = 'premium',
+}
+
+export enum SubscriptionStatus {
+  ACTIVE = 'active',
+  CANCELLED = 'cancelled',
+  PAST_DUE = 'past_due',
+  TRIALING = 'trialing',
+  INCOMPLETE = 'incomplete',
+  INCOMPLETE_EXPIRED = 'incomplete_expired',
+  UNPAID = 'unpaid',
+}
+
+export interface SubscriptionTierFeatures {
+  exclusive_rooms: boolean;
+  max_concurrent_bookings?: number;
+}
+
+export interface SubscriptionTier {
+  id: string;
+  name: SubscriptionTierName;
+  display_name: string;
+  description?: string | null;
+  price_monthly: number;
+  stripe_price_id?: string | null;
+  features: SubscriptionTierFeatures;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserSubscription {
+  id: string;
+  user_id: string;
+  tier_id: string;
+  stripe_subscription_id?: string | null;
+  stripe_customer_id?: string | null;
+  status: SubscriptionStatus;
+  current_period_start?: string | null;
+  current_period_end?: string | null;
+  cancel_at_period_end: boolean;
+  cancelled_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserSubscriptionWithTier extends UserSubscription {
+  tier?: SubscriptionTier;
+}
+
+export enum SubscriptionEventType {
+  SUBSCRIPTION_CREATED = 'subscription_created',
+  SUBSCRIPTION_UPDATED = 'subscription_updated',
+  SUBSCRIPTION_CANCELLED = 'subscription_cancelled',
+  SUBSCRIPTION_RENEWED = 'subscription_renewed',
+  PAYMENT_SUCCEEDED = 'payment_succeeded',
+  PAYMENT_FAILED = 'payment_failed',
+  TRIAL_STARTED = 'trial_started',
+  TRIAL_ENDED = 'trial_ended',
+}
+
+export interface SubscriptionEvent {
+  id: string;
+  user_id?: string | null;
+  subscription_id?: string | null;
+  event_type: SubscriptionEventType;
+  stripe_event_id?: string | null;
+  metadata?: Record<string, any>;
+  created_at: string;
+}
+
+export interface CreateCheckoutSessionInput {
+  tier_id: string;
+  success_url?: string;
+  cancel_url?: string;
+}
+
+export interface CheckoutSessionResponse {
+  sessionId: string;
+  url: string;
+  tier: {
+    name: string;
+    display_name: string;
+    price_monthly: number;
+  };
+}
+
+export interface CreatePortalSessionInput {
+  return_url?: string;
+}
+
+export interface PortalSessionResponse {
+  url: string;
+}
+
+// ============================================
 // Database Types (Supabase specific)
 // ============================================
 
@@ -252,6 +355,21 @@ export interface Database {
         Row: Booking;
         Insert: Omit<Booking, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<Booking, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      subscription_tiers: {
+        Row: SubscriptionTier;
+        Insert: Omit<SubscriptionTier, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<SubscriptionTier, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      user_subscriptions: {
+        Row: UserSubscription;
+        Insert: Omit<UserSubscription, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<UserSubscription, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      subscription_events: {
+        Row: SubscriptionEvent;
+        Insert: Omit<SubscriptionEvent, 'id' | 'created_at'>;
+        Update: Partial<Omit<SubscriptionEvent, 'id' | 'created_at'>>;
       };
     };
   };
