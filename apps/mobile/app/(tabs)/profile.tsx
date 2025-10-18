@@ -10,6 +10,8 @@ import {
   Alert,
 } from 'react-native';
 import { useAuth } from '../../lib/auth/context';
+import { useRouter } from 'expo-router';
+import { warningFeedback } from '../../lib/haptics';
 import { supabase } from '../../lib/supabase';
 import { createProfileService } from '@workspace/supabase';
 import { useForm, Controller } from 'react-hook-form';
@@ -24,7 +26,8 @@ import {
 } from '../../lib/test-notifications';
 
 export default function ProfileScreen() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -138,6 +141,17 @@ export default function ProfileScreen() {
       phone: profile?.phone || '',
       avatar_url: profile?.avatar_url || '',
     });
+  };
+
+  const handleSignOut = async () => {
+    try {
+      warningFeedback();
+      await signOut();
+      router.replace('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      Alert.alert('Error', 'Failed to sign out. Please try again.');
+    }
   };
 
   if (loading && !profile) {
@@ -364,6 +378,22 @@ export default function ProfileScreen() {
               💡 These are local notifications that work on simulator. Notifications will appear after 2 seconds.
             </Text>
           </View>
+        </View>
+
+        {/* Sign Out Section */}
+        <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-6">
+          <Text className="text-xl font-bold text-gray-900 mb-2">Account</Text>
+          <Text className="text-sm text-gray-600 mb-4">
+            Manage your account settings and sign out
+          </Text>
+
+          <TouchableOpacity
+            onPress={handleSignOut}
+            className="bg-white border-2 border-red-200 rounded-lg py-4 items-center"
+            activeOpacity={0.7}
+          >
+            <Text className="text-red-600 text-base font-bold">Sign Out</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
