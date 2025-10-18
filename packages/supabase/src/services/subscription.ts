@@ -131,38 +131,77 @@ export class SubscriptionService {
   async createCheckoutSession(
     input: CreateCheckoutSessionInput
   ): Promise<CheckoutSessionResponse> {
-    const { data, error } = await this.supabase.functions.invoke('create-checkout-session', {
-      body: input,
-    });
+    try {
+      const { data, error } = await this.supabase.functions.invoke('create-checkout-session', {
+        body: input,
+      });
 
-    if (error) {
-      throw new Error(error.message);
+      // Even when there's an error, data might contain the parsed error response
+      console.log('Checkout response - data:', data);
+      console.log('Checkout response - error:', error);
+
+      // Check if data contains an error message (Edge Function returned error response)
+      if (data?.error) {
+        console.error('Edge Function returned error:', data.error);
+        console.error('Error stack:', data.stack);
+        console.error('Error type:', data.type);
+        console.error('Error code:', data.code);
+        console.error('Full error:', data.fullError);
+        throw new Error(`Stripe checkout failed: ${data.error}`);
+      }
+
+      if (error) {
+        console.error('Supabase Functions client error:', error);
+        throw new Error(`Checkout error: ${error.message}`);
+      }
+
+      if (!data || !data.url) {
+        console.error('Invalid checkout session response:', data);
+        throw new Error('Failed to create checkout session - no URL returned');
+      }
+
+      return data as CheckoutSessionResponse;
+    } catch (err) {
+      console.error('Exception in createCheckoutSession:', err);
+      throw err;
     }
-
-    if (!data || !data.url) {
-      throw new Error('Failed to create checkout session');
-    }
-
-    return data as CheckoutSessionResponse;
   }
 
   /**
    * Create a Stripe billing portal session
    */
   async createPortalSession(input: CreatePortalSessionInput): Promise<PortalSessionResponse> {
-    const { data, error } = await this.supabase.functions.invoke('create-portal-session', {
-      body: input,
-    });
+    try {
+      const { data, error } = await this.supabase.functions.invoke('create-portal-session', {
+        body: input,
+      });
 
-    if (error) {
-      throw new Error(error.message);
+      console.log('Portal response - data:', data);
+      console.log('Portal response - error:', error);
+
+      // Check if data contains an error message (Edge Function returned error response)
+      if (data?.error) {
+        console.error('Edge Function returned error:', data.error);
+        console.error('Error stack:', data.stack);
+        console.error('Error type:', data.type);
+        throw new Error(`Billing portal failed: ${data.error}`);
+      }
+
+      if (error) {
+        console.error('Supabase Functions client error:', error);
+        throw new Error(`Portal error: ${error.message}`);
+      }
+
+      if (!data || !data.url) {
+        console.error('Invalid portal session response:', data);
+        throw new Error('Failed to create portal session - no URL returned');
+      }
+
+      return data as PortalSessionResponse;
+    } catch (err) {
+      console.error('Exception in createPortalSession:', err);
+      throw err;
     }
-
-    if (!data || !data.url) {
-      throw new Error('Failed to create portal session');
-    }
-
-    return data as PortalSessionResponse;
   }
 
   /**

@@ -1,13 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createSubscriptionService } from "@workspace/supabase";
-import { useSupabase } from "../auth/context";
+import { supabase } from "../supabase";
 import type { UserSubscriptionWithTier, SubscriptionTier } from "@workspace/types";
 
 /**
  * Hook to manage user subscription state
  */
 export function useSubscription() {
-	const supabase = useSupabase();
 	const subscriptionService = createSubscriptionService(supabase);
 
 	// Get current user's subscription
