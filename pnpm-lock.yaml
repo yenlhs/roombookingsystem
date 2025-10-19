@@ -272,6 +272,9 @@ importers:
       '@workspace/types':
         specifier: workspace:*
         version: link:../types
+      '@workspace/validation':
+        specifier: workspace:*
+        version: link:../validation
     devDependencies:
       '@types/node':
         specifier: ^22.18.10

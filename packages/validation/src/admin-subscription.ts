@@ -17,7 +17,7 @@ export const adminSubscriptionFilterSchema = z.object({
   expiringInDays: z.number().int().positive().max(365).optional(),
 });
 
-export type AdminSubscriptionFilterInput = z.infer<typeof adminSubscriptionFilterSchema>;
+export type AdminSubscriptionFilterInput = z.input<typeof adminSubscriptionFilterSchema>;
 
 // ============================================
 // Admin Subscription Update Schemas
@@ -186,4 +186,4 @@ export const adminEventFilterSchema = z.object({
   dateTo: z.string().datetime().optional(),
 });
 
-export type AdminEventFilterInput = z.infer<typeof adminEventFilterSchema>;
+export type AdminEventFilterInput = z.input<typeof adminEventFilterSchema>;
