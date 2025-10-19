@@ -1,21 +1,34 @@
 import { z } from "zod";
-import { SubscriptionStatus, SubscriptionTierName } from "@workspace/types";
+import {
+  SubscriptionStatus,
+  SubscriptionTierName,
+  SubscriptionEventType,
+} from "@workspace/types";
 
 // ============================================
 // Admin Subscription Filter Schemas
 // ============================================
 
-export const adminSubscriptionFilterSchema = z.object({
-  page: z.number().int().positive().optional().default(1),
-  perPage: z.number().int().min(1).max(100).optional().default(20),
-  status: z.array(z.nativeEnum(SubscriptionStatus)).optional(),
-  tierIds: z.array(z.string().uuid()).optional(),
-  search: z.string().min(1).optional(), // Search by user name or email
-  dateFrom: z.string().datetime().optional(),
-  dateTo: z.string().datetime().optional(),
-  cancelAtPeriodEnd: z.boolean().optional(),
-  expiringInDays: z.number().int().positive().max(365).optional(),
-});
+export const adminSubscriptionFilterSchema = z
+  .object({
+    page: z.number().int().positive().optional().default(1),
+    perPage: z.number().int().min(1).max(100).optional().default(20),
+    status: z.array(z.nativeEnum(SubscriptionStatus)).optional(),
+    tierIds: z.array(z.string().uuid()).optional(),
+    search: z.string().min(1).optional(), // Search by user name or email
+    dateFrom: z.string().datetime().optional(),
+    dateTo: z.string().datetime().optional(),
+    cancelAtPeriodEnd: z.boolean().optional(),
+    expiringInDays: z.number().int().positive().max(365).optional(),
+  })
+  .refine(
+    (v) =>
+      !(v.dateFrom && v.dateTo) || new Date(v.dateFrom) <= new Date(v.dateTo),
+    {
+      message: "dateFrom must be before or equal to dateTo",
+      path: ["dateFrom"],
+    },
+  );
 
 export type AdminSubscriptionFilterInput = z.input<
   typeof adminSubscriptionFilterSchema
@@ -222,14 +235,23 @@ export type AdminDeleteNoteInput = z.infer<typeof adminDeleteNoteSchema>;
 // Event Filter Schema
 // ============================================
 
-export const adminEventFilterSchema = z.object({
-  page: z.number().int().positive().optional().default(1),
-  perPage: z.number().int().min(1).max(100).optional().default(20),
-  eventTypes: z.array(z.string()).optional(),
-  userId: z.string().uuid().optional(),
-  subscriptionId: z.string().uuid().optional(),
-  dateFrom: z.string().datetime().optional(),
-  dateTo: z.string().datetime().optional(),
-});
+export const adminEventFilterSchema = z
+  .object({
+    page: z.number().int().positive().optional().default(1),
+    perPage: z.number().int().min(1).max(100).optional().default(20),
+    eventTypes: z.array(z.nativeEnum(SubscriptionEventType)).optional(),
+    userId: z.string().uuid().optional(),
+    subscriptionId: z.string().uuid().optional(),
+    dateFrom: z.string().datetime().optional(),
+    dateTo: z.string().datetime().optional(),
+  })
+  .refine(
+    (v) =>
+      !(v.dateFrom && v.dateTo) || new Date(v.dateFrom) <= new Date(v.dateTo),
+    {
+      message: "dateFrom must be before or equal to dateTo",
+      path: ["dateFrom"],
+    },
+  );
 
 export type AdminEventFilterInput = z.input<typeof adminEventFilterSchema>;
