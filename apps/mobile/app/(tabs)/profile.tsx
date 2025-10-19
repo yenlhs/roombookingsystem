@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../lib/auth/context";
 import { useRouter } from "expo-router";
 import { warningFeedback } from "../../lib/haptics";
@@ -339,13 +340,26 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        {/* Sign Out Section */}
+        {/* Account Section */}
         <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-6">
           <Text className="text-xl font-bold text-gray-900 mb-2">Account</Text>
           <Text className="text-sm text-gray-600 mb-4">
-            Manage your account settings and sign out
+            Manage your account settings and subscription
           </Text>
 
+          {/* Subscription Button */}
+          <TouchableOpacity
+            onPress={() => router.push("/subscription")}
+            className="bg-white border-2 border-blue-200 rounded-lg py-4 mb-3 flex-row items-center justify-center"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="star" size={20} color="#2563eb" />
+            <Text className="text-blue-600 text-base font-bold ml-2">
+              Manage Subscription
+            </Text>
+          </TouchableOpacity>
+
+          {/* Sign Out Button */}
           <TouchableOpacity
             onPress={handleSignOut}
             className="bg-white border-2 border-red-200 rounded-lg py-4 items-center"
