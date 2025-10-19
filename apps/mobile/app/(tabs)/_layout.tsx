@@ -72,14 +72,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="subscription"
           options={{
-            title: "Subscription",
-            tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons
-                name={focused ? "star" : "star-outline"}
-                size={size}
-                color={color}
-              />
-            ),
+            href: null,
           }}
         />
         <Tabs.Screen
