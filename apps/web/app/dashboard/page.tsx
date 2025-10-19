@@ -9,7 +9,7 @@ import { createBookingService, createRoomService, supabase } from '@workspace/su
 import type { User as UserType } from '@workspace/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, DoorOpen, Calendar, Users, User, Activity, Loader2 } from 'lucide-react';
+import { ArrowRight, DoorOpen, Calendar, Users, User, Activity, Loader2, CreditCard } from 'lucide-react';
 import { useKeyboardShortcuts } from '@/lib/hooks/use-keyboard-shortcuts';
 import { KeyboardShortcutsButton } from '@/components/keyboard-shortcuts-dialog';
 
@@ -59,6 +59,11 @@ function DashboardContent() {
       key: 'u',
       description: 'Go to Users',
       action: () => router.push('/dashboard/users'),
+    },
+    {
+      key: 's',
+      description: 'Go to Subscriptions',
+      action: () => router.push('/dashboard/subscriptions'),
     },
     {
       key: 'p',
@@ -228,7 +233,7 @@ function DashboardContent() {
         {/* Quick Actions */}
         <div className="mb-8">
           <h3 className="mb-4 text-lg font-semibold">Quick Actions</h3>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Link href="/dashboard/rooms" className="group">
             <Card className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-blue-200">
               <CardHeader>
@@ -289,6 +294,28 @@ function DashboardContent() {
                 </p>
                 <div className="mt-4 flex items-center text-sm font-semibold text-purple-600 transition-transform group-hover:translate-x-1">
                   Manage Users
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/dashboard/subscriptions" className="group">
+            <Card className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:border-orange-200">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-orange-100 p-2 transition-colors group-hover:bg-orange-200">
+                    <CreditCard className="h-6 w-6 text-orange-600 transition-transform group-hover:scale-110" />
+                  </div>
+                  <CardTitle className="transition-colors group-hover:text-orange-600">Subscriptions</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Manage user subscriptions and tiers
+                </p>
+                <div className="mt-4 flex items-center text-sm font-semibold text-orange-600 transition-transform group-hover:translate-x-1">
+                  Manage Subscriptions
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </CardContent>

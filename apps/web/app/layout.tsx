@@ -4,6 +4,7 @@ import './globals.css';
 import { AuthProvider } from '@/lib/auth/context';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from 'sonner';
+import { Providers } from '@/lib/providers';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -65,8 +66,10 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ErrorBoundary>
-          <AuthProvider>{children}</AuthProvider>
-          <Toaster position="top-right" richColors closeButton />
+          <Providers>
+            <AuthProvider>{children}</AuthProvider>
+            <Toaster position="top-right" richColors closeButton />
+          </Providers>
         </ErrorBoundary>
       </body>
     </html>
