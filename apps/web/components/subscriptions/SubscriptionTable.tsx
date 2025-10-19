@@ -4,8 +4,18 @@ import { StatusBadge } from "./StatusBadge";
 import { ExternalLink, Eye } from "lucide-react";
 import { format } from "date-fns";
 
+// Extended type with joined user data from admin queries
+interface UserSubscriptionWithUserAndTier extends UserSubscriptionWithTier {
+  user?: {
+    id: string;
+    email: string;
+    full_name: string | null;
+    avatar_url: string | null;
+  };
+}
+
 interface SubscriptionTableProps {
-  subscriptions: UserSubscriptionWithTier[];
+  subscriptions: UserSubscriptionWithUserAndTier[];
   isLoading?: boolean;
 }
 
@@ -126,7 +136,7 @@ export function SubscriptionTable({
                     {subscription.user?.avatar_url ? (
                       <img
                         src={subscription.user.avatar_url}
-                        alt={subscription.user.full_name}
+                        alt={subscription.user.full_name || "User avatar"}
                         className="h-8 w-8 rounded-full mr-3"
                       />
                     ) : (

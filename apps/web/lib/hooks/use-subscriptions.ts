@@ -17,8 +17,18 @@ interface UseSubscriptionsOptions {
   expiringInDays?: number;
 }
 
+// Extended type with joined user data from admin queries
+interface UserSubscriptionWithUserAndTier extends UserSubscriptionWithTier {
+  user?: {
+    id: string;
+    email: string;
+    full_name: string | null;
+    avatar_url: string | null;
+  };
+}
+
 interface SubscriptionsResult {
-  data: UserSubscriptionWithTier[];
+  data: UserSubscriptionWithUserAndTier[];
   total: number;
   page: number;
   totalPages: number;
