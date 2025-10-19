@@ -1,14 +1,31 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AdminRoute } from "../../../../components/admin/AdminRoute";
 import { SubscriptionTable } from "../../../../components/subscriptions/SubscriptionTable";
 import { useSubscriptions } from "../../../../lib/hooks/use-subscriptions";
+import { useAuth } from "@/lib/auth/context";
 import { SubscriptionStatus } from "@workspace/types";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Search, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function UserSubscriptionsPage() {
+  return (
+    <AdminRoute>
+      <UserSubscriptionsContent />
+    </AdminRoute>
+  );
+}
+
+function UserSubscriptionsContent() {
+  const router = useRouter();
+  const { user, signOut } = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<SubscriptionStatus[]>([]);
@@ -61,88 +78,111 @@ export default function UserSubscriptionsPage() {
   ];
 
   return (
-    <AdminRoute>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <Link
-              href="/dashboard/subscriptions"
-              className="text-sm text-primary hover:text-primary/80 mb-2 inline-flex items-center gap-1"
+    <div className="min-h-screen bg-slate-50">
+      {/* Header */}
+      <header className="border-b bg-white">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/dashboard/subscriptions")}
             >
-              <ChevronLeft className="h-4 w-4" />
-              Back to Subscriptions
-            </Link>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              User Subscriptions
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Manage and view all user subscriptions
-            </p>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-bold">User Subscriptions</h1>
           </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">{user?.email}</span>
+            <Button variant="outline" onClick={signOut}>
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="container mx-auto p-8">
+        {/* Header Section */}
+        <div className="mb-6">
+          <Link
+            href="/dashboard/subscriptions"
+            className="text-sm text-primary hover:text-primary/80 mb-2 inline-flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back to Subscriptions
+          </Link>
+          <h2 className="text-3xl font-bold mt-2">User Subscriptions</h2>
+          <p className="text-muted-foreground">
+            Manage and view all user subscriptions
+          </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <form onSubmit={handleSearch} className="flex-1">
-              <div className="relative">
-                <label htmlFor="subscription-search" className="sr-only">
+        <Card className="mb-6">
+          <CardContent className="pt-6 space-y-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              {/* Search */}
+              <form onSubmit={handleSearch} className="flex-1">
+                <Label htmlFor="subscription-search" className="sr-only">
                   Search subscriptions
-                </label>
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  id="subscription-search"
-                  type="text"
-                  placeholder="Search by user name or email..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white"
-                />
-              </div>
-            </form>
-          </div>
+                </Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    id="subscription-search"
+                    type="text"
+                    placeholder="Search by user name or email..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </form>
+            </div>
 
-          {/* Status Filters */}
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 py-1">
-              Status:
-            </span>
-            {statusOptions.map((status) => (
-              <button
-                key={status}
-                onClick={() => handleStatusFilterChange(status)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                  statusFilter.includes(status)
-                    ? "bg-primary text-white"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                }`}
-              >
-                {status.charAt(0).toUpperCase() +
-                  status.slice(1).replace("_", " ")}
-              </button>
-            ))}
-            {(statusFilter.length > 0 || search) && (
-              <button
-                onClick={clearFilters}
-                className="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:underline"
-              >
-                Clear all
-              </button>
-            )}
-          </div>
-        </div>
+            {/* Status Filters */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm font-medium py-1">Status:</span>
+              {statusOptions.map((status) => (
+                <Button
+                  key={status}
+                  onClick={() => handleStatusFilterChange(status)}
+                  variant={
+                    statusFilter.includes(status) ? "default" : "outline"
+                  }
+                  size="sm"
+                  className="rounded-full"
+                >
+                  {status.charAt(0).toUpperCase() +
+                    status.slice(1).replace("_", " ")}
+                </Button>
+              ))}
+              {(statusFilter.length > 0 || search) && (
+                <Button
+                  onClick={clearFilters}
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700"
+                >
+                  Clear all
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-300">
-            {(error as Error).message || "Failed to load subscriptions."}
-          </div>
+          <Alert className="mb-6 border-red-200 bg-red-50">
+            <AlertDescription className="text-red-800">
+              {(error as Error).message || "Failed to load subscriptions."}
+            </AlertDescription>
+          </Alert>
         )}
 
         {/* Results Count */}
-        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+        <div className="mb-6 flex items-center justify-between text-sm text-muted-foreground">
           <div>
             Showing {subscriptions.length} of {total} subscriptions
           </div>
@@ -152,36 +192,38 @@ export default function UserSubscriptionsPage() {
         </div>
 
         {/* Table */}
-        <SubscriptionTable
-          subscriptions={subscriptions}
-          isLoading={isLoading}
-        />
+        <div className="mb-6">
+          <SubscriptionTable
+            subscriptions={subscriptions}
+            isLoading={isLoading}
+          />
+        </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2">
-            <button
+            <Button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              variant="outline"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4 mr-2" />
               Previous
-            </button>
-            <span className="px-4 py-2 text-gray-700 dark:text-gray-300">
+            </Button>
+            <span className="px-4 py-2">
               Page {page} of {totalPages}
             </span>
-            <button
+            <Button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              variant="outline"
             >
               Next
-              <ChevronRight className="h-4 w-4" />
-            </button>
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
           </div>
         )}
       </div>
-    </AdminRoute>
+    </div>
   );
 }
