@@ -23,8 +23,6 @@ import {
   Loader2,
   CreditCard,
 } from "lucide-react";
-import { useKeyboardShortcuts } from "@/lib/hooks/use-keyboard-shortcuts";
-import { KeyboardShortcutsButton } from "@/components/keyboard-shortcuts-dialog";
 
 export default function DashboardPage() {
   return (
@@ -46,50 +44,9 @@ function DashboardContent() {
     totalUsers: 0,
     activeUsers: 0,
   });
-  const [showShortcuts, setShowShortcuts] = useState(false);
 
   const bookingService = createBookingService(supabase);
   const roomService = createRoomService(supabase);
-
-  // Keyboard shortcuts
-  useKeyboardShortcuts([
-    {
-      key: "d",
-      description: "Go to Dashboard",
-      action: () => router.push("/dashboard"),
-    },
-    {
-      key: "r",
-      description: "Go to Rooms",
-      action: () => router.push("/dashboard/rooms"),
-    },
-    {
-      key: "b",
-      description: "Go to Bookings",
-      action: () => router.push("/dashboard/bookings"),
-    },
-    {
-      key: "u",
-      description: "Go to Users",
-      action: () => router.push("/dashboard/users"),
-    },
-    {
-      key: "s",
-      description: "Go to Subscriptions",
-      action: () => router.push("/dashboard/subscriptions"),
-    },
-    {
-      key: "p",
-      description: "Go to Profile",
-      action: () => router.push("/dashboard/profile"),
-    },
-    {
-      key: "?",
-      shiftKey: true,
-      description: "Show keyboard shortcuts",
-      action: () => setShowShortcuts(true),
-    },
-  ]);
 
   useEffect(() => {
     loadDashboardStats();
@@ -142,7 +99,6 @@ function DashboardContent() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <h1 className="text-xl font-bold">Room Booking System</h1>
           <div className="flex items-center gap-2 sm:gap-4">
-            <KeyboardShortcutsButton />
             <Link href="/dashboard/profile">
               <Button variant="ghost" size="sm">
                 <User className="mr-2 h-4 w-4" />
