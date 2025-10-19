@@ -34,7 +34,7 @@ function AppContent() {
 		};
 
 		// Add global error listeners
-		(global as any).ErrorUtils?.setGlobalHandler?.(errorHandler);
+		(globalThis as any).ErrorUtils?.setGlobalHandler?.(errorHandler);
 		console.log("[App] Global error handler installed");
 
 		return () => {
