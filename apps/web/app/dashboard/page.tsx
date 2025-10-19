@@ -321,46 +321,6 @@ function DashboardContent() {
             </Link>
           </div>
         </div>
-
-        <div className="mt-8 space-y-4">
-          <div className="rounded-lg bg-green-50 p-4">
-            <p className="text-sm font-semibold text-green-800">
-              ✅ Phase 1 Complete: Foundation & Infrastructure
-            </p>
-            <p className="mt-1 text-xs text-green-700">
-              Authentication & Profile Management fully functional!
-            </p>
-          </div>
-
-          <div className="rounded-lg bg-green-50 p-4">
-            <p className="text-sm font-semibold text-green-800">
-              ✅ Phase 2 Complete: Room Management
-            </p>
-            <p className="mt-1 text-xs text-green-700">
-              Full room management available on web and mobile!
-            </p>
-          </div>
-
-          <div className="rounded-lg bg-green-50 p-4">
-            <p className="text-sm font-semibold text-green-800">
-              ✅ Phase 3 Complete: Booking System
-            </p>
-            <p className="mt-1 text-xs text-green-700">
-              Full booking management is now available. Users can book rooms on
-              mobile, and admins can manage all bookings on web!
-            </p>
-          </div>
-
-          <div className="rounded-lg bg-blue-50 p-4">
-            <p className="text-sm font-semibold text-blue-800">
-              🚀 Phase 4 Complete: User Management & Dashboard
-            </p>
-            <p className="mt-1 text-xs text-blue-700">
-              User management and analytics dashboard now available! View
-              real-time metrics and manage users.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
