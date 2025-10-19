@@ -37,11 +37,13 @@ I've already created a template for you at that location! Just update it with yo
 ```
 
 **To edit the file:**
+
 ```bash
 open ~/claude_desktop_config.json
 ```
 
 Or use VS Code:
+
 ```bash
 code ~/claude_desktop_config.json
 ```
@@ -53,6 +55,7 @@ Replace `REPLACE_WITH_YOUR_TOKEN` with your actual Supabase access token.
 ### Step 3: Reload VS Code
 
 After saving the config file:
+
 1. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
 2. Type: `Developer: Reload Window`
 3. Press Enter
@@ -68,6 +71,7 @@ After reloading, ask Claude:
 ```
 
 If it works, Claude will be able to:
+
 - ✅ Query your database directly
 - ✅ Apply migrations automatically
 - ✅ Create and modify tables
@@ -81,24 +85,31 @@ If it works, Claude will be able to:
 ### "MCP server not found" or no response
 
 **Check 1: File Location**
+
 ```bash
 ls -la ~/claude_desktop_config.json
 ```
+
 The file should exist in your home directory.
 
 **Check 2: File Contents**
+
 ```bash
 cat ~/claude_desktop_config.json
 ```
+
 Make sure:
+
 - Valid JSON format (no trailing commas)
 - Token is filled in (not "REPLACE_WITH_YOUR_TOKEN")
 - Project ID is correct: `nladwgkecjkcjsdawzoc`
 
 **Check 3: Test MCP Server Manually**
+
 ```bash
 npx -y @supabase/mcp-server@latest --version
 ```
+
 Should install and show version info.
 
 ---
@@ -128,10 +139,12 @@ You don't need MCP to proceed! You can:
 ## 📍 File Locations
 
 **MCP Config:**
+
 - Location: `~/claude_desktop_config.json`
 - Quick open: `open ~/claude_desktop_config.json`
 
 **Migration File:**
+
 - Location: `supabase/migrations/20251015000000_initial_schema.sql`
 - In your project directory
 
@@ -178,11 +191,13 @@ npx -y @supabase/mcp-server@latest --version
 ---
 
 **Current Status:**
+
 - ✅ Template config created at `~/claude_desktop_config.json`
 - ⏳ Waiting for you to add your Supabase access token
 - ⏳ Then reload VS Code
 
 **Your token goes here in the file:**
+
 ```json
 "SUPABASE_ACCESS_TOKEN": "sbp_paste_your_token_here"
 ```

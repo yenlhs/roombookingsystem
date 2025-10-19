@@ -40,6 +40,7 @@ roombookingsystem/
 ## Features
 
 ### Mobile App (User)
+
 - User registration and authentication
 - Browse available rooms
 - View room details and operating hours
@@ -48,6 +49,7 @@ roombookingsystem/
 - Real-time availability updates
 
 ### Web App (Admin)
+
 - Admin dashboard with metrics
 - Room management (CRUD operations)
 - Configure operating hours and slot durations
@@ -113,6 +115,7 @@ See [BUILD_PLAN.md](BUILD_PLAN.md) for the complete development roadmap.
 **Status:** Task 1.1.1 Complete ✅
 
 **Next Steps:**
+
 - Task 1.1.2: Set Up Shared Packages
 - Task 1.1.3: Initialize Next.js Web App
 - Task 1.1.4: Initialize Expo Mobile App

@@ -3,8 +3,8 @@ import type {
   RegisterInput,
   ForgotPasswordInput,
   ChangePasswordInput,
-} from '@workspace/validation';
-import { supabase } from '../supabase';
+} from "@workspace/validation";
+import { supabase } from "../supabase";
 
 export const authService = {
   async signIn(credentials: LoginInput) {
@@ -48,7 +48,7 @@ export const authService = {
 
   async resetPassword(data: ForgotPasswordInput) {
     const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-      redirectTo: 'myapp://reset-password',
+      redirectTo: "myapp://reset-password",
     });
 
     if (error) {

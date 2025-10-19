@@ -1,7 +1,7 @@
-import { View, Text, ScrollView } from 'react-native';
-import Animated from 'react-native-reanimated';
-import { useAuth } from '../../lib/auth/context';
-import { useFadeIn, useSlideUp } from '../../lib/animations';
+import { View, Text, ScrollView } from "react-native";
+import Animated from "react-native-reanimated";
+import { useAuth } from "../../lib/auth/context";
+import { useFadeIn, useSlideUp } from "../../lib/animations";
 
 export default function DashboardScreen() {
   const { user } = useAuth();
@@ -32,13 +32,19 @@ export default function DashboardScreen() {
         <Animated.View style={statsAnimation} className="gap-4 mb-6">
           <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
             <Text className="text-lg font-bold text-gray-900 mb-2">Rooms</Text>
-            <Text className="text-sm text-gray-600 mb-3">Manage meeting rooms and spaces</Text>
+            <Text className="text-sm text-gray-600 mb-3">
+              Manage meeting rooms and spaces
+            </Text>
             <Text className="text-xs text-gray-500">(Coming in Phase 2)</Text>
           </View>
 
           <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <Text className="text-lg font-bold text-gray-900 mb-2">Bookings</Text>
-            <Text className="text-sm text-gray-600 mb-3">View and manage room bookings</Text>
+            <Text className="text-lg font-bold text-gray-900 mb-2">
+              Bookings
+            </Text>
+            <Text className="text-sm text-gray-600 mb-3">
+              View and manage room bookings
+            </Text>
             <Text className="text-xs text-gray-500">(Coming in Phase 3)</Text>
           </View>
 

@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { createRoomService, supabase } from '@workspace/supabase';
-import type { Room, RoomStatus } from '@workspace/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { createRoomService, supabase } from "@workspace/supabase";
+import type { Room, RoomStatus } from "@workspace/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader2,
   Plus,
@@ -22,7 +22,7 @@ import {
   Eye,
   Users,
   Clock,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function RoomsPage() {
   return (
@@ -38,8 +38,8 @@ function RoomsContent() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<RoomStatus | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<RoomStatus | "all">("all");
 
   const roomService = createRoomService(supabase);
 
@@ -53,14 +53,14 @@ function RoomsContent() {
       setError(null);
 
       const filters = {
-        ...(statusFilter !== 'all' && { status: statusFilter }),
+        ...(statusFilter !== "all" && { status: statusFilter }),
         ...(searchQuery && { search: searchQuery }),
       };
 
       const data = await roomService.getRooms(filters);
       setRooms(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load rooms');
+      setError(err instanceof Error ? err.message : "Failed to load rooms");
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,11 @@ function RoomsContent() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this room? This action cannot be undone.')) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this room? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
@@ -79,7 +83,7 @@ function RoomsContent() {
       await roomService.deleteRoom(id);
       await loadRooms();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete room');
+      setError(err instanceof Error ? err.message : "Failed to delete room");
     }
   };
 
@@ -103,7 +107,7 @@ function RoomsContent() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push("/dashboard")}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -123,7 +127,9 @@ function RoomsContent() {
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -160,7 +166,7 @@ function RoomsContent() {
                       placeholder="Search rooms..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                       className="pl-9"
                     />
                   </div>
@@ -176,7 +182,9 @@ function RoomsContent() {
                 <select
                   id="status"
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as RoomStatus | 'all')}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as RoomStatus | "all")
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <option value="all">All Status</option>
@@ -197,8 +205,8 @@ function RoomsContent() {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
-                {searchQuery || statusFilter !== 'all'
-                  ? 'No rooms found matching your criteria.'
+                {searchQuery || statusFilter !== "all"
+                  ? "No rooms found matching your criteria."
                   : 'No rooms created yet. Click "Create Room" to get started.'}
               </p>
             </CardContent>
@@ -214,9 +222,9 @@ function RoomsContent() {
                       <div className="mt-1 flex items-center gap-2">
                         <span
                           className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                            room.status === 'active'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
+                            room.status === "active"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
                           }`}
                         >
                           {room.status}
@@ -242,14 +250,17 @@ function RoomsContent() {
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Clock className="h-4 w-4" />
                       <span>
-                        {room.operating_hours_start.slice(0, 5)} -{' '}
+                        {room.operating_hours_start.slice(0, 5)} -{" "}
                         {room.operating_hours_end.slice(0, 5)}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex gap-2 pt-3">
-                    <Link href={`/dashboard/rooms/${room.id}`} className="flex-1">
+                    <Link
+                      href={`/dashboard/rooms/${room.id}`}
+                      className="flex-1"
+                    >
                       <Button variant="outline" size="sm" className="w-full">
                         <Eye className="mr-2 h-4 w-4" />
                         View
@@ -277,7 +288,8 @@ function RoomsContent() {
         {/* Stats */}
         {!loading && filteredRooms.length > 0 && (
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            Showing {filteredRooms.length} of {rooms.length} room{rooms.length !== 1 ? 's' : ''}
+            Showing {filteredRooms.length} of {rooms.length} room
+            {rooms.length !== 1 ? "s" : ""}
           </div>
         )}
       </div>

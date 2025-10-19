@@ -1,14 +1,14 @@
-import { toast } from 'sonner';
-import { ZodError } from 'zod';
+import { toast } from "sonner";
+import { ZodError } from "zod";
 
 export type ErrorType =
-  | 'network'
-  | 'validation'
-  | 'authentication'
-  | 'authorization'
-  | 'not_found'
-  | 'server'
-  | 'unknown';
+  | "network"
+  | "validation"
+  | "authentication"
+  | "authorization"
+  | "not_found"
+  | "server"
+  | "unknown";
 
 export interface AppError {
   type: ErrorType;
@@ -21,13 +21,13 @@ export interface AppError {
  * Formats an error into a user-friendly message
  */
 export function formatErrorMessage(error: unknown): string {
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
 
   if (error instanceof ZodError) {
     const firstError = error.errors[0];
-    return firstError?.message || 'Validation error';
+    return firstError?.message || "Validation error";
   }
 
   if (error instanceof Error) {
@@ -35,15 +35,15 @@ export function formatErrorMessage(error: unknown): string {
   }
 
   if (
-    typeof error === 'object' &&
+    typeof error === "object" &&
     error !== null &&
-    'message' in error &&
-    typeof error.message === 'string'
+    "message" in error &&
+    typeof error.message === "string"
   ) {
     return error.message;
   }
 
-  return 'An unexpected error occurred';
+  return "An unexpected error occurred";
 }
 
 /**
@@ -51,50 +51,50 @@ export function formatErrorMessage(error: unknown): string {
  */
 export function getErrorType(error: unknown): ErrorType {
   if (error instanceof ZodError) {
-    return 'validation';
+    return "validation";
   }
 
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
 
-    if (message.includes('network') || message.includes('fetch')) {
-      return 'network';
+    if (message.includes("network") || message.includes("fetch")) {
+      return "network";
     }
 
     if (
-      message.includes('unauthorized') ||
-      message.includes('not authenticated')
+      message.includes("unauthorized") ||
+      message.includes("not authenticated")
     ) {
-      return 'authentication';
+      return "authentication";
     }
 
-    if (message.includes('forbidden') || message.includes('not allowed')) {
-      return 'authorization';
+    if (message.includes("forbidden") || message.includes("not allowed")) {
+      return "authorization";
     }
 
-    if (message.includes('not found')) {
-      return 'not_found';
+    if (message.includes("not found")) {
+      return "not_found";
     }
 
-    if (message.includes('server error') || message.includes('500')) {
-      return 'server';
+    if (message.includes("server error") || message.includes("500")) {
+      return "server";
     }
   }
 
   // Check for Supabase errors
   if (
-    typeof error === 'object' &&
+    typeof error === "object" &&
     error !== null &&
-    'code' in error &&
-    typeof error.code === 'string'
+    "code" in error &&
+    typeof error.code === "string"
   ) {
     const code = error.code;
-    if (code === 'PGRST301') return 'authentication';
-    if (code.startsWith('PGRST1')) return 'authorization';
-    if (code === 'PGRST116') return 'not_found';
+    if (code === "PGRST301") return "authentication";
+    if (code.startsWith("PGRST1")) return "authorization";
+    if (code === "PGRST116") return "not_found";
   }
 
-  return 'unknown';
+  return "unknown";
 }
 
 /**
@@ -150,14 +150,12 @@ export function showInfoToast(message: string, description?: string) {
  */
 function getErrorDescription(type: ErrorType): string | undefined {
   const descriptions: Record<ErrorType, string | undefined> = {
-    network:
-      'Please check your internet connection and try again.',
-    validation: 'Please check your input and try again.',
-    authentication: 'Please log in and try again.',
-    authorization: 'You do not have permission to perform this action.',
-    not_found: 'The requested resource was not found.',
-    server:
-      'A server error occurred. Please try again later.',
+    network: "Please check your internet connection and try again.",
+    validation: "Please check your input and try again.",
+    authentication: "Please log in and try again.",
+    authorization: "You do not have permission to perform this action.",
+    not_found: "The requested resource was not found.",
+    server: "A server error occurred. Please try again later.",
     unknown: undefined,
   };
 
@@ -171,19 +169,19 @@ export async function handleApiError(error: unknown, action?: string) {
   const appError = createAppError(error);
 
   // Log errors in development
-  if (process.env.NODE_ENV === 'development') {
-    console.error('API Error:', appError);
+  if (process.env.NODE_ENV === "development") {
+    console.error("API Error:", appError);
   }
 
   // Show toast notification
-  const actionText = action ? ` while ${action}` : '';
+  const actionText = action ? ` while ${action}` : "";
   showErrorToast(error, `Error${actionText}`);
 
   // Redirect to login if authentication error
-  if (appError.type === 'authentication') {
+  if (appError.type === "authentication") {
     // Wait a bit before redirecting to allow user to see the toast
     setTimeout(() => {
-      window.location.href = '/login';
+      window.location.href = "/login";
     }, 1000);
   }
 
@@ -193,10 +191,9 @@ export async function handleApiError(error: unknown, action?: string) {
 /**
  * Wraps an async function with error handling
  */
-export function withErrorHandling<T extends (...args: never[]) => Promise<unknown>>(
-  fn: T,
-  errorMessage?: string
-): T {
+export function withErrorHandling<
+  T extends (...args: never[]) => Promise<unknown>,
+>(fn: T, errorMessage?: string): T {
   return (async (...args: Parameters<T>) => {
     try {
       return await fn(...args);

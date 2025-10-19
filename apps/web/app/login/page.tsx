@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginInput } from '@workspace/validation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginInput } from "@workspace/validation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -16,9 +16,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
-import { showErrorToast, showSuccessToast } from '@/lib/errors';
+} from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { showErrorToast, showSuccessToast } from "@/lib/errors";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,15 +36,18 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const { authService } = await import('@/lib/auth/service');
+      const { authService } = await import("@/lib/auth/service");
       await authService.signIn(data);
 
-      showSuccessToast('Welcome back!', 'You have been successfully signed in.');
+      showSuccessToast(
+        "Welcome back!",
+        "You have been successfully signed in.",
+      );
 
       // Redirect to dashboard on success
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (err) {
-      showErrorToast(err, 'Failed to sign in');
+      showErrorToast(err, "Failed to sign in");
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +72,7 @@ export default function LoginPage() {
                 placeholder="name@example.com"
                 autoComplete="email"
                 disabled={isLoading}
-                {...register('email')}
+                {...register("email")}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -91,10 +94,12 @@ export default function LoginPage() {
                 type="password"
                 autoComplete="current-password"
                 disabled={isLoading}
-                {...register('password')}
+                {...register("password")}
               />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -105,14 +110,14 @@ export default function LoginPage() {
                   Signing in...
                 </>
               ) : (
-                'Sign in'
+                "Sign in"
               )}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <Link href="/signup" className="text-primary hover:underline">
               Sign up
             </Link>

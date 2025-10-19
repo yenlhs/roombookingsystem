@@ -1,10 +1,11 @@
 # Pull Request
 
 ## Description
+
 <!-- Provide a clear and concise description of your changes -->
 
-
 ## Type of Change
+
 <!-- Check the type that applies to this PR -->
 
 - [ ] `feat`: New feature
@@ -17,6 +18,7 @@
 - [ ] `ci`: CI/CD changes
 
 ## Affected Areas
+
 <!-- Check all that apply -->
 
 - [ ] Web App (`apps/web`)
@@ -25,6 +27,7 @@
 - [ ] Shared Packages (`packages/*`)
 
 ## Testing
+
 <!-- Describe how you tested these changes -->
 
 - [ ] Tested locally
@@ -32,14 +35,15 @@
 - [ ] Added/updated tests (if applicable)
 
 **Testing Details:**
+
 <!-- How did you test these changes? -->
 
-
 ## Screenshots/Videos
+
 <!-- If applicable, add screenshots or videos to demonstrate the changes -->
 
-
 ## Breaking Changes
+
 <!-- Does this PR introduce breaking changes? If yes, describe them and the migration path -->
 
 - [ ] Yes, this PR includes breaking changes
@@ -47,8 +51,8 @@
 
 **If yes, describe:**
 
-
 ## Checklist
+
 <!-- Ensure all items are completed before requesting review -->
 
 - [ ] My code follows the project's code style
@@ -59,5 +63,5 @@
 - [ ] My commits follow the conventional commit format (`type(scope): description`)
 
 ## Additional Notes
-<!-- Any additional information that reviewers should know -->
 
+<!-- Any additional information that reviewers should know -->

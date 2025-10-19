@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema, type RegisterInput } from '@workspace/validation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, type RegisterInput } from "@workspace/validation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -16,8 +16,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+} from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -37,13 +37,15 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      const { authService } = await import('@/lib/auth/service');
+      const { authService } = await import("@/lib/auth/service");
       await authService.signUp(data);
 
       // Redirect to dashboard on success
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during sign up');
+      setError(
+        err instanceof Error ? err.message : "An error occurred during sign up",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +55,9 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Create an account
+          </CardTitle>
           <CardDescription>
             Enter your information to create your account
           </CardDescription>
@@ -68,10 +72,12 @@ export default function SignupPage() {
                 placeholder="John Doe"
                 autoComplete="name"
                 disabled={isLoading}
-                {...register('full_name')}
+                {...register("full_name")}
               />
               {errors.full_name && (
-                <p className="text-sm text-red-500">{errors.full_name.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.full_name.message}
+                </p>
               )}
             </div>
 
@@ -83,7 +89,7 @@ export default function SignupPage() {
                 placeholder="name@example.com"
                 autoComplete="email"
                 disabled={isLoading}
-                {...register('email')}
+                {...register("email")}
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -92,7 +98,8 @@ export default function SignupPage() {
 
             <div className="space-y-2">
               <Label htmlFor="phone">
-                Phone Number <span className="text-muted-foreground">(optional)</span>
+                Phone Number{" "}
+                <span className="text-muted-foreground">(optional)</span>
               </Label>
               <Input
                 id="phone"
@@ -100,7 +107,7 @@ export default function SignupPage() {
                 placeholder="1234567890"
                 autoComplete="tel"
                 disabled={isLoading}
-                {...register('phone')}
+                {...register("phone")}
               />
               {errors.phone && (
                 <p className="text-sm text-red-500">{errors.phone.message}</p>
@@ -114,13 +121,16 @@ export default function SignupPage() {
                 type="password"
                 autoComplete="new-password"
                 disabled={isLoading}
-                {...register('password')}
+                {...register("password")}
               />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
               <p className="text-xs text-muted-foreground">
-                Must be at least 8 characters with uppercase, lowercase, and number
+                Must be at least 8 characters with uppercase, lowercase, and
+                number
               </p>
             </div>
 
@@ -131,7 +141,7 @@ export default function SignupPage() {
                 type="password"
                 autoComplete="new-password"
                 disabled={isLoading}
-                {...register('confirmPassword')}
+                {...register("confirmPassword")}
               />
               {errors.confirmPassword && (
                 <p className="text-sm text-red-500">
@@ -153,14 +163,14 @@ export default function SignupPage() {
                   Creating account...
                 </>
               ) : (
-                'Create account'
+                "Create account"
               )}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-sm text-muted-foreground">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link href="/login" className="text-primary hover:underline">
               Sign in
             </Link>

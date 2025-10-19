@@ -5,13 +5,13 @@
 // ============================================
 
 export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
+  USER = "user",
+  ADMIN = "admin",
 }
 
 export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
 
 export interface User {
@@ -39,8 +39,8 @@ export interface UserProfile {
 // ============================================
 
 export enum RoomStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
 
 export interface Room {
@@ -82,9 +82,9 @@ export interface UpdateRoomInput extends Partial<CreateRoomInput> {
 // ============================================
 
 export enum BookingStatus {
-  CONFIRMED = 'confirmed',
-  CANCELLED = 'cancelled',
-  COMPLETED = 'completed',
+  CONFIRMED = "confirmed",
+  CANCELLED = "cancelled",
+  COMPLETED = "completed",
 }
 
 export interface Booking {
@@ -201,7 +201,11 @@ export interface DashboardStats {
 
 export interface RecentActivity {
   id: string;
-  type: 'booking_created' | 'booking_cancelled' | 'user_registered' | 'room_created';
+  type:
+    | "booking_created"
+    | "booking_cancelled"
+    | "user_registered"
+    | "room_created";
   title: string;
   description: string;
   user_id?: string;
@@ -238,18 +242,18 @@ export interface RoomFilters {
 // ============================================
 
 export enum SubscriptionTierName {
-  FREE = 'free',
-  PREMIUM = 'premium',
+  FREE = "free",
+  PREMIUM = "premium",
 }
 
 export enum SubscriptionStatus {
-  ACTIVE = 'active',
-  CANCELLED = 'cancelled',
-  PAST_DUE = 'past_due',
-  TRIALING = 'trialing',
-  INCOMPLETE = 'incomplete',
-  INCOMPLETE_EXPIRED = 'incomplete_expired',
-  UNPAID = 'unpaid',
+  ACTIVE = "active",
+  CANCELLED = "cancelled",
+  PAST_DUE = "past_due",
+  TRIALING = "trialing",
+  INCOMPLETE = "incomplete",
+  INCOMPLETE_EXPIRED = "incomplete_expired",
+  UNPAID = "unpaid",
 }
 
 export interface SubscriptionTierFeatures {
@@ -290,14 +294,14 @@ export interface UserSubscriptionWithTier extends UserSubscription {
 }
 
 export enum SubscriptionEventType {
-  SUBSCRIPTION_CREATED = 'subscription_created',
-  SUBSCRIPTION_UPDATED = 'subscription_updated',
-  SUBSCRIPTION_CANCELLED = 'subscription_cancelled',
-  SUBSCRIPTION_RENEWED = 'subscription_renewed',
-  PAYMENT_SUCCEEDED = 'payment_succeeded',
-  PAYMENT_FAILED = 'payment_failed',
-  TRIAL_STARTED = 'trial_started',
-  TRIAL_ENDED = 'trial_ended',
+  SUBSCRIPTION_CREATED = "subscription_created",
+  SUBSCRIPTION_UPDATED = "subscription_updated",
+  SUBSCRIPTION_CANCELLED = "subscription_cancelled",
+  SUBSCRIPTION_RENEWED = "subscription_renewed",
+  PAYMENT_SUCCEEDED = "payment_succeeded",
+  PAYMENT_FAILED = "payment_failed",
+  TRIAL_STARTED = "trial_started",
+  TRIAL_ENDED = "trial_ended",
 }
 
 export interface SubscriptionEvent {
@@ -343,33 +347,37 @@ export interface Database {
     Tables: {
       users: {
         Row: User;
-        Insert: Omit<User, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<User, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<User, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<User, "id" | "created_at" | "updated_at">>;
       };
       rooms: {
         Row: Room;
-        Insert: Omit<Room, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<Room, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<Room, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<Room, "id" | "created_at" | "updated_at">>;
       };
       bookings: {
         Row: Booking;
-        Insert: Omit<Booking, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<Booking, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<Booking, "id" | "created_at" | "updated_at">;
+        Update: Partial<Omit<Booking, "id" | "created_at" | "updated_at">>;
       };
       subscription_tiers: {
         Row: SubscriptionTier;
-        Insert: Omit<SubscriptionTier, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<SubscriptionTier, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<SubscriptionTier, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<SubscriptionTier, "id" | "created_at" | "updated_at">
+        >;
       };
       user_subscriptions: {
         Row: UserSubscription;
-        Insert: Omit<UserSubscription, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<UserSubscription, 'id' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<UserSubscription, "id" | "created_at" | "updated_at">;
+        Update: Partial<
+          Omit<UserSubscription, "id" | "created_at" | "updated_at">
+        >;
       };
       subscription_events: {
         Row: SubscriptionEvent;
-        Insert: Omit<SubscriptionEvent, 'id' | 'created_at'>;
-        Update: Partial<Omit<SubscriptionEvent, 'id' | 'created_at'>>;
+        Insert: Omit<SubscriptionEvent, "id" | "created_at">;
+        Update: Partial<Omit<SubscriptionEvent, "id" | "created_at">>;
       };
     };
   };

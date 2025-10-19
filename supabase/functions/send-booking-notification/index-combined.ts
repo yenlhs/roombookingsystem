@@ -1,10 +1,10 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const EXPO_ACCESS_TOKEN = Deno.env.get('EXPO_ACCESS_TOKEN');
-const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const EXPO_ACCESS_TOKEN = Deno.env.get("EXPO_ACCESS_TOKEN");
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 // Email template types
 interface BookingEmailData {
@@ -20,7 +20,11 @@ interface BookingEmailData {
 // Notification request types
 interface BookingNotificationRequest {
   bookingId: string;
-  notificationType: 'booking_confirmed' | 'booking_cancelled' | 'booking_reminder' | 'booking_updated';
+  notificationType:
+    | "booking_confirmed"
+    | "booking_cancelled"
+    | "booking_reminder"
+    | "booking_updated";
 }
 
 interface BookingDetails {
@@ -88,7 +92,10 @@ function baseTemplate(content: string): string {
   `.trim();
 }
 
-function bookingConfirmedEmail(data: BookingEmailData): { subject: string; html: string } {
+function bookingConfirmedEmail(data: BookingEmailData): {
+  subject: string;
+  html: string;
+} {
   const content = `
     <div style="text-align: center; margin-bottom: 30px;">
       <div style="background-color: #dcfce7; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
@@ -129,7 +136,9 @@ function bookingConfirmedText(data: BookingEmailData): string {
   return `Booking Confirmed!\n\nHi ${data.userName},\n\nYour room has been successfully booked.\n\nBooking Details:\n- Room: ${data.roomName}\n- Date: ${data.bookingDate}\n- Time: ${data.startTime} - ${data.endTime}`;
 }
 
-function bookingCancelledEmail(data: BookingEmailData & { cancellationReason?: string }): { subject: string; html: string } {
+function bookingCancelledEmail(
+  data: BookingEmailData & { cancellationReason?: string },
+): { subject: string; html: string } {
   const content = `
     <div style="text-align: center; margin-bottom: 30px;">
       <div style="background-color: #fee2e2; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
@@ -159,11 +168,15 @@ function bookingCancelledEmail(data: BookingEmailData & { cancellationReason?: s
   };
 }
 
-function bookingCancelledText(data: BookingEmailData & { cancellationReason?: string }): string {
+function bookingCancelledText(
+  data: BookingEmailData & { cancellationReason?: string },
+): string {
   return `Booking Cancelled\n\nHi ${data.userName},\n\nYour room booking has been cancelled.\n\nCancelled Booking Details:\n- Room: ${data.roomName}\n- Date: ${data.bookingDate}\n- Time: ${data.startTime} - ${data.endTime}`;
 }
 
-function bookingReminderEmail(data: BookingEmailData & { minutesUntilStart: number }): { subject: string; html: string } {
+function bookingReminderEmail(
+  data: BookingEmailData & { minutesUntilStart: number },
+): { subject: string; html: string } {
   const content = `
     <div style="text-align: center; margin-bottom: 30px;">
       <div style="background-color: #dbeafe; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
@@ -180,48 +193,55 @@ function bookingReminderEmail(data: BookingEmailData & { minutesUntilStart: numb
   };
 }
 
-function bookingReminderText(data: BookingEmailData & { minutesUntilStart: number }): string {
+function bookingReminderText(
+  data: BookingEmailData & { minutesUntilStart: number },
+): string {
   return `Booking Reminder\n\nHi ${data.userName},\n\nYour booking starts in ${data.minutesUntilStart} minutes!\n\nBooking Details:\n- Room: ${data.roomName}\n- Date: ${data.bookingDate}\n- Time: ${data.startTime} - ${data.endTime}`;
 }
 
 // Main handler
 serve(async (req) => {
   try {
-    const { bookingId, notificationType }: BookingNotificationRequest = await req.json();
+    const { bookingId, notificationType }: BookingNotificationRequest =
+      await req.json();
 
     if (!bookingId || !notificationType) {
       return new Response(
-        JSON.stringify({ error: 'bookingId and notificationType are required' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({
+          error: "bookingId and notificationType are required",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .select(`
+      .from("bookings")
+      .select(
+        `
         *,
         user:users!bookings_user_id_fkey(id, email, full_name),
         room:rooms!bookings_room_id_fkey(id, name)
-      `)
-      .eq('id', bookingId)
+      `,
+      )
+      .eq("id", bookingId)
       .single();
 
     if (bookingError || !booking) {
-      console.error('Failed to fetch booking:', bookingError);
-      return new Response(
-        JSON.stringify({ error: 'Booking not found' }),
-        { status: 404, headers: { 'Content-Type': 'application/json' } }
-      );
+      console.error("Failed to fetch booking:", bookingError);
+      return new Response(JSON.stringify({ error: "Booking not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const bookingDetails = booking as unknown as BookingDetails;
 
     const { data: preferences } = await supabase
-      .from('notification_preferences')
-      .select('*')
-      .eq('user_id', bookingDetails.user_id)
+      .from("notification_preferences")
+      .select("*")
+      .eq("user_id", bookingDetails.user_id)
       .single();
 
     const prefs = preferences || {
@@ -237,20 +257,22 @@ serve(async (req) => {
     // Send email notification
     if (prefs.email_enabled && RESEND_API_KEY) {
       try {
-        const formattedDate = new Date(bookingDetails.booking_date).toLocaleDateString('en-US', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
+        const formattedDate = new Date(
+          bookingDetails.booking_date,
+        ).toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
         });
-        const [hours, minutes] = bookingDetails.start_time.split(':');
+        const [hours, minutes] = bookingDetails.start_time.split(":");
         const hour = parseInt(hours);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const ampm = hour >= 12 ? "PM" : "AM";
         const displayHour = hour % 12 || 12;
         const formattedTime = `${displayHour}:${minutes} ${ampm}`;
 
         const emailData = {
-          userName: bookingDetails.user.full_name || 'User',
+          userName: bookingDetails.user.full_name || "User",
           roomName: bookingDetails.room.name,
           bookingDate: formattedDate,
           startTime: formattedTime,
@@ -262,19 +284,25 @@ serve(async (req) => {
         let textContent: string;
 
         switch (notificationType) {
-          case 'booking_confirmed':
+          case "booking_confirmed":
             emailTemplate = bookingConfirmedEmail(emailData);
             textContent = bookingConfirmedText(emailData);
             break;
-          case 'booking_cancelled':
+          case "booking_cancelled":
             emailTemplate = bookingCancelledEmail(emailData);
             textContent = bookingCancelledText(emailData);
             break;
-          case 'booking_reminder':
-            emailTemplate = bookingReminderEmail({ ...emailData, minutesUntilStart: 15 });
-            textContent = bookingReminderText({ ...emailData, minutesUntilStart: 15 });
+          case "booking_reminder":
+            emailTemplate = bookingReminderEmail({
+              ...emailData,
+              minutesUntilStart: 15,
+            });
+            textContent = bookingReminderText({
+              ...emailData,
+              minutesUntilStart: 15,
+            });
             break;
-          case 'booking_updated':
+          case "booking_updated":
             emailTemplate = bookingConfirmedEmail(emailData);
             textContent = bookingConfirmedText(emailData);
             emailTemplate.subject = `Booking Updated: ${emailData.roomName} on ${emailData.bookingDate}`;
@@ -283,14 +311,14 @@ serve(async (req) => {
             throw new Error(`Unknown notification type: ${notificationType}`);
         }
 
-        const response = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
+        const response = await fetch("https://api.resend.com/emails", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: 'Room Booking System <onboarding@resend.dev>',
+            from: "Room Booking System <onboarding@resend.dev>",
             to: bookingDetails.user.email,
             subject: emailTemplate.subject,
             html: emailTemplate.html,
@@ -301,12 +329,12 @@ serve(async (req) => {
         const result = await response.json();
         results.email = { success: response.ok, ...result };
 
-        await supabase.from('notification_log').insert({
+        await supabase.from("notification_log").insert({
           user_id: bookingDetails.user_id,
           booking_id: bookingDetails.id,
           notification_type: notificationType,
-          channel: 'email',
-          status: response.ok ? 'sent' : 'failed',
+          channel: "email",
+          status: response.ok ? "sent" : "failed",
           recipient: bookingDetails.user.email,
           subject: emailTemplate.subject,
           body: textContent,
@@ -315,7 +343,7 @@ serve(async (req) => {
           sent_at: response.ok ? new Date().toISOString() : null,
         });
       } catch (error) {
-        console.error('Failed to send email:', error);
+        console.error("Failed to send email:", error);
         results.email = { success: false, error: String(error) };
       }
     }
@@ -324,36 +352,48 @@ serve(async (req) => {
     if (prefs.push_enabled) {
       try {
         const { data: tokens } = await supabase
-          .from('push_tokens')
-          .select('token, token_type, platform')
-          .eq('user_id', bookingDetails.user_id)
-          .eq('is_active', true);
+          .from("push_tokens")
+          .select("token, token_type, platform")
+          .eq("user_id", bookingDetails.user_id)
+          .eq("is_active", true);
 
         if (tokens && tokens.length > 0) {
           const pushResults = [];
           for (const tokenData of tokens) {
-            if (tokenData.token_type === 'expo') {
-              const response = await fetch('https://exp.host/--/api/v2/push/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  to: tokenData.token,
-                  title: notificationType === 'booking_confirmed' ? 'Booking Confirmed!' : 'Booking Cancelled',
-                  body: `Your booking for ${bookingDetails.room.name} has been ${notificationType === 'booking_confirmed' ? 'confirmed' : 'cancelled'}`,
-                  data: { bookingId: bookingDetails.id, roomName: bookingDetails.room.name },
-                  sound: 'default',
-                  priority: 'high',
-                }),
-              });
+            if (tokenData.token_type === "expo") {
+              const response = await fetch(
+                "https://exp.host/--/api/v2/push/send",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    to: tokenData.token,
+                    title:
+                      notificationType === "booking_confirmed"
+                        ? "Booking Confirmed!"
+                        : "Booking Cancelled",
+                    body: `Your booking for ${bookingDetails.room.name} has been ${notificationType === "booking_confirmed" ? "confirmed" : "cancelled"}`,
+                    data: {
+                      bookingId: bookingDetails.id,
+                      roomName: bookingDetails.room.name,
+                    },
+                    sound: "default",
+                    priority: "high",
+                  }),
+                },
+              );
 
               const result = await response.json();
               pushResults.push({ success: response.ok, ...result });
             }
           }
-          results.push = { success: pushResults.some((r) => r.success), results: pushResults };
+          results.push = {
+            success: pushResults.some((r) => r.success),
+            results: pushResults,
+          };
         }
       } catch (error) {
-        console.error('Failed to send push:', error);
+        console.error("Failed to send push:", error);
         results.push = { success: false, error: String(error) };
       }
     }
@@ -365,13 +405,13 @@ serve(async (req) => {
         notificationType,
         results,
       }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: { "Content-Type": "application/json" } },
     );
   } catch (error) {
-    console.error('Error in send-booking-notification:', error);
-    return new Response(
-      JSON.stringify({ error: String(error) }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    console.error("Error in send-booking-notification:", error);
+    return new Response(JSON.stringify({ error: String(error) }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 });

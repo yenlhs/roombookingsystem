@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,49 +7,57 @@ import {
   ActivityIndicator,
   Alert,
   ListRenderItem,
-} from 'react-native';
-import Animated from 'react-native-reanimated';
-import { useRouter } from 'expo-router';
-import { supabase } from '../../lib/supabase';
-import { createBookingService, createNotificationService } from '@workspace/supabase';
-import type { BookingWithDetails, BookingStatus } from '@workspace/types';
-import { useFadeIn, useListItemAnimation } from '../../lib/animations';
-import { lightImpact, mediumImpact, warningFeedback } from '../../lib/haptics';
-import { FLATLIST_CONFIG } from '../../lib/performance';
+} from "react-native";
+import Animated from "react-native-reanimated";
+import { useRouter } from "expo-router";
+import { supabase } from "../../lib/supabase";
+import {
+  createBookingService,
+  createNotificationService,
+} from "@workspace/supabase";
+import type { BookingWithDetails, BookingStatus } from "@workspace/types";
+import { useFadeIn, useListItemAnimation } from "../../lib/animations";
+import { lightImpact, mediumImpact, warningFeedback } from "../../lib/haptics";
+import { FLATLIST_CONFIG } from "../../lib/performance";
 
 // Helper functions
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 };
 
 const formatTime = (timeString: string): string => {
-  const [hours, minutes] = timeString.split(':');
+  const [hours, minutes] = timeString.split(":");
   const hour = parseInt(hours);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const ampm = hour >= 12 ? "PM" : "AM";
   const hour12 = hour % 12 || 12;
   return `${hour12}:${minutes} ${ampm}`;
 };
 
 const getDisplayStatus = (booking: BookingWithDetails): string => {
-  const bookingDateTime = new Date(`${booking.booking_date}T${booking.start_time}`);
+  const bookingDateTime = new Date(
+    `${booking.booking_date}T${booking.start_time}`,
+  );
   const now = new Date();
 
-  if (booking.status === 'cancelled') {
-    return 'Cancelled';
+  if (booking.status === "cancelled") {
+    return "Cancelled";
   }
 
-  if (booking.status === 'completed' || (booking.status === 'confirmed' && bookingDateTime < now)) {
-    return 'Past';
+  if (
+    booking.status === "completed" ||
+    (booking.status === "confirmed" && bookingDateTime < now)
+  ) {
+    return "Past";
   }
 
-  if (booking.status === 'confirmed' && bookingDateTime > now) {
-    return 'Upcoming';
+  if (booking.status === "confirmed" && bookingDateTime > now) {
+    return "Upcoming";
   }
 
   return booking.status;
@@ -57,33 +65,35 @@ const getDisplayStatus = (booking: BookingWithDetails): string => {
 
 const getStatusColor = (displayStatus: string) => {
   switch (displayStatus.toLowerCase()) {
-    case 'upcoming':
-      return 'bg-blue-100';
-    case 'past':
-      return 'bg-gray-100';
-    case 'cancelled':
-      return 'bg-red-100';
+    case "upcoming":
+      return "bg-blue-100";
+    case "past":
+      return "bg-gray-100";
+    case "cancelled":
+      return "bg-red-100";
     default:
-      return 'bg-gray-100';
+      return "bg-gray-100";
   }
 };
 
 const getStatusTextColor = (displayStatus: string) => {
   switch (displayStatus.toLowerCase()) {
-    case 'upcoming':
-      return 'text-blue-800';
-    case 'past':
-      return 'text-gray-800';
-    case 'cancelled':
-      return 'text-red-800';
+    case "upcoming":
+      return "text-blue-800";
+    case "past":
+      return "text-gray-800";
+    case "cancelled":
+      return "text-red-800";
     default:
-      return 'text-gray-800';
+      return "text-gray-800";
   }
 };
 
 const isUpcoming = (booking: BookingWithDetails): boolean => {
-  const bookingDateTime = new Date(`${booking.booking_date}T${booking.start_time}`);
-  return bookingDateTime > new Date() && booking.status === 'confirmed';
+  const bookingDateTime = new Date(
+    `${booking.booking_date}T${booking.start_time}`,
+  );
+  return bookingDateTime > new Date() && booking.status === "confirmed";
 };
 
 // Booking Card Component
@@ -109,11 +119,15 @@ function BookingCard({
         <View className="flex-row justify-between items-start mb-3">
           <View className="flex-1 mr-4">
             <Text className="text-xl font-bold text-gray-900 mb-1">
-              {booking.room?.name || 'Unknown Room'}
+              {booking.room?.name || "Unknown Room"}
             </Text>
-            <Text className="text-sm text-gray-600">{formatDate(booking.booking_date)}</Text>
+            <Text className="text-sm text-gray-600">
+              {formatDate(booking.booking_date)}
+            </Text>
           </View>
-          <View className={`px-3 py-1 rounded-full ${getStatusColor(displayStatus)}`}>
+          <View
+            className={`px-3 py-1 rounded-full ${getStatusColor(displayStatus)}`}
+          >
             <Text
               className={`text-xs font-semibold ${getStatusTextColor(displayStatus)} uppercase`}
             >
@@ -143,7 +157,9 @@ function BookingCard({
           {booking.notes && (
             <View className="flex-row items-start">
               <Text className="text-2xl mr-2">📝</Text>
-              <Text className="text-sm text-gray-700 flex-1">{booking.notes}</Text>
+              <Text className="text-sm text-gray-700 flex-1">
+                {booking.notes}
+              </Text>
             </View>
           )}
         </View>
@@ -174,10 +190,14 @@ function BookingCard({
           </View>
         )}
 
-        {booking.status === 'cancelled' && booking.cancellation_reason && (
+        {booking.status === "cancelled" && booking.cancellation_reason && (
           <View className="mt-3 pt-3 border-t border-gray-100">
-            <Text className="text-xs text-gray-500 mb-1">Cancellation Reason:</Text>
-            <Text className="text-sm text-gray-700">{booking.cancellation_reason}</Text>
+            <Text className="text-xs text-gray-500 mb-1">
+              Cancellation Reason:
+            </Text>
+            <Text className="text-sm text-gray-700">
+              {booking.cancellation_reason}
+            </Text>
           </View>
         )}
       </View>
@@ -188,11 +208,15 @@ function BookingCard({
 export default function BookingsScreen() {
   const router = useRouter();
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
-  const [filteredBookings, setFilteredBookings] = useState<BookingWithDetails[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<
+    BookingWithDetails[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<'all' | BookingStatus>('all');
+  const [filterStatus, setFilterStatus] = useState<"all" | BookingStatus>(
+    "all",
+  );
 
   const bookingService = createBookingService(supabase);
   const notificationService = createNotificationService(supabase);
@@ -203,18 +227,18 @@ export default function BookingsScreen() {
 
     // Subscribe to real-time updates
     const channel = supabase
-      .channel('my-bookings-changes')
+      .channel("my-bookings-changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'bookings',
+          event: "*",
+          schema: "public",
+          table: "bookings",
         },
         (payload) => {
-          console.log('Booking change received:', payload);
+          console.log("Booking change received:", payload);
           loadBookings();
-        }
+        },
       )
       .subscribe();
 
@@ -233,7 +257,7 @@ export default function BookingsScreen() {
       const data = await bookingService.getMyBookings();
       setBookings(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load bookings');
+      setError(err instanceof Error ? err.message : "Failed to load bookings");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -248,9 +272,9 @@ export default function BookingsScreen() {
   const applyFilters = () => {
     let filtered = [...bookings];
 
-    if (filterStatus === 'all') {
+    if (filterStatus === "all") {
       // Exclude cancelled bookings from the default "All" view
-      filtered = filtered.filter((booking) => booking.status !== 'cancelled');
+      filtered = filtered.filter((booking) => booking.status !== "cancelled");
     } else {
       filtered = filtered.filter((booking) => booking.status === filterStatus);
     }
@@ -260,17 +284,17 @@ export default function BookingsScreen() {
 
   const handleCancelBooking = (booking: BookingWithDetails) => {
     Alert.alert(
-      'Cancel Booking',
+      "Cancel Booking",
       `Are you sure you want to cancel this booking?\n\nRoom: ${booking.room?.name}\nDate: ${formatDate(booking.booking_date)}\nTime: ${formatTime(booking.start_time)} - ${formatTime(booking.end_time)}`,
       [
         {
-          text: 'No',
-          style: 'cancel',
+          text: "No",
+          style: "cancel",
           onPress: () => lightImpact(),
         },
         {
-          text: 'Yes, Cancel',
-          style: 'destructive',
+          text: "Yes, Cancel",
+          style: "destructive",
           onPress: async () => {
             try {
               mediumImpact();
@@ -280,21 +304,27 @@ export default function BookingsScreen() {
               try {
                 await notificationService.sendBookingNotification({
                   bookingId: booking.id,
-                  notificationType: 'booking_cancelled',
+                  notificationType: "booking_cancelled",
                 });
-                console.log('[Booking] Cancellation notification sent');
+                console.log("[Booking] Cancellation notification sent");
               } catch (notifError) {
-                console.warn('[Booking] Failed to send cancellation notification:', notifError);
+                console.warn(
+                  "[Booking] Failed to send cancellation notification:",
+                  notifError,
+                );
               }
 
-              Alert.alert('Success', 'Booking cancelled successfully');
+              Alert.alert("Success", "Booking cancelled successfully");
               loadBookings();
             } catch (err) {
-              Alert.alert('Error', err instanceof Error ? err.message : 'Failed to cancel booking');
+              Alert.alert(
+                "Error",
+                err instanceof Error ? err.message : "Failed to cancel booking",
+              );
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -303,16 +333,28 @@ export default function BookingsScreen() {
     router.push(`/edit-booking/${booking.id}` as any);
   };
 
-  const renderBookingCard: ListRenderItem<BookingWithDetails> = ({ item, index }) => (
-    <BookingCard booking={item} index={index} onCancel={handleCancelBooking} onEdit={handleEditBooking} />
+  const renderBookingCard: ListRenderItem<BookingWithDetails> = ({
+    item,
+    index,
+  }) => (
+    <BookingCard
+      booking={item}
+      index={index}
+      onCancel={handleCancelBooking}
+      onEdit={handleEditBooking}
+    />
   );
 
   const renderListHeader = () => (
     <View>
       {/* Header */}
       <Animated.View style={headerAnimation} className="mb-6">
-        <Text className="text-3xl font-bold text-gray-900 mb-2">My Bookings</Text>
-        <Text className="text-base text-gray-600">Manage your room reservations</Text>
+        <Text className="text-3xl font-bold text-gray-900 mb-2">
+          My Bookings
+        </Text>
+        <Text className="text-base text-gray-600">
+          Manage your room reservations
+        </Text>
       </Animated.View>
 
       {/* Error Message */}
@@ -324,21 +366,25 @@ export default function BookingsScreen() {
 
       {/* Filters */}
       <View className="mb-4">
-        <Text className="text-sm font-semibold text-gray-900 mb-2">Filter by Status</Text>
+        <Text className="text-sm font-semibold text-gray-900 mb-2">
+          Filter by Status
+        </Text>
         <View className="flex-row flex-wrap gap-2">
           <TouchableOpacity
             onPress={() => {
               lightImpact();
-              setFilterStatus('all');
+              setFilterStatus("all");
             }}
             className={`px-4 py-2 rounded-full border ${
-              filterStatus === 'all' ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'
+              filterStatus === "all"
+                ? "bg-blue-600 border-blue-600"
+                : "bg-white border-gray-300"
             }`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-sm font-medium ${
-                filterStatus === 'all' ? 'text-white' : 'text-gray-700'
+                filterStatus === "all" ? "text-white" : "text-gray-700"
               }`}
             >
               Active
@@ -348,18 +394,18 @@ export default function BookingsScreen() {
           <TouchableOpacity
             onPress={() => {
               lightImpact();
-              setFilterStatus('confirmed' as BookingStatus);
+              setFilterStatus("confirmed" as BookingStatus);
             }}
             className={`px-4 py-2 rounded-full border ${
-              filterStatus === 'confirmed'
-                ? 'bg-blue-600 border-blue-600'
-                : 'bg-white border-gray-300'
+              filterStatus === "confirmed"
+                ? "bg-blue-600 border-blue-600"
+                : "bg-white border-gray-300"
             }`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-sm font-medium ${
-                filterStatus === 'confirmed' ? 'text-white' : 'text-gray-700'
+                filterStatus === "confirmed" ? "text-white" : "text-gray-700"
               }`}
             >
               Upcoming
@@ -369,18 +415,18 @@ export default function BookingsScreen() {
           <TouchableOpacity
             onPress={() => {
               lightImpact();
-              setFilterStatus('completed' as BookingStatus);
+              setFilterStatus("completed" as BookingStatus);
             }}
             className={`px-4 py-2 rounded-full border ${
-              filterStatus === 'completed'
-                ? 'bg-blue-600 border-blue-600'
-                : 'bg-white border-gray-300'
+              filterStatus === "completed"
+                ? "bg-blue-600 border-blue-600"
+                : "bg-white border-gray-300"
             }`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-sm font-medium ${
-                filterStatus === 'completed' ? 'text-white' : 'text-gray-700'
+                filterStatus === "completed" ? "text-white" : "text-gray-700"
               }`}
             >
               Past
@@ -390,18 +436,18 @@ export default function BookingsScreen() {
           <TouchableOpacity
             onPress={() => {
               lightImpact();
-              setFilterStatus('cancelled' as BookingStatus);
+              setFilterStatus("cancelled" as BookingStatus);
             }}
             className={`px-4 py-2 rounded-full border ${
-              filterStatus === 'cancelled'
-                ? 'bg-blue-600 border-blue-600'
-                : 'bg-white border-gray-300'
+              filterStatus === "cancelled"
+                ? "bg-blue-600 border-blue-600"
+                : "bg-white border-gray-300"
             }`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-sm font-medium ${
-                filterStatus === 'cancelled' ? 'text-white' : 'text-gray-700'
+                filterStatus === "cancelled" ? "text-white" : "text-gray-700"
               }`}
             >
               Cancelled
@@ -413,7 +459,8 @@ export default function BookingsScreen() {
       {/* Results Count */}
       <View className="mb-4">
         <Text className="text-sm text-gray-600">
-          {filteredBookings.length} {filteredBookings.length === 1 ? 'booking' : 'bookings'} found
+          {filteredBookings.length}{" "}
+          {filteredBookings.length === 1 ? "booking" : "bookings"} found
         </Text>
       </View>
     </View>
@@ -422,14 +469,16 @@ export default function BookingsScreen() {
   const renderListEmpty = () => (
     <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-200 mx-6">
       <Text className="text-4xl mb-3">📅</Text>
-      <Text className="text-xl font-bold text-gray-900 mb-2 text-center">No bookings found</Text>
+      <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
+        No bookings found
+      </Text>
       <Text className="text-sm text-gray-600 text-center mb-4">
         You haven't made any bookings yet. Browse rooms to get started!
       </Text>
       <TouchableOpacity
         onPress={() => {
           mediumImpact();
-          router.push('/rooms' as any);
+          router.push("/rooms" as any);
         }}
         className="bg-blue-600 rounded-lg px-6 py-3"
         activeOpacity={0.7}

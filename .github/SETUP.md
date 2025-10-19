@@ -20,6 +20,7 @@ Navigate to your repository on GitHub:
 #### For Mobile Deployment (EAS)
 
 **EXPO_TOKEN**
+
 - Get your token by running locally:
   ```bash
   npx eas-cli login
@@ -31,6 +32,7 @@ Navigate to your repository on GitHub:
 #### For Supabase Migrations
 
 **SUPABASE_ACCESS_TOKEN**
+
 1. Go to https://supabase.com/dashboard/account/tokens
 2. Click "Generate new token"
 3. Give it a name (e.g., "GitHub Actions")
@@ -38,12 +40,14 @@ Navigate to your repository on GitHub:
 5. Add as secret with name: `SUPABASE_ACCESS_TOKEN`
 
 **SUPABASE_PROJECT_REF**
+
 1. Go to your Supabase project dashboard
 2. Go to Settings → General
 3. Copy the "Reference ID" (e.g., `nladwgkecjkcjsdawzoc`)
 4. Add as secret with name: `SUPABASE_PROJECT_REF`
 
 **SUPABASE_DB_PASSWORD**
+
 1. This is your database password from when you created the project
 2. If you don't have it, you can reset it in Supabase dashboard
 3. Go to Settings → Database → Reset Database Password
@@ -51,12 +55,12 @@ Navigate to your repository on GitHub:
 
 ### Summary of Secrets
 
-| Secret Name              | Description                        | Where to Get It                          |
-|-------------------------|------------------------------------|------------------------------------------|
-| `EXPO_TOKEN`            | Expo authentication token          | `eas whoami --json`                      |
-| `SUPABASE_ACCESS_TOKEN` | Supabase API access token          | supabase.com/dashboard/account/tokens    |
-| `SUPABASE_PROJECT_REF`  | Supabase project reference ID      | Project Settings → General               |
-| `SUPABASE_DB_PASSWORD`  | Supabase database password         | Project Settings → Database              |
+| Secret Name             | Description                   | Where to Get It                       |
+| ----------------------- | ----------------------------- | ------------------------------------- |
+| `EXPO_TOKEN`            | Expo authentication token     | `eas whoami --json`                   |
+| `SUPABASE_ACCESS_TOKEN` | Supabase API access token     | supabase.com/dashboard/account/tokens |
+| `SUPABASE_PROJECT_REF`  | Supabase project reference ID | Project Settings → General            |
+| `SUPABASE_DB_PASSWORD`  | Supabase database password    | Project Settings → Database           |
 
 ## Step 2: Configure Branch Protection
 
@@ -68,6 +72,7 @@ Navigate to your repository on GitHub:
 **Branch name pattern:** `main`
 
 **Protect matching branches:**
+
 - ✅ Require a pull request before merging
   - ✅ Require approvals: 1 (can be adjusted based on team size)
   - ✅ Dismiss stale pull request approvals when new commits are pushed
@@ -119,6 +124,7 @@ Click "Create" or "Save changes" at the bottom.
 ### Configure Automatic Deployments
 
 Vercel automatically deploys:
+
 - **Production:** Every push to `main` branch
 - **Preview:** Every pull request
 
@@ -136,6 +142,7 @@ cat eas.json
 ```
 
 Should show:
+
 - Development profile with internal distribution
 - Production profile with auto-increment
 - Submit configuration with Apple credentials
@@ -145,6 +152,7 @@ Should show:
 ### Create a Test PR
 
 1. Create a feature branch:
+
    ```bash
    git checkout -b test/ci-pipeline
    ```
@@ -152,6 +160,7 @@ Should show:
 2. Make a small change (e.g., update CONTRIBUTING.md)
 
 3. Commit and push:
+
    ```bash
    git add .
    git commit -m "test(ci): Verify CI/CD pipeline setup"
@@ -179,14 +188,17 @@ Should show:
 ## Step 6: Monitor Deployments
 
 ### Web (Vercel)
+
 - Dashboard: https://vercel.com/dashboard
 - View deployments, logs, and analytics
 
 ### Mobile (EAS)
+
 - Dashboard: https://expo.dev/accounts/yenlhs/projects/roombooking
 - View builds, submissions, and TestFlight status
 
 ### Supabase
+
 - Dashboard: https://supabase.com/dashboard/project/[project-ref]
 - View migrations, database status, and logs
 
@@ -195,25 +207,30 @@ Should show:
 ### CI Checks Failing
 
 **Type check errors:**
+
 - Run `npm run type-check --workspace apps/web` locally
 - Fix type errors before pushing
 
 **Lint errors:**
+
 - Run `npm run lint --workspace apps/web` locally
 - Fix lint errors or update ESLint config
 
 **Build errors:**
+
 - Ensure all dependencies are installed
 - Check for missing environment variables
 
 ### Mobile Deployment Issues
 
 **EAS build fails:**
+
 - Check EXPO_TOKEN is valid
 - Verify eas.json configuration
 - Check build logs in EAS dashboard
 
 **TestFlight submission fails:**
+
 - Verify Apple credentials in EAS
 - Check App Store Connect status
 - Review submission logs
@@ -221,6 +238,7 @@ Should show:
 ### Supabase Migration Fails
 
 **Migration errors:**
+
 - Test migrations locally first: `supabase db reset`
 - Check SQL syntax
 - Verify migration order and dependencies
@@ -229,11 +247,13 @@ Should show:
 ### Vercel Deployment Issues
 
 **Build fails:**
+
 - Check environment variables in Vercel dashboard
 - Verify build command and output directory
 - Review build logs in Vercel
 
 **Preview deployment not created:**
+
 - Ensure Vercel GitHub app is installed
 - Check repository permissions
 - Verify root directory is set to `apps/web`

@@ -3,6 +3,7 @@
 ## Overview
 
 The Room Booking System supports two types of notifications:
+
 1. **Push Notifications** - Mobile app notifications via Expo Push Service
 2. **Email Notifications** - Email notifications for booking events
 
@@ -11,9 +12,11 @@ The Room Booking System supports two types of notifications:
 ### Database Schema
 
 #### Push Tokens Table (`push_tokens`)
+
 Stores push notification tokens for registered mobile devices.
 
 **Columns:**
+
 - `id` - Unique token ID
 - `user_id` - User who owns the device
 - `token` - Expo/FCM/APNS push token
@@ -27,9 +30,11 @@ Stores push notification tokens for registered mobile devices.
 - `created_at`, `updated_at` - Timestamps
 
 #### Notification Preferences Table (`notification_preferences`)
+
 User preferences for email and push notifications.
 
 **Columns:**
+
 - `id` - Unique preference ID
 - `user_id` - User who owns these preferences
 - `email_enabled` - Master email toggle
@@ -45,9 +50,11 @@ User preferences for email and push notifications.
 - `created_at`, `updated_at` - Timestamps
 
 #### Notification Log Table (`notification_log`)
+
 Audit log of all sent notifications.
 
 **Columns:**
+
 - `id` - Unique log entry ID
 - `user_id` - Recipient user ID
 - `booking_id` - Related booking ID
@@ -67,12 +74,14 @@ Audit log of all sent notifications.
 ### Setup
 
 1. **Install Dependencies**
+
    ```bash
    cd apps/mobile
    pnpm add expo-notifications expo-device expo-constants
    ```
 
 2. **Configure app.json**
+
    ```json
    {
      "expo": {
@@ -188,6 +197,7 @@ Pre-built HTML email templates are available:
 3. **Booking Reminder** - Sent before a booking starts
 
 All templates include:
+
 - Responsive design
 - Inline CSS for email client compatibility
 - Plain text fallback
@@ -231,19 +241,19 @@ await sendEmail({
 ### Client-Side Service
 
 ```typescript
-import { createNotificationService } from '@workspace/supabase';
+import { createNotificationService } from "@workspace/supabase";
 
 const notificationService = createNotificationService(supabase);
 
 // Register push token
 await notificationService.registerPushToken({
-  token: 'ExponentPushToken[xxx]',
-  token_type: 'expo',
-  platform: 'ios',
+  token: "ExponentPushToken[xxx]",
+  token_type: "expo",
+  platform: "ios",
 });
 
 // Deactivate token (on logout)
-await notificationService.deactivatePushToken('ExponentPushToken[xxx]');
+await notificationService.deactivatePushToken("ExponentPushToken[xxx]");
 
 // Get notification preferences
 const prefs = await notificationService.getNotificationPreferences();
@@ -286,8 +296,8 @@ Notifications are automatically triggered for:
 ```typescript
 // Send notification for a specific booking
 await notificationService.sendBookingNotification({
-  bookingId: 'booking-123',
-  notificationType: 'booking_confirmed',
+  bookingId: "booking-123",
+  notificationType: "booking_confirmed",
 });
 ```
 
@@ -296,16 +306,19 @@ await notificationService.sendBookingNotification({
 Users can customize notification preferences:
 
 ### Email Preferences
+
 - Master email toggle
 - Per-event toggles (confirmed, cancelled, reminder)
 - Reminder timing (minutes before booking)
 
 ### Push Preferences
+
 - Master push toggle
 - Per-event toggles (confirmed, cancelled, reminder)
 - Reminder timing (minutes before booking)
 
 ### Default Settings
+
 - All notifications enabled by default
 - Email reminders: 30 minutes before
 - Push reminders: 15 minutes before
@@ -340,12 +353,14 @@ fs.writeFileSync('preview.html', email.html);
 ## Security & Privacy
 
 ### Push Token Security
+
 - Tokens are user-scoped with RLS policies
 - Only active tokens are used for sending
 - Tokens are automatically deactivated on logout
 - Old/unused tokens are periodically cleaned
 
 ### Email Privacy
+
 - Users can opt out of any notification type
 - Notification logs are user-scoped
 - Email addresses are never shared with third parties
@@ -374,22 +389,25 @@ CREATE POLICY "Users can view own logs"
 ### Push Notifications Not Received
 
 1. **Check permissions**
+
    ```typescript
    const { status } = await Notifications.getPermissionsAsync();
-   console.log('Permission status:', status);
+   console.log("Permission status:", status);
    ```
 
 2. **Verify token registration**
+
    ```typescript
    const tokens = await notificationService.getPushTokens();
-   console.log('Active tokens:', tokens);
+   console.log("Active tokens:", tokens);
    ```
 
 3. **Check notification log**
+
    ```typescript
    const logs = await notificationService.getNotificationLogs();
-   const failed = logs.filter(l => l.status === 'failed');
-   console.log('Failed notifications:', failed);
+   const failed = logs.filter((l) => l.status === "failed");
+   console.log("Failed notifications:", failed);
    ```
 
 4. **Test notification manually**
@@ -401,9 +419,10 @@ CREATE POLICY "Users can view own logs"
 
 1. **Check spam folder**
 2. **Verify email preferences**
+
    ```typescript
    const prefs = await notificationService.getNotificationPreferences();
-   console.log('Email enabled:', prefs?.email_enabled);
+   console.log("Email enabled:", prefs?.email_enabled);
    ```
 
 3. **Check notification log for errors**
@@ -417,16 +436,19 @@ CREATE POLICY "Users can view own logs"
 ## Performance Considerations
 
 ### Push Notification Batching
+
 - Batch multiple notifications when possible
 - Use Expo's batch API for multiple recipients
 - Limit to 100 notifications per request
 
 ### Email Rate Limiting
+
 - Respect email service provider limits
 - Implement exponential backoff for failures
 - Queue emails during high traffic
 
 ### Database Cleanup
+
 ```sql
 -- Clean up old notification logs (older than 90 days)
 DELETE FROM notification_log

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,19 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { supabase } from '../../lib/supabase';
-import { createBookingService, createRoomService, createNotificationService } from '@workspace/supabase';
-import type { BookingWithDetails, TimeSlot, RoomAvailability } from '@workspace/types';
+} from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { supabase } from "../../lib/supabase";
+import {
+  createBookingService,
+  createRoomService,
+  createNotificationService,
+} from "@workspace/supabase";
+import type {
+  BookingWithDetails,
+  TimeSlot,
+  RoomAvailability,
+} from "@workspace/types";
 
 export default function EditBookingScreen() {
   const router = useRouter();
@@ -23,14 +31,16 @@ export default function EditBookingScreen() {
   const [error, setError] = useState<string | null>(null);
 
   // Booking form state
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [availability, setAvailability] = useState<RoomAvailability | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [availability, setAvailability] = useState<RoomAvailability | null>(
+    null,
+  );
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes] = useState("");
 
   // Step management
-  const [step, setStep] = useState<'date' | 'slot' | 'confirm'>('date');
+  const [step, setStep] = useState<"date" | "slot" | "confirm">("date");
 
   const bookingService = createBookingService(supabase);
   const roomService = createRoomService(supabase);
@@ -46,7 +56,7 @@ export default function EditBookingScreen() {
       const data = await bookingService.getBookingById(bookingId as string);
       setBooking(data);
       setSelectedDate(data.booking_date);
-      setNotes(data.notes || '');
+      setNotes(data.notes || "");
 
       // Set initial selected slot
       setSelectedSlot({
@@ -55,7 +65,7 @@ export default function EditBookingScreen() {
         is_available: true,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load booking');
+      setError(err instanceof Error ? err.message : "Failed to load booking");
     } finally {
       setLoading(false);
     }
@@ -68,7 +78,7 @@ export default function EditBookingScreen() {
     for (let i = 0; i < 14; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      dates.push(date.toISOString().split('T')[0]);
+      dates.push(date.toISOString().split("T")[0]);
     }
 
     return dates;
@@ -81,22 +91,24 @@ export default function EditBookingScreen() {
     const dateOnly = new Date(date);
     dateOnly.setHours(0, 0, 0, 0);
 
-    const diffDays = Math.floor((dateOnly.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.floor(
+      (dateOnly.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Tomorrow";
 
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const formatTime = (timeString: string): string => {
-    const [hours, minutes] = timeString.split(':');
+    const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const hour12 = hour % 12 || 12;
     return `${hour12}:${minutes} ${ampm}`;
   };
@@ -109,11 +121,16 @@ export default function EditBookingScreen() {
 
     try {
       if (!booking) return;
-      const availabilityData = await bookingService.getRoomAvailability(booking.room_id, date);
+      const availabilityData = await bookingService.getRoomAvailability(
+        booking.room_id,
+        date,
+      );
       setAvailability(availabilityData);
-      setStep('slot');
+      setStep("slot");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load time slots');
+      setError(
+        err instanceof Error ? err.message : "Failed to load time slots",
+      );
     } finally {
       setLoadingSlots(false);
     }
@@ -122,12 +139,12 @@ export default function EditBookingScreen() {
   const handleSlotSelect = (slot: TimeSlot) => {
     if (!slot.is_available) return;
     setSelectedSlot(slot);
-    setStep('confirm');
+    setStep("confirm");
   };
 
   const handleUpdateBooking = async () => {
     if (!selectedSlot || !selectedDate || !booking) {
-      Alert.alert('Error', 'Please select a date and time slot');
+      Alert.alert("Error", "Please select a date and time slot");
       return;
     }
 
@@ -154,22 +171,28 @@ export default function EditBookingScreen() {
         try {
           await notificationService.sendBookingNotification({
             bookingId: bookingId as string,
-            notificationType: 'booking_updated',
+            notificationType: "booking_updated",
           });
-          console.log('[Booking] Update notification sent');
+          console.log("[Booking] Update notification sent");
         } catch (notifError) {
-          console.warn('[Booking] Failed to send update notification:', notifError);
+          console.warn(
+            "[Booking] Failed to send update notification:",
+            notifError,
+          );
         }
       }
 
-      Alert.alert('Success!', 'Your booking has been updated', [
+      Alert.alert("Success!", "Your booking has been updated", [
         {
-          text: 'OK',
+          text: "OK",
           onPress: () => router.back(),
         },
       ]);
     } catch (err) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'Failed to update booking');
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Failed to update booking",
+      );
     } finally {
       setUpdating(false);
     }
@@ -205,12 +228,16 @@ export default function EditBookingScreen() {
         <View className="p-6 pb-24">
           {/* Back Button */}
           <TouchableOpacity onPress={() => router.back()} className="mb-6">
-            <Text className="text-blue-600 font-semibold text-base">← Back</Text>
+            <Text className="text-blue-600 font-semibold text-base">
+              ← Back
+            </Text>
           </TouchableOpacity>
 
           {/* Header */}
           <View className="mb-6">
-            <Text className="text-3xl font-bold text-gray-900 mb-2">Edit Booking</Text>
+            <Text className="text-3xl font-bold text-gray-900 mb-2">
+              Edit Booking
+            </Text>
             <Text className="text-xl text-gray-700">{booking.room?.name}</Text>
           </View>
 
@@ -219,7 +246,7 @@ export default function EditBookingScreen() {
             <View className="flex-1 items-center">
               <View
                 className={`w-10 h-10 rounded-full items-center justify-center ${
-                  step === 'date' ? 'bg-blue-600' : 'bg-green-600'
+                  step === "date" ? "bg-blue-600" : "bg-green-600"
                 }`}
               >
                 <Text className="text-white font-bold">1</Text>
@@ -230,11 +257,15 @@ export default function EditBookingScreen() {
             <View className="flex-1 items-center">
               <View
                 className={`w-10 h-10 rounded-full items-center justify-center ${
-                  step === 'slot' ? 'bg-blue-600' : step === 'confirm' ? 'bg-green-600' : 'bg-gray-300'
+                  step === "slot"
+                    ? "bg-blue-600"
+                    : step === "confirm"
+                      ? "bg-green-600"
+                      : "bg-gray-300"
                 }`}
               >
                 <Text
-                  className={`${step === 'date' ? 'text-gray-500' : 'text-white'} font-bold`}
+                  className={`${step === "date" ? "text-gray-500" : "text-white"} font-bold`}
                 >
                   2
                 </Text>
@@ -245,11 +276,11 @@ export default function EditBookingScreen() {
             <View className="flex-1 items-center">
               <View
                 className={`w-10 h-10 rounded-full items-center justify-center ${
-                  step === 'confirm' ? 'bg-blue-600' : 'bg-gray-300'
+                  step === "confirm" ? "bg-blue-600" : "bg-gray-300"
                 }`}
               >
                 <Text
-                  className={`${step === 'confirm' ? 'text-white' : 'text-gray-500'} font-bold`}
+                  className={`${step === "confirm" ? "text-white" : "text-gray-500"} font-bold`}
                 >
                   3
                 </Text>
@@ -266,16 +297,20 @@ export default function EditBookingScreen() {
           )}
 
           {/* Step 1: Date Selection */}
-          {step === 'date' && (
+          {step === "date" && (
             <View>
-              <Text className="text-xl font-bold text-gray-900 mb-4">Select a Date</Text>
+              <Text className="text-xl font-bold text-gray-900 mb-4">
+                Select a Date
+              </Text>
               <View className="gap-3">
                 {generateDateOptions().map((date) => (
                   <TouchableOpacity
                     key={date}
                     onPress={() => handleDateSelect(date)}
                     className={`bg-white rounded-xl p-4 border-2 ${
-                      selectedDate === date ? 'border-blue-600' : 'border-gray-200'
+                      selectedDate === date
+                        ? "border-blue-600"
+                        : "border-gray-200"
                     }`}
                   >
                     <Text className="text-lg font-semibold text-gray-900">
@@ -289,13 +324,20 @@ export default function EditBookingScreen() {
           )}
 
           {/* Step 2: Time Slot Selection */}
-          {step === 'slot' && (
+          {step === "slot" && (
             <View>
-              <TouchableOpacity onPress={() => setStep('date')} className="mb-4">
-                <Text className="text-blue-600 font-semibold">← Change Date</Text>
+              <TouchableOpacity
+                onPress={() => setStep("date")}
+                className="mb-4"
+              >
+                <Text className="text-blue-600 font-semibold">
+                  ← Change Date
+                </Text>
               </TouchableOpacity>
 
-              <Text className="text-xl font-bold text-gray-900 mb-2">Select a Time Slot</Text>
+              <Text className="text-xl font-bold text-gray-900 mb-2">
+                Select a Time Slot
+              </Text>
               <Text className="text-base text-gray-600 mb-4">
                 {formatDateDisplay(selectedDate)} • {selectedDate}
               </Text>
@@ -303,7 +345,9 @@ export default function EditBookingScreen() {
               {loadingSlots ? (
                 <View className="py-8 items-center">
                   <ActivityIndicator size="large" color="#2563eb" />
-                  <Text className="text-gray-600 mt-4">Loading available slots...</Text>
+                  <Text className="text-gray-600 mt-4">
+                    Loading available slots...
+                  </Text>
                 </View>
               ) : availability && availability.slots.length > 0 ? (
                 <View className="gap-3">
@@ -323,19 +367,20 @@ export default function EditBookingScreen() {
                         disabled={!isAvailable}
                         className={`rounded-xl p-4 border-2 ${
                           !isAvailable
-                            ? 'bg-gray-100 border-gray-200'
+                            ? "bg-gray-100 border-gray-200"
                             : selectedSlot?.start_time === slot.start_time
-                              ? 'bg-blue-50 border-blue-600'
-                              : 'bg-white border-gray-200'
+                              ? "bg-blue-50 border-blue-600"
+                              : "bg-white border-gray-200"
                         }`}
                       >
                         <View className="flex-row justify-between items-center">
                           <Text
                             className={`text-lg font-semibold ${
-                              !isAvailable ? 'text-gray-400' : 'text-gray-900'
+                              !isAvailable ? "text-gray-400" : "text-gray-900"
                             }`}
                           >
-                            {formatTime(slot.start_time)} - {formatTime(slot.end_time)}
+                            {formatTime(slot.start_time)} -{" "}
+                            {formatTime(slot.end_time)}
                           </Text>
                           {!isAvailable && !isCurrentSlot && (
                             <View className="bg-red-100 px-3 py-1 rounded-full">
@@ -359,7 +404,9 @@ export default function EditBookingScreen() {
               ) : (
                 <View className="bg-white rounded-xl p-8 items-center">
                   <Text className="text-4xl mb-3">😔</Text>
-                  <Text className="text-lg font-bold text-gray-900 mb-2">No slots available</Text>
+                  <Text className="text-lg font-bold text-gray-900 mb-2">
+                    No slots available
+                  </Text>
                   <Text className="text-sm text-gray-600 text-center">
                     Please try a different date
                   </Text>
@@ -369,23 +416,34 @@ export default function EditBookingScreen() {
           )}
 
           {/* Step 3: Confirmation */}
-          {step === 'confirm' && selectedSlot && (
+          {step === "confirm" && selectedSlot && (
             <View>
-              <TouchableOpacity onPress={() => setStep('slot')} className="mb-4">
-                <Text className="text-blue-600 font-semibold">← Change Time</Text>
+              <TouchableOpacity
+                onPress={() => setStep("slot")}
+                className="mb-4"
+              >
+                <Text className="text-blue-600 font-semibold">
+                  ← Change Time
+                </Text>
               </TouchableOpacity>
 
-              <Text className="text-xl font-bold text-gray-900 mb-4">Confirm Changes</Text>
+              <Text className="text-xl font-bold text-gray-900 mb-4">
+                Confirm Changes
+              </Text>
 
               {/* Booking Summary Card */}
               <View className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200 mb-4">
-                <Text className="text-lg font-bold text-gray-900 mb-4">Updated Booking Details</Text>
+                <Text className="text-lg font-bold text-gray-900 mb-4">
+                  Updated Booking Details
+                </Text>
 
                 <View className="space-y-3">
                   <View className="flex-row items-center">
                     <Text className="text-2xl mr-3">🏢</Text>
                     <View className="flex-1">
-                      <Text className="text-xs text-gray-500 uppercase">Room</Text>
+                      <Text className="text-xs text-gray-500 uppercase">
+                        Room
+                      </Text>
                       <Text className="text-base font-semibold text-gray-900">
                         {booking.room?.name}
                       </Text>
@@ -395,7 +453,9 @@ export default function EditBookingScreen() {
                   <View className="flex-row items-center">
                     <Text className="text-2xl mr-3">📅</Text>
                     <View className="flex-1">
-                      <Text className="text-xs text-gray-500 uppercase">Date</Text>
+                      <Text className="text-xs text-gray-500 uppercase">
+                        Date
+                      </Text>
                       <Text className="text-base font-semibold text-gray-900">
                         {formatDateDisplay(selectedDate)} • {selectedDate}
                       </Text>
@@ -405,9 +465,12 @@ export default function EditBookingScreen() {
                   <View className="flex-row items-center">
                     <Text className="text-2xl mr-3">🕐</Text>
                     <View className="flex-1">
-                      <Text className="text-xs text-gray-500 uppercase">Time</Text>
+                      <Text className="text-xs text-gray-500 uppercase">
+                        Time
+                      </Text>
                       <Text className="text-base font-semibold text-gray-900">
-                        {formatTime(selectedSlot.start_time)} - {formatTime(selectedSlot.end_time)}
+                        {formatTime(selectedSlot.start_time)} -{" "}
+                        {formatTime(selectedSlot.end_time)}
                       </Text>
                     </View>
                   </View>
@@ -429,7 +492,9 @@ export default function EditBookingScreen() {
                   numberOfLines={3}
                   maxLength={500}
                 />
-                <Text className="text-xs text-gray-500 mt-2">{notes.length}/500 characters</Text>
+                <Text className="text-xs text-gray-500 mt-2">
+                  {notes.length}/500 characters
+                </Text>
               </View>
 
               {/* Action Buttons */}
@@ -439,19 +504,23 @@ export default function EditBookingScreen() {
                   disabled={updating}
                   className="flex-1 bg-gray-200 rounded-2xl py-4 items-center"
                 >
-                  <Text className="text-gray-700 font-bold text-lg">Cancel</Text>
+                  <Text className="text-gray-700 font-bold text-lg">
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleUpdateBooking}
                   disabled={updating}
                   className={`flex-1 bg-blue-600 rounded-2xl py-4 items-center shadow-sm ${
-                    updating ? 'opacity-70' : ''
+                    updating ? "opacity-70" : ""
                   }`}
                 >
                   {updating ? (
                     <ActivityIndicator color="white" />
                   ) : (
-                    <Text className="text-white font-bold text-lg">Update Booking</Text>
+                    <Text className="text-white font-bold text-lg">
+                      Update Booking
+                    </Text>
                   )}
                 </TouchableOpacity>
               </View>

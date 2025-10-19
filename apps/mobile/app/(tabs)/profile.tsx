@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,22 +8,25 @@ import {
   Image,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { useAuth } from '../../lib/auth/context';
-import { useRouter } from 'expo-router';
-import { warningFeedback } from '../../lib/haptics';
-import { supabase } from '../../lib/supabase';
-import { createProfileService } from '@workspace/supabase';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { updateProfileSchema, type UpdateProfileInput } from '@workspace/validation';
-import * as ImagePicker from 'expo-image-picker';
+} from "react-native";
+import { useAuth } from "../../lib/auth/context";
+import { useRouter } from "expo-router";
+import { warningFeedback } from "../../lib/haptics";
+import { supabase } from "../../lib/supabase";
+import { createProfileService } from "@workspace/supabase";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  updateProfileSchema,
+  type UpdateProfileInput,
+} from "@workspace/validation";
+import * as ImagePicker from "expo-image-picker";
 import {
   testBookingConfirmation,
   testBookingCancellation,
   testBookingReminder,
   testImmediateNotification,
-} from '../../lib/test-notifications';
+} from "../../lib/test-notifications";
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
@@ -58,11 +61,11 @@ export default function ProfileScreen() {
       setProfile(data);
       reset({
         full_name: data.full_name,
-        phone: data.phone || '',
-        avatar_url: data.avatar_url || '',
+        phone: data.phone || "",
+        avatar_url: data.avatar_url || "",
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load profile');
+      setError(err instanceof Error ? err.message : "Failed to load profile");
     } finally {
       setLoading(false);
     }
@@ -77,13 +80,13 @@ export default function ProfileScreen() {
       await profileService.updateProfile(data);
       await loadProfile();
 
-      setSuccess('Profile updated successfully!');
+      setSuccess("Profile updated successfully!");
       setIsEditing(false);
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
+      setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
       setLoading(false);
     }
@@ -91,15 +94,19 @@ export default function ProfileScreen() {
 
   const pickImage = async () => {
     try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-      if (status !== 'granted') {
-        Alert.alert('Permission needed', 'Please grant camera roll permissions to upload an avatar');
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission needed",
+          "Please grant camera roll permissions to upload an avatar",
+        );
         return;
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: 'images',
+        mediaTypes: "images",
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
@@ -109,7 +116,7 @@ export default function ProfileScreen() {
         await uploadAvatar(result.assets[0].uri);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to pick image');
+      setError(err instanceof Error ? err.message : "Failed to pick image");
     }
   };
 
@@ -124,10 +131,10 @@ export default function ProfileScreen() {
       const avatarUrl = await profileService.uploadAvatar(blob);
 
       await loadProfile();
-      setSuccess('Avatar uploaded successfully!');
+      setSuccess("Avatar uploaded successfully!");
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to upload avatar');
+      setError(err instanceof Error ? err.message : "Failed to upload avatar");
     } finally {
       setUploading(false);
     }
@@ -138,8 +145,8 @@ export default function ProfileScreen() {
     setError(null);
     reset({
       full_name: profile?.full_name,
-      phone: profile?.phone || '',
-      avatar_url: profile?.avatar_url || '',
+      phone: profile?.phone || "",
+      avatar_url: profile?.avatar_url || "",
     });
   };
 
@@ -147,10 +154,10 @@ export default function ProfileScreen() {
     try {
       warningFeedback();
       await signOut();
-      router.replace('/');
+      router.replace("/");
     } catch (error) {
-      console.error('Error signing out:', error);
-      Alert.alert('Error', 'Failed to sign out. Please try again.');
+      console.error("Error signing out:", error);
+      Alert.alert("Error", "Failed to sign out. Please try again.");
     }
   };
 
@@ -193,7 +200,7 @@ export default function ProfileScreen() {
               </View>
             </TouchableOpacity>
             <Text className="text-2xl font-bold text-gray-900 mt-4">
-              {profile?.full_name || 'User'}
+              {profile?.full_name || "User"}
             </Text>
             <Text className="text-sm text-gray-500">{profile?.email}</Text>
           </View>
@@ -201,7 +208,9 @@ export default function ProfileScreen() {
           {/* Success Message */}
           {success && (
             <View className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-              <Text className="text-sm text-green-800 text-center">{success}</Text>
+              <Text className="text-sm text-green-800 text-center">
+                {success}
+              </Text>
             </View>
           )}
 
@@ -216,14 +225,16 @@ export default function ProfileScreen() {
             <View className="gap-4">
               {/* Full Name Field */}
               <View>
-                <Text className="text-sm font-semibold text-gray-900 mb-2">Full Name</Text>
+                <Text className="text-sm font-semibold text-gray-900 mb-2">
+                  Full Name
+                </Text>
                 <Controller
                   control={control}
                   name="full_name"
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       className={`w-full border ${
-                        errors.full_name ? 'border-red-500' : 'border-gray-300'
+                        errors.full_name ? "border-red-500" : "border-gray-300"
                       } rounded-lg px-4 py-3 text-base bg-white text-gray-900`}
                       placeholder="Enter your full name"
                       placeholderTextColor="#9CA3AF"
@@ -235,7 +246,9 @@ export default function ProfileScreen() {
                   )}
                 />
                 {errors.full_name && (
-                  <Text className="text-sm text-red-600 mt-1">{errors.full_name.message}</Text>
+                  <Text className="text-sm text-red-600 mt-1">
+                    {errors.full_name.message}
+                  </Text>
                 )}
               </View>
 
@@ -250,7 +263,7 @@ export default function ProfileScreen() {
                   render={({ field: { onChange, onBlur, value } }) => (
                     <TextInput
                       className={`w-full border ${
-                        errors.phone ? 'border-red-500' : 'border-gray-300'
+                        errors.phone ? "border-red-500" : "border-gray-300"
                       } rounded-lg px-4 py-3 text-base bg-white text-gray-900`}
                       placeholder="1234567890"
                       placeholderTextColor="#9CA3AF"
@@ -263,7 +276,9 @@ export default function ProfileScreen() {
                   )}
                 />
                 {errors.phone && (
-                  <Text className="text-sm text-red-600 mt-1">{errors.phone.message}</Text>
+                  <Text className="text-sm text-red-600 mt-1">
+                    {errors.phone.message}
+                  </Text>
                 )}
               </View>
 
@@ -280,7 +295,7 @@ export default function ProfileScreen() {
                   onPress={handleSubmit(onSubmit)}
                   disabled={loading}
                   className={`flex-1 bg-blue-600 rounded-lg py-3 items-center ${
-                    loading ? 'opacity-70' : ''
+                    loading ? "opacity-70" : ""
                   }`}
                 >
                   {loading ? (
@@ -297,21 +312,27 @@ export default function ProfileScreen() {
                 <Text className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
                   Full Name
                 </Text>
-                <Text className="text-base text-gray-900">{profile?.full_name || 'Not set'}</Text>
+                <Text className="text-base text-gray-900">
+                  {profile?.full_name || "Not set"}
+                </Text>
               </View>
 
               <View className="py-3 border-b border-gray-200">
                 <Text className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
                   Email
                 </Text>
-                <Text className="text-base text-gray-900">{profile?.email}</Text>
+                <Text className="text-base text-gray-900">
+                  {profile?.email}
+                </Text>
               </View>
 
               <View className="py-3 border-b border-gray-200">
                 <Text className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
                   Phone
                 </Text>
-                <Text className="text-base text-gray-900">{profile?.phone || 'Not set'}</Text>
+                <Text className="text-base text-gray-900">
+                  {profile?.phone || "Not set"}
+                </Text>
               </View>
 
               <TouchableOpacity
@@ -326,7 +347,9 @@ export default function ProfileScreen() {
 
         {/* Test Notifications Section (Development Only) */}
         <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-4">
-          <Text className="text-xl font-bold text-gray-900 mb-2">Test Notifications</Text>
+          <Text className="text-xl font-bold text-gray-900 mb-2">
+            Test Notifications
+          </Text>
           <Text className="text-sm text-gray-600 mb-4">
             Test push notifications on iOS simulator using local notifications
           </Text>
@@ -335,47 +358,59 @@ export default function ProfileScreen() {
             <TouchableOpacity
               onPress={async () => {
                 await testImmediateNotification();
-                Alert.alert('Success', 'Test notification sent!');
+                Alert.alert("Success", "Test notification sent!");
               }}
               className="bg-blue-600 rounded-lg py-3 items-center"
             >
-              <Text className="text-white font-bold">Send Test Notification</Text>
+              <Text className="text-white font-bold">
+                Send Test Notification
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={async () => {
                 await testBookingConfirmation();
-                Alert.alert('Success', 'Booking confirmation notification scheduled!');
+                Alert.alert(
+                  "Success",
+                  "Booking confirmation notification scheduled!",
+                );
               }}
               className="bg-green-600 rounded-lg py-3 items-center"
             >
-              <Text className="text-white font-bold">Test Booking Confirmed</Text>
+              <Text className="text-white font-bold">
+                Test Booking Confirmed
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={async () => {
                 await testBookingCancellation();
-                Alert.alert('Success', 'Cancellation notification scheduled!');
+                Alert.alert("Success", "Cancellation notification scheduled!");
               }}
               className="bg-red-600 rounded-lg py-3 items-center"
             >
-              <Text className="text-white font-bold">Test Booking Cancelled</Text>
+              <Text className="text-white font-bold">
+                Test Booking Cancelled
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={async () => {
                 await testBookingReminder();
-                Alert.alert('Success', 'Reminder notification scheduled!');
+                Alert.alert("Success", "Reminder notification scheduled!");
               }}
               className="bg-orange-600 rounded-lg py-3 items-center"
             >
-              <Text className="text-white font-bold">Test Booking Reminder</Text>
+              <Text className="text-white font-bold">
+                Test Booking Reminder
+              </Text>
             </TouchableOpacity>
           </View>
 
           <View className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <Text className="text-xs text-yellow-800">
-              💡 These are local notifications that work on simulator. Notifications will appear after 2 seconds.
+              💡 These are local notifications that work on simulator.
+              Notifications will appear after 2 seconds.
             </Text>
           </View>
         </View>

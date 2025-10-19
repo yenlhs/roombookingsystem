@@ -1,33 +1,37 @@
-import { z } from 'zod';
+import { z } from "zod";
 import {
   SubscriptionTierName,
   SubscriptionStatus,
   SubscriptionEventType,
-} from '@workspace/types';
+} from "@workspace/types";
 
 // Create checkout session schema
 export const createCheckoutSessionSchema = z.object({
-  tier_id: z.string().uuid('Invalid tier ID'),
-  success_url: z.string().url('Invalid success URL').optional(),
-  cancel_url: z.string().url('Invalid cancel URL').optional(),
+  tier_id: z.string().uuid("Invalid tier ID"),
+  success_url: z.string().url("Invalid success URL").optional(),
+  cancel_url: z.string().url("Invalid cancel URL").optional(),
 });
 
-export type CreateCheckoutSessionInput = z.infer<typeof createCheckoutSessionSchema>;
+export type CreateCheckoutSessionInput = z.infer<
+  typeof createCheckoutSessionSchema
+>;
 
 // Create portal session schema
 export const createPortalSessionSchema = z.object({
-  return_url: z.string().url('Invalid return URL').optional(),
+  return_url: z.string().url("Invalid return URL").optional(),
 });
 
-export type CreatePortalSessionInput = z.infer<typeof createPortalSessionSchema>;
+export type CreatePortalSessionInput = z.infer<
+  typeof createPortalSessionSchema
+>;
 
 // Subscription tier schema
 export const subscriptionTierSchema = z.object({
   id: z.string().uuid(),
   name: z.nativeEnum(SubscriptionTierName),
-  display_name: z.string().min(1, 'Display name is required'),
+  display_name: z.string().min(1, "Display name is required"),
   description: z.string().optional().nullable(),
-  price_monthly: z.number().nonnegative('Price must be non-negative'),
+  price_monthly: z.number().nonnegative("Price must be non-negative"),
   stripe_price_id: z.string().optional().nullable(),
   features: z.object({
     exclusive_rooms: z.boolean(),
@@ -73,7 +77,7 @@ export type SubscriptionEventInput = z.infer<typeof subscriptionEventSchema>;
 
 // Tier ID param schema
 export const tierIdSchema = z.object({
-  id: z.string().uuid('Invalid tier ID'),
+  id: z.string().uuid("Invalid tier ID"),
 });
 
 export type TierIdParam = z.infer<typeof tierIdSchema>;

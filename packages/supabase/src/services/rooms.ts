@@ -1,5 +1,11 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Room, RoomStatus, RoomFilters, CreateRoomInput, UpdateRoomInput } from '@workspace/types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type {
+  Room,
+  RoomStatus,
+  RoomFilters,
+  CreateRoomInput,
+  UpdateRoomInput,
+} from "@workspace/types";
 
 /**
  * Room Service
@@ -12,16 +18,21 @@ export class RoomService {
    * Get all rooms with optional filtering
    */
   async getRooms(filters?: RoomFilters): Promise<Room[]> {
-    let query = this.supabase.from('rooms').select('*').order('created_at', { ascending: false });
+    let query = this.supabase
+      .from("rooms")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     // Apply status filter
     if (filters?.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq("status", filters.status);
     }
 
     // Apply search filter
     if (filters?.search) {
-      query = query.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      query = query.or(
+        `name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
+      );
     }
 
     const { data, error } = await query;
@@ -38,10 +49,10 @@ export class RoomService {
    */
   async getActiveRooms(): Promise<Room[]> {
     const { data, error } = await this.supabase
-      .from('rooms')
-      .select('*')
-      .eq('status', 'active')
-      .order('name', { ascending: true });
+      .from("rooms")
+      .select("*")
+      .eq("status", "active")
+      .order("name", { ascending: true });
 
     if (error) {
       throw new Error(error.message);
@@ -55,9 +66,9 @@ export class RoomService {
    */
   async getRoomById(id: string): Promise<Room> {
     const { data, error } = await this.supabase
-      .from('rooms')
-      .select('*')
-      .eq('id', id)
+      .from("rooms")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (error) {
@@ -65,7 +76,7 @@ export class RoomService {
     }
 
     if (!data) {
-      throw new Error('Room not found');
+      throw new Error("Room not found");
     }
 
     return data;
@@ -81,7 +92,7 @@ export class RoomService {
     } = await this.supabase.auth.getUser();
 
     if (authError || !user) {
-      throw new Error('User not authenticated');
+      throw new Error("User not authenticated");
     }
 
     // Ensure times have proper format (HH:mm:ss)
@@ -93,7 +104,7 @@ export class RoomService {
       description: input.description || null,
       capacity: input.capacity || null,
       amenities: input.amenities || null,
-      status: input.status || 'active',
+      status: input.status || "active",
       operating_hours_start,
       operating_hours_end,
       slot_duration_minutes: input.slot_duration_minutes || 60,
@@ -102,7 +113,7 @@ export class RoomService {
     };
 
     const { data, error } = await this.supabase
-      .from('rooms')
+      .from("rooms")
       .insert(roomData)
       .select()
       .single();
@@ -122,16 +133,20 @@ export class RoomService {
 
     // Format times if provided
     if (updateData.operating_hours_start) {
-      updateData.operating_hours_start = this.formatTime(updateData.operating_hours_start);
+      updateData.operating_hours_start = this.formatTime(
+        updateData.operating_hours_start,
+      );
     }
     if (updateData.operating_hours_end) {
-      updateData.operating_hours_end = this.formatTime(updateData.operating_hours_end);
+      updateData.operating_hours_end = this.formatTime(
+        updateData.operating_hours_end,
+      );
     }
 
     const { data, error } = await this.supabase
-      .from('rooms')
+      .from("rooms")
       .update(updateData)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -140,7 +155,7 @@ export class RoomService {
     }
 
     if (!data) {
-      throw new Error('Room not found');
+      throw new Error("Room not found");
     }
 
     return data;
@@ -151,7 +166,7 @@ export class RoomService {
    * Note: This will fail if there are active bookings due to FK constraints
    */
   async deleteRoom(id: string): Promise<void> {
-    const { error } = await this.supabase.from('rooms').delete().eq('id', id);
+    const { error } = await this.supabase.from("rooms").delete().eq("id", id);
 
     if (error) {
       throw new Error(error.message);
@@ -163,9 +178,9 @@ export class RoomService {
    */
   async deactivateRoom(id: string): Promise<Room> {
     const { data, error } = await this.supabase
-      .from('rooms')
-      .update({ status: 'inactive' })
-      .eq('id', id)
+      .from("rooms")
+      .update({ status: "inactive" })
+      .eq("id", id)
       .select()
       .single();
 
@@ -174,7 +189,7 @@ export class RoomService {
     }
 
     if (!data) {
-      throw new Error('Room not found');
+      throw new Error("Room not found");
     }
 
     return data;
@@ -185,9 +200,9 @@ export class RoomService {
    */
   async activateRoom(id: string): Promise<Room> {
     const { data, error } = await this.supabase
-      .from('rooms')
-      .update({ status: 'active' })
-      .eq('id', id)
+      .from("rooms")
+      .update({ status: "active" })
+      .eq("id", id)
       .select()
       .single();
 
@@ -196,7 +211,7 @@ export class RoomService {
     }
 
     if (!data) {
-      throw new Error('Room not found');
+      throw new Error("Room not found");
     }
 
     return data;
@@ -209,15 +224,19 @@ export class RoomService {
    * @param index - Image index (for multiple images)
    * @returns Public URL of uploaded image
    */
-  async uploadRoomImage(roomId: string, file: File | Blob, index: number = 0): Promise<string> {
-    const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
+  async uploadRoomImage(
+    roomId: string,
+    file: File | Blob,
+    index: number = 0,
+  ): Promise<string> {
+    const fileExt = file instanceof File ? file.name.split(".").pop() : "jpg";
     const fileName = `${roomId}/image-${index}-${Date.now()}.${fileExt}`;
 
     // Upload to storage
     const { error: uploadError } = await this.supabase.storage
-      .from('rooms')
+      .from("rooms")
       .upload(fileName, file, {
-        cacheControl: '3600',
+        cacheControl: "3600",
         upsert: true,
       });
 
@@ -228,7 +247,7 @@ export class RoomService {
     // Get public URL
     const {
       data: { publicUrl },
-    } = this.supabase.storage.from('rooms').getPublicUrl(fileName);
+    } = this.supabase.storage.from("rooms").getPublicUrl(fileName);
 
     return publicUrl;
   }
@@ -236,8 +255,13 @@ export class RoomService {
   /**
    * Upload multiple room images
    */
-  async uploadRoomImages(roomId: string, files: (File | Blob)[]): Promise<string[]> {
-    const uploadPromises = files.map((file, index) => this.uploadRoomImage(roomId, file, index));
+  async uploadRoomImages(
+    roomId: string,
+    files: (File | Blob)[],
+  ): Promise<string[]> {
+    const uploadPromises = files.map((file, index) =>
+      this.uploadRoomImage(roomId, file, index),
+    );
     return Promise.all(uploadPromises);
   }
 
@@ -247,10 +271,10 @@ export class RoomService {
   async deleteRoomImage(imageUrl: string): Promise<void> {
     const path = this.extractPathFromUrl(imageUrl);
     if (!path) {
-      throw new Error('Invalid image URL');
+      throw new Error("Invalid image URL");
     }
 
-    const { error } = await this.supabase.storage.from('rooms').remove([path]);
+    const { error } = await this.supabase.storage.from("rooms").remove([path]);
 
     if (error) {
       throw new Error(error.message);
@@ -265,21 +289,21 @@ export class RoomService {
     upcoming_bookings: number;
     utilization_rate: number;
   }> {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
 
     // Get total bookings
     const { count: total_bookings } = await this.supabase
-      .from('bookings')
-      .select('*', { count: 'exact', head: true })
-      .eq('room_id', roomId);
+      .from("bookings")
+      .select("*", { count: "exact", head: true })
+      .eq("room_id", roomId);
 
     // Get upcoming bookings
     const { count: upcoming_bookings } = await this.supabase
-      .from('bookings')
-      .select('*', { count: 'exact', head: true })
-      .eq('room_id', roomId)
-      .gte('booking_date', today)
-      .eq('status', 'confirmed');
+      .from("bookings")
+      .select("*", { count: "exact", head: true })
+      .eq("room_id", roomId)
+      .gte("booking_date", today)
+      .eq("status", "confirmed");
 
     // TODO: Calculate utilization rate based on operating hours and bookings
     const utilization_rate = 0; // Placeholder
@@ -302,13 +326,13 @@ export class RoomService {
 
     // If in HH:mm format, add :00
     if (/^\d{1,2}:\d{2}$/.test(time)) {
-      const parts = time.split(':');
-      const hours = parts[0].padStart(2, '0');
+      const parts = time.split(":");
+      const hours = parts[0].padStart(2, "0");
       const minutes = parts[1];
       return `${hours}:${minutes}:00`;
     }
 
-    throw new Error('Invalid time format. Use HH:mm or HH:mm:ss');
+    throw new Error("Invalid time format. Use HH:mm or HH:mm:ss");
   }
 
   /**
@@ -317,7 +341,9 @@ export class RoomService {
   private extractPathFromUrl(url: string): string | null {
     try {
       const urlObj = new URL(url);
-      const pathParts = urlObj.pathname.split('/storage/v1/object/public/rooms/');
+      const pathParts = urlObj.pathname.split(
+        "/storage/v1/object/public/rooms/",
+      );
       return pathParts[1] || null;
     } catch {
       return null;

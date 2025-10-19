@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { X, Keyboard } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { X, Keyboard } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 
 interface KeyboardShortcut {
   key: string;
@@ -23,13 +23,13 @@ interface KeyboardShortcutsDialogProps {
 }
 
 const shortcuts: KeyboardShortcut[] = [
-  { key: 'D', description: 'Go to Dashboard', category: 'Navigation' },
-  { key: 'R', description: 'Go to Rooms', category: 'Navigation' },
-  { key: 'B', description: 'Go to Bookings', category: 'Navigation' },
-  { key: 'U', description: 'Go to Users', category: 'Navigation' },
-  { key: 'P', description: 'Go to Profile', category: 'Navigation' },
-  { key: '?', description: 'Show this help', category: 'General' },
-  { key: 'Esc', description: 'Close dialog/modal', category: 'General' },
+  { key: "D", description: "Go to Dashboard", category: "Navigation" },
+  { key: "R", description: "Go to Rooms", category: "Navigation" },
+  { key: "B", description: "Go to Bookings", category: "Navigation" },
+  { key: "U", description: "Go to Users", category: "Navigation" },
+  { key: "P", description: "Go to Profile", category: "Navigation" },
+  { key: "?", description: "Show this help", category: "General" },
+  { key: "Esc", description: "Close dialog/modal", category: "General" },
 ];
 
 export function KeyboardShortcutsDialog({
@@ -78,8 +78,8 @@ export function KeyboardShortcutsDialog({
 
         <div className="mt-4 rounded-lg bg-blue-50 p-4">
           <p className="text-sm text-blue-800">
-            <strong>Tip:</strong> Keyboard shortcuts won&apos;t work when typing in
-            input fields or text areas.
+            <strong>Tip:</strong> Keyboard shortcuts won&apos;t work when typing
+            in input fields or text areas.
           </p>
         </div>
       </DialogContent>

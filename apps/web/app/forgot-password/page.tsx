@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordSchema, type ForgotPasswordInput } from '@workspace/validation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordInput,
+} from "@workspace/validation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -15,8 +18,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Loader2, ArrowLeft, Mail } from 'lucide-react';
+} from "@/components/ui/card";
+import { Loader2, ArrowLeft, Mail } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +40,16 @@ export default function ForgotPasswordPage() {
     setSuccess(false);
 
     try {
-      const { authService } = await import('@/lib/auth/service');
+      const { authService } = await import("@/lib/auth/service");
       await authService.resetPassword(data);
 
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while sending reset link');
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred while sending reset link",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -54,8 +61,8 @@ export default function ForgotPasswordPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Reset password</CardTitle>
           <CardDescription>
-            Enter your email address and we&apos;ll send you a link to reset your
-            password
+            Enter your email address and we&apos;ll send you a link to reset
+            your password
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -69,8 +76,8 @@ export default function ForgotPasswordPage() {
               <div className="text-center space-y-2">
                 <h3 className="text-lg font-semibold">Check your email</h3>
                 <p className="text-sm text-muted-foreground">
-                  We&apos;ve sent you a password reset link. Please check your email
-                  and follow the instructions.
+                  We&apos;ve sent you a password reset link. Please check your
+                  email and follow the instructions.
                 </p>
               </div>
               <Button asChild className="w-full">
@@ -90,7 +97,7 @@ export default function ForgotPasswordPage() {
                   placeholder="name@example.com"
                   autoComplete="email"
                   disabled={isLoading}
-                  {...register('email')}
+                  {...register("email")}
                 />
                 {errors.email && (
                   <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -110,11 +117,16 @@ export default function ForgotPasswordPage() {
                     Sending reset link...
                   </>
                 ) : (
-                  'Send reset link'
+                  "Send reset link"
                 )}
               </Button>
 
-              <Button asChild variant="ghost" className="w-full" disabled={isLoading}>
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full"
+                disabled={isLoading}
+              >
                 <Link href="/login">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Back to login
@@ -125,7 +137,7 @@ export default function ForgotPasswordPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-sm text-muted-foreground text-center">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <Link href="/signup" className="text-primary hover:underline">
               Sign up
             </Link>

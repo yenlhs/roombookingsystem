@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.47.10",
-    "@workspace/types": "workspace:*"
+    "@workspace/types": "workspace:*",
+    "@workspace/validation": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.18.10",

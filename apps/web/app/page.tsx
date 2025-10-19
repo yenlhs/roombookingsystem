@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -61,7 +61,8 @@ export default function Home() {
 
           <div className="mt-8 p-4 bg-primary/5 rounded-lg">
             <p className="text-sm text-center">
-              <span className="font-semibold">Status:</span> Web app initialized successfully! ✅
+              <span className="font-semibold">Status:</span> Web app initialized
+              successfully! ✅
             </p>
             <p className="text-xs text-center text-muted-foreground mt-2">
               Phase 1, Task 1.3.2 Complete

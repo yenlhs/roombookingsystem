@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -30,8 +30,8 @@ export class ErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error caught by boundary:', error, errorInfo);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error caught by boundary:", error, errorInfo);
     }
 
     // In production, you would send this to an error logging service
@@ -57,14 +57,14 @@ export class ErrorBoundary extends React.Component<
                   We encountered an unexpected error. Please try refreshing the
                   page.
                 </p>
-                {process.env.NODE_ENV === 'development' && this.state.error && (
+                {process.env.NODE_ENV === "development" && this.state.error && (
                   <details className="mt-4 text-left">
                     <summary className="cursor-pointer text-sm font-medium">
                       Error details
                     </summary>
                     <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
                       {this.state.error.message}
-                      {'\n\n'}
+                      {"\n\n"}
                       {this.state.error.stack}
                     </pre>
                   </details>

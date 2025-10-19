@@ -67,7 +67,10 @@ function baseTemplate(content: string): string {
 /**
  * Booking Confirmed Email
  */
-export function bookingConfirmedEmail(data: BookingEmailData): { subject: string; html: string } {
+export function bookingConfirmedEmail(data: BookingEmailData): {
+  subject: string;
+  html: string;
+} {
   const content = `
     <div style="text-align: center; margin-bottom: 30px;">
       <div style="background-color: #dcfce7; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
@@ -103,7 +106,7 @@ export function bookingConfirmedEmail(data: BookingEmailData): { subject: string
           </td>
         </tr>
         `
-            : ''
+            : ""
         }
       </table>
     </div>
@@ -135,7 +138,7 @@ export function bookingConfirmedEmail(data: BookingEmailData): { subject: string
  * Booking Cancelled Email
  */
 export function bookingCancelledEmail(
-  data: BookingEmailData & { cancellationReason?: string }
+  data: BookingEmailData & { cancellationReason?: string },
 ): { subject: string; html: string } {
   const content = `
     <div style="text-align: center; margin-bottom: 30px;">
@@ -172,7 +175,7 @@ export function bookingCancelledEmail(
           </td>
         </tr>
         `
-            : ''
+            : ""
         }
       </table>
     </div>
@@ -198,7 +201,7 @@ export function bookingCancelledEmail(
  * Booking Reminder Email
  */
 export function bookingReminderEmail(
-  data: BookingEmailData & { minutesUntilStart: number }
+  data: BookingEmailData & { minutesUntilStart: number },
 ): { subject: string; html: string } {
   const content = `
     <div style="text-align: center; margin-bottom: 30px;">
@@ -261,7 +264,7 @@ Booking Details:
 - Room: ${data.roomName}
 - Date: ${data.bookingDate}
 - Time: ${data.startTime} - ${data.endTime}
-${data.notes ? `- Notes: ${data.notes}` : ''}
+${data.notes ? `- Notes: ${data.notes}` : ""}
 
 We look forward to seeing you! If you need to make any changes or cancel this booking, please do so through the Room Booking System.
 
@@ -271,7 +274,9 @@ Room Booking System
   `.trim();
 }
 
-export function bookingCancelledText(data: BookingEmailData & { cancellationReason?: string }): string {
+export function bookingCancelledText(
+  data: BookingEmailData & { cancellationReason?: string },
+): string {
   return `
 Booking Cancelled
 
@@ -283,7 +288,7 @@ Cancelled Booking Details:
 - Room: ${data.roomName}
 - Date: ${data.bookingDate}
 - Time: ${data.startTime} - ${data.endTime}
-${data.cancellationReason ? `- Cancellation Reason: ${data.cancellationReason}` : ''}
+${data.cancellationReason ? `- Cancellation Reason: ${data.cancellationReason}` : ""}
 
 If you didn't request this cancellation or have any questions, please contact support.
 
@@ -293,7 +298,9 @@ Room Booking System
   `.trim();
 }
 
-export function bookingReminderText(data: BookingEmailData & { minutesUntilStart: number }): string {
+export function bookingReminderText(
+  data: BookingEmailData & { minutesUntilStart: number },
+): string {
   return `
 Booking Reminder
 

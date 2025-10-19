@@ -1,19 +1,27 @@
 // Time utility functions
 
-import type { TimeSlot } from '@workspace/types';
+import type { TimeSlot } from "@workspace/types";
 
 /**
  * Format time to HH:mm:ss
  */
-export function formatTimeToISO(hours: number, minutes: number, seconds: number = 0): string {
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+export function formatTimeToISO(
+  hours: number,
+  minutes: number,
+  seconds: number = 0,
+): string {
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 /**
  * Parse time string (HH:mm:ss or HH:mm) to components
  */
-export function parseTime(timeString: string): { hours: number; minutes: number; seconds: number } {
-  const parts = timeString.split(':');
+export function parseTime(timeString: string): {
+  hours: number;
+  minutes: number;
+  seconds: number;
+} {
+  const parts = timeString.split(":");
   return {
     hours: parseInt(parts[0], 10),
     minutes: parseInt(parts[1], 10),
@@ -41,7 +49,10 @@ export function minutesToTime(minutes: number): string {
 /**
  * Add minutes to a time string
  */
-export function addMinutesToTime(timeString: string, minutesToAdd: number): string {
+export function addMinutesToTime(
+  timeString: string,
+  minutesToAdd: number,
+): string {
   const totalMinutes = timeToMinutes(timeString) + minutesToAdd;
   return minutesToTime(totalMinutes);
 }
@@ -63,7 +74,11 @@ export function isTimeAfter(time1: string, time2: string): boolean {
 /**
  * Check if a time is within a time range (inclusive)
  */
-export function isTimeInRange(time: string, startTime: string, endTime: string): boolean {
+export function isTimeInRange(
+  time: string,
+  startTime: string,
+  endTime: string,
+): boolean {
   const timeMinutes = timeToMinutes(time);
   const startMinutes = timeToMinutes(startTime);
   const endMinutes = timeToMinutes(endTime);
@@ -83,7 +98,7 @@ export function calculateDuration(startTime: string, endTime: string): number {
 export function generateTimeSlots(
   startTime: string,
   endTime: string,
-  slotDurationMinutes: number
+  slotDurationMinutes: number,
 ): TimeSlot[] {
   const slots: TimeSlot[] = [];
   let currentTime = startTime;
@@ -111,15 +126,18 @@ export function generateTimeSlots(
  */
 export function formatTimeForDisplay(timeString: string): string {
   const { hours, minutes } = parseTime(timeString);
-  const period = hours >= 12 ? 'PM' : 'AM';
+  const period = hours >= 12 ? "PM" : "AM";
   const displayHours = hours % 12 || 12;
-  return `${displayHours}:${String(minutes).padStart(2, '0')} ${period}`;
+  return `${displayHours}:${String(minutes).padStart(2, "0")} ${period}`;
 }
 
 /**
  * Format time range for display
  */
-export function formatTimeRangeForDisplay(startTime: string, endTime: string): string {
+export function formatTimeRangeForDisplay(
+  startTime: string,
+  endTime: string,
+): string {
   return `${formatTimeForDisplay(startTime)} - ${formatTimeForDisplay(endTime)}`;
 }
 
@@ -130,7 +148,7 @@ export function timeRangesOverlap(
   start1: string,
   end1: string,
   start2: string,
-  end2: string
+  end2: string,
 ): boolean {
   const start1Minutes = timeToMinutes(start1);
   const end1Minutes = timeToMinutes(end1);

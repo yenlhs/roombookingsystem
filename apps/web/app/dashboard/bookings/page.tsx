@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { createBookingService, supabase } from '@workspace/supabase';
-import type { BookingWithDetails, BookingStatus } from '@workspace/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { createBookingService, supabase } from "@workspace/supabase";
+import type { BookingWithDetails, BookingStatus } from "@workspace/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader2,
   Plus,
@@ -24,7 +24,7 @@ import {
   Clock,
   User,
   MapPin,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function BookingsPage() {
   return (
@@ -40,9 +40,13 @@ function BookingsContent() {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<BookingStatus | 'all'>('all');
-  const [dateFilter, setDateFilter] = useState<'all' | 'upcoming' | 'past'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<BookingStatus | "all">(
+    "all",
+  );
+  const [dateFilter, setDateFilter] = useState<"all" | "upcoming" | "past">(
+    "all",
+  );
 
   const bookingService = createBookingService(supabase);
 
@@ -51,17 +55,17 @@ function BookingsContent() {
 
     // Subscribe to real-time updates
     const channel = supabase
-      .channel('bookings-changes')
+      .channel("bookings-changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'bookings',
+          event: "*",
+          schema: "public",
+          table: "bookings",
         },
         () => {
           loadBookings();
-        }
+        },
       )
       .subscribe();
 
@@ -76,14 +80,14 @@ function BookingsContent() {
       setError(null);
 
       const filters: Record<string, string> = {};
-      if (statusFilter !== 'all') {
+      if (statusFilter !== "all") {
         filters.status = statusFilter;
       }
 
       const data = await bookingService.getBookings(filters);
       setBookings(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load bookings');
+      setError(err instanceof Error ? err.message : "Failed to load bookings");
     } finally {
       setLoading(false);
     }
@@ -94,7 +98,9 @@ function BookingsContent() {
   };
 
   const handleCancelBooking = async (id: string, roomName: string) => {
-    if (!confirm(`Are you sure you want to cancel this booking for ${roomName}?`)) {
+    if (
+      !confirm(`Are you sure you want to cancel this booking for ${roomName}?`)
+    ) {
       return;
     }
 
@@ -102,14 +108,14 @@ function BookingsContent() {
       await bookingService.cancelBooking({ id });
       await loadBookings();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to cancel booking');
+      setError(err instanceof Error ? err.message : "Failed to cancel booking");
     }
   };
 
   const handleDeleteBooking = async (id: string, roomName: string) => {
     if (
       !confirm(
-        `Are you sure you want to permanently delete this booking for ${roomName}? This action cannot be undone.`
+        `Are you sure you want to permanently delete this booking for ${roomName}? This action cannot be undone.`,
       )
     ) {
       return;
@@ -119,24 +125,24 @@ function BookingsContent() {
       await bookingService.deleteBooking(id);
       await loadBookings();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete booking');
+      setError(err instanceof Error ? err.message : "Failed to delete booking");
     }
   };
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const formatTime = (timeString: string): string => {
-    const [hours, minutes] = timeString.split(':');
+    const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const hour12 = hour % 12 || 12;
     return `${hour12}:${minutes} ${ampm}`;
   };
@@ -153,14 +159,14 @@ function BookingsContent() {
     }
 
     // Date filter
-    if (dateFilter !== 'all') {
+    if (dateFilter !== "all") {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const bookingDate = new Date(booking.booking_date);
       bookingDate.setHours(0, 0, 0, 0);
 
-      if (dateFilter === 'upcoming' && bookingDate < today) return false;
-      if (dateFilter === 'past' && bookingDate >= today) return false;
+      if (dateFilter === "upcoming" && bookingDate < today) return false;
+      if (dateFilter === "past" && bookingDate >= today) return false;
     }
 
     return true;
@@ -168,9 +174,9 @@ function BookingsContent() {
 
   const getStatusBadge = (status: BookingStatus) => {
     const styles = {
-      confirmed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      completed: 'bg-gray-100 text-gray-800',
+      confirmed: "bg-green-100 text-green-800",
+      cancelled: "bg-red-100 text-red-800",
+      completed: "bg-gray-100 text-gray-800",
     };
     return styles[status] || styles.confirmed;
   };
@@ -181,7 +187,11 @@ function BookingsContent() {
       <header className="border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/dashboard")}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold">Booking Management</h1>
@@ -200,7 +210,9 @@ function BookingsContent() {
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -208,7 +220,9 @@ function BookingsContent() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold">Bookings</h2>
-            <p className="text-muted-foreground">View and manage all room bookings</p>
+            <p className="text-muted-foreground">
+              View and manage all room bookings
+            </p>
           </div>
           <Link href="/dashboard/bookings/new">
             <Button>
@@ -235,7 +249,7 @@ function BookingsContent() {
                       placeholder="Search by room, user, or email..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                       className="pl-9"
                     />
                   </div>
@@ -251,7 +265,9 @@ function BookingsContent() {
                 <select
                   id="status"
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as BookingStatus | 'all')}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as BookingStatus | "all")
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <option value="all">All Status</option>
@@ -269,7 +285,9 @@ function BookingsContent() {
                 <select
                   id="dateFilter"
                   value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value as 'all' | 'upcoming' | 'past')}
+                  onChange={(e) =>
+                    setDateFilter(e.target.value as "all" | "upcoming" | "past")
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <option value="all">All Dates</option>
@@ -290,8 +308,8 @@ function BookingsContent() {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
-                {searchQuery || statusFilter !== 'all' || dateFilter !== 'all'
-                  ? 'No bookings found matching your criteria.'
+                {searchQuery || statusFilter !== "all" || dateFilter !== "all"
+                  ? "No bookings found matching your criteria."
                   : 'No bookings created yet. Click "Create Booking" to get started.'}
               </p>
             </CardContent>
@@ -308,12 +326,18 @@ function BookingsContent() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-muted-foreground" />
-                            <h3 className="font-semibold">{booking.room?.name || 'Unknown Room'}</h3>
+                            <h3 className="font-semibold">
+                              {booking.room?.name || "Unknown Room"}
+                            </h3>
                           </div>
                           <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                             <User className="h-3 w-3" />
-                            <span>{booking.user?.full_name || 'Unknown User'}</span>
-                            <span className="text-xs">({booking.user?.email})</span>
+                            <span>
+                              {booking.user?.full_name || "Unknown User"}
+                            </span>
+                            <span className="text-xs">
+                              ({booking.user?.email})
+                            </span>
                           </div>
                         </div>
 
@@ -333,7 +357,8 @@ function BookingsContent() {
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Clock className="h-4 w-4" />
                           <span>
-                            {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                            {formatTime(booking.start_time)} -{" "}
+                            {formatTime(booking.end_time)}
                           </span>
                         </div>
                       </div>
@@ -341,7 +366,8 @@ function BookingsContent() {
                       {/* Notes */}
                       {booking.notes && (
                         <div className="text-sm text-muted-foreground">
-                          <span className="font-medium">Notes:</span> {booking.notes}
+                          <span className="font-medium">Notes:</span>{" "}
+                          {booking.notes}
                         </div>
                       )}
                     </div>
@@ -353,7 +379,7 @@ function BookingsContent() {
                           <Eye className="h-4 w-4" />
                         </Button>
                       </Link>
-                      {booking.status === 'confirmed' && (
+                      {booking.status === "confirmed" && (
                         <>
                           <Link href={`/dashboard/bookings/${booking.id}/edit`}>
                             <Button variant="outline" size="sm">
@@ -364,7 +390,10 @@ function BookingsContent() {
                             variant="outline"
                             size="sm"
                             onClick={() =>
-                              handleCancelBooking(booking.id, booking.room?.name || 'this room')
+                              handleCancelBooking(
+                                booking.id,
+                                booking.room?.name || "this room",
+                              )
                             }
                           >
                             Cancel
@@ -375,7 +404,10 @@ function BookingsContent() {
                         variant="outline"
                         size="sm"
                         onClick={() =>
-                          handleDeleteBooking(booking.id, booking.room?.name || 'this room')
+                          handleDeleteBooking(
+                            booking.id,
+                            booking.room?.name || "this room",
+                          )
                         }
                       >
                         <Trash2 className="h-4 w-4 text-red-600" />
@@ -392,7 +424,7 @@ function BookingsContent() {
         {!loading && filteredBookings.length > 0 && (
           <div className="mt-6 text-center text-sm text-muted-foreground">
             Showing {filteredBookings.length} of {bookings.length} booking
-            {bookings.length !== 1 ? 's' : ''}
+            {bookings.length !== 1 ? "s" : ""}
           </div>
         )}
       </div>

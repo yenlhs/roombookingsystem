@@ -3,7 +3,7 @@
  * In production, this could be integrated with services like Sentry, LogRocket, etc.
  */
 
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+export type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogEntry {
   level: LogLevel;
@@ -14,7 +14,7 @@ interface LogEntry {
 }
 
 class Logger {
-  private isDevelopment = process.env.NODE_ENV === 'development';
+  private isDevelopment = process.env.NODE_ENV === "development";
 
   private formatMessage(entry: LogEntry): string {
     return `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`;
@@ -24,7 +24,7 @@ class Logger {
     level: LogLevel,
     message: string,
     data?: unknown,
-    error?: Error
+    error?: Error,
   ): LogEntry {
     return {
       level,
@@ -41,16 +41,16 @@ class Logger {
     // In development, log to console
     if (this.isDevelopment) {
       switch (entry.level) {
-        case 'debug':
+        case "debug":
           console.debug(formattedMessage, entry.data);
           break;
-        case 'info':
+        case "info":
           console.info(formattedMessage, entry.data);
           break;
-        case 'warn':
+        case "warn":
           console.warn(formattedMessage, entry.data);
           break;
-        case 'error':
+        case "error":
           console.error(formattedMessage, entry.error || entry.data);
           break;
       }
@@ -69,19 +69,19 @@ class Logger {
   }
 
   debug(message: string, data?: unknown) {
-    this.log(this.createEntry('debug', message, data));
+    this.log(this.createEntry("debug", message, data));
   }
 
   info(message: string, data?: unknown) {
-    this.log(this.createEntry('info', message, data));
+    this.log(this.createEntry("info", message, data));
   }
 
   warn(message: string, data?: unknown) {
-    this.log(this.createEntry('warn', message, data));
+    this.log(this.createEntry("warn", message, data));
   }
 
   error(message: string, error?: Error, data?: unknown) {
-    this.log(this.createEntry('error', message, data, error));
+    this.log(this.createEntry("error", message, data, error));
   }
 }
 

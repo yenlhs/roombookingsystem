@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { createRoomService, supabase } from '@workspace/supabase';
-import type { Room } from '@workspace/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { createRoomService, supabase } from "@workspace/supabase";
+import type { Room } from "@workspace/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader2,
   ArrowLeft,
@@ -20,7 +20,7 @@ import {
   Calendar,
   Activity,
   AlertCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function RoomDetailsPage() {
   return (
@@ -61,22 +61,26 @@ function RoomDetailsContent() {
       setRoom(roomData);
       setStats(statsData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load room');
+      setError(err instanceof Error ? err.message : "Failed to load room");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this room? This action cannot be undone.')) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this room? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
     try {
       await roomService.deleteRoom(roomId);
-      router.push('/dashboard/rooms');
+      router.push("/dashboard/rooms");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete room');
+      setError(err instanceof Error ? err.message : "Failed to delete room");
     }
   };
 
@@ -84,14 +88,16 @@ function RoomDetailsContent() {
     if (!room) return;
 
     try {
-      if (room.status === 'active') {
+      if (room.status === "active") {
         await roomService.deactivateRoom(roomId);
       } else {
         await roomService.activateRoom(roomId);
       }
       await loadRoom();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update room status');
+      setError(
+        err instanceof Error ? err.message : "Failed to update room status",
+      );
     }
   };
 
@@ -109,7 +115,10 @@ function RoomDetailsContent() {
         <div className="text-center">
           <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
           <p className="text-lg text-muted-foreground">Room not found</p>
-          <Button className="mt-4" onClick={() => router.push('/dashboard/rooms')}>
+          <Button
+            className="mt-4"
+            onClick={() => router.push("/dashboard/rooms")}
+          >
             Back to Rooms
           </Button>
         </div>
@@ -126,7 +135,7 @@ function RoomDetailsContent() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => router.push('/dashboard/rooms')}
+              onClick={() => router.push("/dashboard/rooms")}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -146,7 +155,9 @@ function RoomDetailsContent() {
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -159,9 +170,9 @@ function RoomDetailsContent() {
                 <div className="mt-2 flex items-center gap-2">
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${
-                      room.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-800'
+                      room.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
                     }`}
                   >
                     {room.status}
@@ -208,7 +219,9 @@ function RoomDetailsContent() {
                 <div className="mt-1 flex items-center gap-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">
-                    {room.capacity ? `${room.capacity} people` : 'Not specified'}
+                    {room.capacity
+                      ? `${room.capacity} people`
+                      : "Not specified"}
                   </span>
                 </div>
               </div>
@@ -220,7 +233,7 @@ function RoomDetailsContent() {
                 <div className="mt-1 flex items-center gap-2">
                   <Clock className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">
-                    {room.operating_hours_start.slice(0, 5)} -{' '}
+                    {room.operating_hours_start.slice(0, 5)} -{" "}
                     {room.operating_hours_end.slice(0, 5)}
                   </span>
                 </div>
@@ -232,7 +245,9 @@ function RoomDetailsContent() {
                 </Label>
                 <div className="mt-1 flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{room.slot_duration_minutes} minutes</span>
+                  <span className="text-sm">
+                    {room.slot_duration_minutes} minutes
+                  </span>
                 </div>
               </div>
 
@@ -241,10 +256,10 @@ function RoomDetailsContent() {
                   Created
                 </Label>
                 <p className="mt-1 text-sm">
-                  {new Date(room.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+                  {new Date(room.created_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </p>
               </div>
@@ -287,16 +302,18 @@ function RoomDetailsContent() {
                 </Label>
                 <div className="mt-2">
                   <Button
-                    variant={room.status === 'active' ? 'outline' : 'default'}
+                    variant={room.status === "active" ? "outline" : "default"}
                     onClick={handleToggleStatus}
                     className="w-full"
                   >
-                    {room.status === 'active' ? 'Deactivate Room' : 'Activate Room'}
+                    {room.status === "active"
+                      ? "Deactivate Room"
+                      : "Activate Room"}
                   </Button>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {room.status === 'active'
-                      ? 'Room is available for bookings'
-                      : 'Room is hidden from users'}
+                    {room.status === "active"
+                      ? "Room is available for bookings"
+                      : "Room is hidden from users"}
                   </p>
                 </div>
               </div>
@@ -352,6 +369,12 @@ function RoomDetailsContent() {
   );
 }
 
-function Label({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Label({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return <label className={`block ${className}`}>{children}</label>;
 }
