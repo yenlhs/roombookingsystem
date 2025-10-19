@@ -12,11 +12,15 @@
     "type-check": "turbo run type-check",
     "clean": "turbo run clean && rm -rf node_modules .turbo",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "ci:check": "pnpm type-check && pnpm lint --filter mobile && pnpm format:check",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@turbo/gen": "^2.3.3",
     "@vitest/ui": "^3.2.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.4",
     "prettier": "^3.3.3",
     "turbo": "^2.3.3",
     "typescript": "^5.6.3",
@@ -33,5 +37,10 @@
   ],
   "dependencies": {
     "@supabase/supabase-js": "^2.75.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,json,md}": [
+      "prettier --write"
+    ]
   }
 }

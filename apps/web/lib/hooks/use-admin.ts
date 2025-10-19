@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@workspace/supabase';
-import { useAuth } from '../auth/context';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@workspace/supabase";
+import { useAuth } from "../auth/context";
 
 interface UserRole {
-  role: 'admin' | 'user';
+  role: "admin" | "user";
 }
 
 /**
@@ -16,16 +16,16 @@ export function useAdmin() {
   const { user, loading: authLoading } = useAuth();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['user-role', user?.id],
+    queryKey: ["user-role", user?.id],
     queryFn: async () => {
       if (!user?.id) {
-        throw new Error('No user ID available');
+        throw new Error("No user ID available");
       }
 
       const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
+        .from("users")
+        .select("role")
+        .eq("id", user.id)
         .single();
 
       if (error) {
@@ -40,7 +40,7 @@ export function useAdmin() {
   });
 
   return {
-    isAdmin: data?.role === 'admin',
+    isAdmin: data?.role === "admin",
     role: data?.role,
     isLoading: authLoading || isLoading,
     error,

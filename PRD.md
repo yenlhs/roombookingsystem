@@ -1,4 +1,5 @@
 # Product Requirements Document (PRD)
+
 ## Room Booking System
 
 **Version:** 1.0
@@ -8,6 +9,7 @@
 ---
 
 ## Table of Contents
+
 1. [Executive Summary](#executive-summary)
 2. [Project Overview](#project-overview)
 3. [Technical Stack](#technical-stack)
@@ -29,6 +31,7 @@
 The Room Booking System is a comprehensive platform that enables users to book rooms by hourly slots through a mobile application, while administrators manage rooms, bookings, and users through a web dashboard. The system ensures bookings can only be made during designated room operating hours.
 
 **Key Objectives:**
+
 - Provide seamless room booking experience for mobile users
 - Enable efficient room and booking management for administrators
 - Ensure real-time availability tracking
@@ -39,13 +42,16 @@ The Room Booking System is a comprehensive platform that enables users to book r
 ## 2. Project Overview
 
 ### 2.1 Purpose
+
 Create a dual-platform booking system that streamlines room reservation management with distinct interfaces for end-users (mobile) and administrators (web).
 
 ### 2.2 Target Users
+
 - **End Users:** Individuals who need to book rooms via mobile app
 - **Administrators:** Staff managing rooms, bookings, and user accounts via web dashboard
 
 ### 2.3 Key Success Metrics
+
 - Booking completion rate
 - System uptime and reliability
 - User registration and retention
@@ -57,6 +63,7 @@ Create a dual-platform booking system that streamlines room reservation manageme
 ## 3. Technical Stack
 
 ### 3.1 Frontend
+
 - **Mobile App:** Expo React Native
   - TypeScript
   - React Navigation
@@ -73,6 +80,7 @@ Create a dual-platform booking system that streamlines room reservation manageme
   - TanStack Query
 
 ### 3.2 Backend
+
 - **BaaS Platform:** Supabase
   - PostgreSQL Database
   - Authentication (Email/Password, OAuth)
@@ -82,6 +90,7 @@ Create a dual-platform booking system that streamlines room reservation manageme
   - Edge Functions (if needed)
 
 ### 3.3 Monorepo Management
+
 - **Package Manager:** pnpm / Turborepo
 - **Shared Packages:**
   - `@workspace/types` - Shared TypeScript types
@@ -90,6 +99,7 @@ Create a dual-platform booking system that streamlines room reservation manageme
   - `@workspace/supabase` - Supabase client configuration
 
 ### 3.4 Development Tools
+
 - TypeScript
 - ESLint & Prettier
 - Husky (Git hooks)
@@ -231,6 +241,7 @@ roombookingsystem/
 ### 6.1 User Role (Mobile App Users)
 
 **Permissions:**
+
 - Register and login
 - View available rooms
 - View room details and availability
@@ -240,6 +251,7 @@ roombookingsystem/
 - Update their profile
 
 **Restrictions:**
+
 - Cannot access admin dashboard
 - Cannot modify other users' bookings
 - Cannot create or edit rooms
@@ -247,6 +259,7 @@ roombookingsystem/
 ### 6.2 Admin Role (Web Dashboard)
 
 **Permissions:**
+
 - Full access to admin dashboard
 - Create, edit, delete rooms
 - Set room operating hours and slot durations
@@ -258,6 +271,7 @@ roombookingsystem/
 - Access user profiles from mobile app
 
 **Restrictions:**
+
 - Cannot delete users (only deactivate)
 
 ---
@@ -267,6 +281,7 @@ roombookingsystem/
 ### 7.1 Mobile App Features
 
 #### 7.1.1 Authentication
+
 - **User Registration**
   - Email and password
   - Email verification
@@ -284,6 +299,7 @@ roombookingsystem/
   - View booking history
 
 #### 7.1.2 Room Discovery
+
 - **Room List View**
   - Display all available rooms
   - Show room status (Open/Closed)
@@ -300,6 +316,7 @@ roombookingsystem/
   - Real-time availability calendar
 
 #### 7.1.3 Booking Management
+
 - **Create Booking**
   - Select room
   - Choose date
@@ -319,6 +336,7 @@ roombookingsystem/
   - Automatic slot release
 
 #### 7.1.4 Real-time Features
+
 - Live availability updates
 - Booking confirmation notifications
 - Booking reminders
@@ -326,11 +344,13 @@ roombookingsystem/
 ### 7.2 Web App Features
 
 #### 7.2.1 Admin Authentication
+
 - Email/password login
 - Password reset
 - Session management
 
 #### 7.2.2 Dashboard
+
 - **Overview Metrics**
   - Total rooms
   - Total bookings (today, this week, this month)
@@ -348,6 +368,7 @@ roombookingsystem/
   - Manage users
 
 #### 7.2.3 Room Management
+
 - **Room List**
   - Table view of all rooms
   - Search and filter
@@ -377,6 +398,7 @@ roombookingsystem/
   - Handle existing bookings (cancel or reassign)
 
 #### 7.2.4 Booking Management
+
 - **Booking Calendar View**
   - Daily, weekly, monthly views
   - Color-coded by status
@@ -407,6 +429,7 @@ roombookingsystem/
   - Release slots immediately
 
 #### 7.2.5 User Management
+
 - **User List**
   - View all registered mobile users
   - Search by name, email, phone
@@ -428,6 +451,7 @@ roombookingsystem/
   - Send notifications
 
 #### 7.2.6 Reports & Analytics
+
 - Room utilization reports
 - Booking trends
 - User activity statistics
@@ -441,6 +465,7 @@ roombookingsystem/
 ### 8.1 Core Tables
 
 #### `users` (extends Supabase auth.users)
+
 ```sql
 - id (uuid, PK, FK to auth.users)
 - email (text, unique)
@@ -454,6 +479,7 @@ roombookingsystem/
 ```
 
 #### `rooms`
+
 ```sql
 - id (uuid, PK)
 - name (text, unique)
@@ -471,6 +497,7 @@ roombookingsystem/
 ```
 
 #### `bookings`
+
 ```sql
 - id (uuid, PK)
 - user_id (uuid, FK to users.id)
@@ -492,6 +519,7 @@ CHECK(end_time > start_time)
 ```
 
 #### `booking_slots` (for handling consecutive bookings)
+
 ```sql
 - id (uuid, PK)
 - booking_id (uuid, FK to bookings.id)
@@ -501,6 +529,7 @@ CHECK(end_time > start_time)
 ```
 
 ### 8.2 Indexes
+
 ```sql
 CREATE INDEX idx_bookings_user_id ON bookings(user_id);
 CREATE INDEX idx_bookings_room_id ON bookings(room_id);
@@ -512,16 +541,19 @@ CREATE INDEX idx_rooms_status ON rooms(status);
 ### 8.3 Row Level Security (RLS) Policies
 
 #### Users Table
+
 - Users can read their own record
 - Admins can read all records
 - Users can update their own record (limited fields)
 - Admins can update any record
 
 #### Rooms Table
+
 - All authenticated users can read active rooms
 - Only admins can create, update, delete rooms
 
 #### Bookings Table
+
 - Users can read their own bookings
 - Admins can read all bookings
 - Users can create bookings for themselves
@@ -694,12 +726,14 @@ CREATE FUNCTION get_booking_stats(
 ## 11. Non-Functional Requirements
 
 ### 11.1 Performance
+
 - Page load time: < 2 seconds
 - API response time: < 500ms (95th percentile)
 - Real-time updates: < 1 second latency
 - Mobile app startup: < 3 seconds
 
 ### 11.2 Security
+
 - HTTPS/TLS for all communications
 - JWT token-based authentication
 - Row Level Security (RLS) on all tables
@@ -709,6 +743,7 @@ CREATE FUNCTION get_booking_stats(
 - Secure storage of credentials (SecureStore for mobile)
 
 ### 11.3 Scalability
+
 - Support 1000+ concurrent users
 - Handle 10,000+ bookings per day
 - Database optimization with proper indexes
@@ -716,6 +751,7 @@ CREATE FUNCTION get_booking_stats(
 - Caching strategy for frequently accessed data
 
 ### 11.4 Reliability
+
 - 99.9% uptime
 - Automated backups (daily)
 - Error logging and monitoring
@@ -723,6 +759,7 @@ CREATE FUNCTION get_booking_stats(
 - Offline capability (view cached data)
 
 ### 11.5 Usability
+
 - Intuitive UI/UX
 - Responsive design (web)
 - Native mobile experience
@@ -730,6 +767,7 @@ CREATE FUNCTION get_booking_stats(
 - Multi-language support (future)
 
 ### 11.6 Maintainability
+
 - Comprehensive documentation
 - Code comments and type safety
 - Automated testing (unit, integration, e2e)
@@ -742,6 +780,7 @@ CREATE FUNCTION get_booking_stats(
 ## 12. Development Phases
 
 ### Phase 1: Foundation (Weeks 1-2)
+
 **Goal:** Set up infrastructure and core authentication
 
 - [ ] Initialize monorepo structure (Turborepo + pnpm)
@@ -759,14 +798,17 @@ CREATE FUNCTION get_booking_stats(
 - [ ] Set up CI/CD pipeline
 
 **Deliverables:**
+
 - Working monorepo structure
 - Authenticated web and mobile apps
 - Database with RLS policies
 
 ### Phase 2: Room Management (Weeks 3-4)
+
 **Goal:** Enable admins to create and manage rooms
 
 **Web App:**
+
 - [ ] Admin dashboard layout
 - [ ] Room list view
 - [ ] Create room form with validations
@@ -777,20 +819,24 @@ CREATE FUNCTION get_booking_stats(
 - [ ] Slot duration configuration
 
 **Mobile App:**
+
 - [ ] Room list view
 - [ ] Room detail view
 - [ ] Real-time room updates
 - [ ] Search and filter functionality
 
 **Deliverables:**
+
 - Full room CRUD functionality on web
 - Room browsing on mobile
 - Image storage setup
 
 ### Phase 3: Booking System (Weeks 5-7)
+
 **Goal:** Core booking functionality for users and admins
 
 **Mobile App:**
+
 - [ ] Availability calendar view
 - [ ] Time slot selection UI
 - [ ] Consecutive slot booking
@@ -800,6 +846,7 @@ CREATE FUNCTION get_booking_stats(
 - [ ] Cancel booking functionality
 
 **Web App:**
+
 - [ ] Booking calendar view (daily, weekly, monthly)
 - [ ] Booking list view with filters
 - [ ] Create booking for users
@@ -808,20 +855,24 @@ CREATE FUNCTION get_booking_stats(
 - [ ] View booking details with user info
 
 **Backend:**
+
 - [ ] Availability calculation logic
 - [ ] Booking validation (time windows, conflicts)
 - [ ] Database functions for availability checks
 - [ ] Real-time booking subscriptions
 
 **Deliverables:**
+
 - Full booking workflow on mobile
 - Complete booking management on web
 - Real-time availability updates
 
 ### Phase 4: User Management & Dashboard (Weeks 8-9)
+
 **Goal:** Admin tools for user management and analytics
 
 **Web App:**
+
 - [ ] User list view
 - [ ] User detail view
 - [ ] User search and filters
@@ -832,10 +883,12 @@ CREATE FUNCTION get_booking_stats(
 - [ ] Booking statistics
 
 **Deliverables:**
+
 - Complete user management interface
 - Functional dashboard with metrics
 
 ### Phase 5: Polish & Testing (Weeks 10-11)
+
 **Goal:** Refine UX, testing, and bug fixes
 
 - [ ] Comprehensive testing
@@ -853,11 +906,13 @@ CREATE FUNCTION get_booking_stats(
 - [ ] Documentation
 
 **Deliverables:**
+
 - Stable, tested application
 - Performance benchmarks met
 - Documentation complete
 
 ### Phase 6: Deployment & Launch (Week 12)
+
 **Goal:** Deploy to production
 
 - [ ] Production environment setup
@@ -873,6 +928,7 @@ CREATE FUNCTION get_booking_stats(
 - [ ] Launch
 
 **Deliverables:**
+
 - Live production system
 - Published mobile apps
 - Monitoring in place
@@ -971,6 +1027,7 @@ CREATE FUNCTION get_booking_stats(
 ### C. Success Criteria
 
 **Launch Criteria:**
+
 - All Phase 1-5 deliverables complete
 - Zero critical bugs
 - Performance requirements met
@@ -978,6 +1035,7 @@ CREATE FUNCTION get_booking_stats(
 - At least 5 test users successfully complete booking flow
 
 **Post-Launch Success:**
+
 - 100+ registered users in first month
 - 80%+ booking completion rate
 - < 1% error rate
@@ -985,13 +1043,13 @@ CREATE FUNCTION get_booking_stats(
 
 ### D. Risks & Mitigation
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Supabase service outage | High | Low | Implement retry logic, error boundaries, caching |
-| Double booking edge cases | High | Medium | Comprehensive testing, database constraints, transaction handling |
-| Poor mobile performance | Medium | Medium | Performance monitoring, optimization, lazy loading |
-| Low user adoption | High | Medium | User research, intuitive UI, onboarding flow |
-| Scope creep | Medium | High | Strict MVP definition, phased approach, change control |
+| Risk                      | Impact | Probability | Mitigation                                                        |
+| ------------------------- | ------ | ----------- | ----------------------------------------------------------------- |
+| Supabase service outage   | High   | Low         | Implement retry logic, error boundaries, caching                  |
+| Double booking edge cases | High   | Medium      | Comprehensive testing, database constraints, transaction handling |
+| Poor mobile performance   | Medium | Medium      | Performance monitoring, optimization, lazy loading                |
+| Low user adoption         | High   | Medium      | User research, intuitive UI, onboarding flow                      |
+| Scope creep               | Medium | High        | Strict MVP definition, phased approach, change control            |
 
 ### E. Contact & Resources
 
@@ -1004,9 +1062,9 @@ CREATE FUNCTION get_booking_stats(
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2025-10-14 | Initial | Created comprehensive PRD |
+| Version | Date       | Author  | Changes                   |
+| ------- | ---------- | ------- | ------------------------- |
+| 1.0     | 2025-10-14 | Initial | Created comprehensive PRD |
 
 ---
 

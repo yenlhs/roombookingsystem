@@ -5,6 +5,7 @@
 **Status:** Planning Phase
 
 ## Table of Contents
+
 1. [Executive Summary](#executive-summary)
 2. [Current State Assessment](#current-state-assessment)
 3. [Goals and Objectives](#goals-and-objectives)
@@ -26,6 +27,7 @@
 This document outlines the implementation plan for a comprehensive subscription management portal within the web application. The portal will enable administrators to view, manage, and analyze user subscriptions, subscription tiers, and related billing events.
 
 ### Key Deliverables
+
 - Admin dashboard for subscription analytics
 - User subscription management interface
 - Subscription tier configuration panel
@@ -33,6 +35,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 - Comprehensive reporting and export capabilities
 
 ### Timeline
+
 - **Phase 1 (Core Features):** 2-3 weeks
 - **Phase 2 (Analytics & Reporting):** 1-2 weeks
 - **Phase 3 (Advanced Features):** 1-2 weeks
@@ -45,6 +48,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 ### Existing Infrastructure ✅
 
 #### Database Schema
+
 - ✅ `subscription_tiers` table with Free and Premium tiers
 - ✅ `user_subscriptions` table tracking user subscription status
 - ✅ `subscription_events` table for audit logging
@@ -53,6 +57,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 - ✅ Stripe integration fields (customer_id, subscription_id)
 
 #### Backend Services
+
 - ✅ Subscription service with methods for tier and subscription retrieval
 - ✅ `getAllSubscriptions()` and `getSubscriptionStats()` methods ready for admin use
 - ✅ Stripe Edge Functions for checkout and billing portal
@@ -60,6 +65,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 - ✅ Zod validation schemas for subscription operations
 
 #### Mobile Implementation (Reference)
+
 - ✅ `useSubscription()` hook demonstrating data fetching patterns
 - ✅ Subscription screen with tier display and checkout
 - ✅ Subscription banner promoting premium features
@@ -67,6 +73,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 ### Current Gaps ❌
 
 #### Web Portal
+
 - ❌ No subscription management pages in web admin
 - ❌ No admin-only route protection for subscription features
 - ❌ No subscription analytics dashboard
@@ -76,6 +83,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 - ❌ No export/reporting capabilities
 
 #### Backend Enhancements Needed
+
 - ❌ Admin override functions for manual subscription updates
 - ❌ Bulk operation endpoints
 - ❌ Advanced filtering and search capabilities
@@ -87,6 +95,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 ## Goals and Objectives
 
 ### Primary Goals
+
 1. **Visibility:** Provide comprehensive view of all user subscriptions
 2. **Control:** Enable admins to manage subscriptions and tiers
 3. **Insights:** Deliver actionable analytics on subscription metrics
@@ -94,12 +103,14 @@ This document outlines the implementation plan for a comprehensive subscription 
 5. **Efficiency:** Streamline subscription support workflows
 
 ### Business Objectives
+
 - Reduce support response time for subscription issues by 50%
 - Enable data-driven decisions on tier pricing and features
 - Improve subscription retention through proactive monitoring
 - Ensure compliance with billing and subscription regulations
 
 ### Technical Objectives
+
 - Reuse existing subscription service architecture
 - Maintain consistent UI/UX with current admin pages
 - Implement proper role-based access control
@@ -115,6 +126,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 **Purpose:** Central hub for subscription analytics and quick actions
 
 **Components:**
+
 - Overview cards showing key metrics:
   - Total Subscriptions
   - Active Premium Subscriptions
@@ -138,6 +150,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 **Purpose:** Browse and search all user subscriptions
 
 **Components:**
+
 - Paginated table with columns:
   - User (name, email, avatar)
   - Current Tier (badge with color coding)
@@ -173,6 +186,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 **Purpose:** Deep dive into individual subscription details
 
 **Components:**
+
 - **User Information Section:**
   - Full name, email, phone
   - User avatar
@@ -215,6 +229,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 **Purpose:** Configure subscription tiers and pricing
 
 **Components:**
+
 - **Tiers List Table:**
   - Tier name and display name
   - Price (monthly)
@@ -252,6 +267,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 **Purpose:** Track all subscription-related events for compliance
 
 **Components:**
+
 - **Events Table:**
   - Timestamp
   - User (name, email)
@@ -284,6 +300,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 **Purpose:** Generate insights for business decision-making
 
 **Components:**
+
 - **Subscription Reports:**
   - Monthly Revenue Report
   - Churn Analysis Report
@@ -314,6 +331,7 @@ This document outlines the implementation plan for a comprehensive subscription 
 ## Technical Architecture
 
 ### Technology Stack
+
 - **Frontend Framework:** Next.js 14 (App Router)
 - **UI Library:** React with TypeScript
 - **Styling:** Tailwind CSS (existing pattern)
@@ -463,6 +481,7 @@ EventsAuditLog (page.tsx)
 **Goals:** Establish admin access control and basic subscription viewing/management
 
 #### Week 1: Foundation
+
 - [ ] **Task 1.1:** Create admin route guard component
   - File: `apps/web/components/admin/AdminRoute.tsx`
   - Hook: `apps/web/lib/hooks/use-admin.ts`
@@ -493,6 +512,7 @@ EventsAuditLog (page.tsx)
   - Test policy enforcement
 
 #### Week 2: Dashboard and List View
+
 - [ ] **Task 2.1:** Build Subscription Dashboard page
   - File: `apps/web/app/dashboard/subscriptions/page.tsx`
   - Components:
@@ -527,6 +547,7 @@ EventsAuditLog (page.tsx)
     - Metric display cards
 
 #### Week 3: Detail View and Actions
+
 - [ ] **Task 3.1:** Build Subscription Detail page
   - File: `apps/web/app/dashboard/subscriptions/users/[id]/page.tsx`
   - Sections:
@@ -564,6 +585,7 @@ EventsAuditLog (page.tsx)
   - Update keyboard shortcuts (if applicable)
 
 #### Deliverables - Phase 1
+
 - ✅ Admin-protected subscription routes
 - ✅ Subscription dashboard with key metrics
 - ✅ Paginated list of all user subscriptions
@@ -580,6 +602,7 @@ EventsAuditLog (page.tsx)
 **Goals:** Add analytics dashboards and audit logging capabilities
 
 #### Week 4: Charts and Analytics
+
 - [ ] **Task 4.1:** Implement revenue chart
   - Component: `apps/web/components/subscriptions/RevenueChart.tsx`
   - Library: Recharts
@@ -606,6 +629,7 @@ EventsAuditLog (page.tsx)
   - Download options (CSV, PDF)
 
 #### Week 5: Event Logs and Export
+
 - [ ] **Task 5.1:** Build Events Audit Log page
   - File: `apps/web/app/dashboard/subscriptions/events/page.tsx`
   - Components:
@@ -635,6 +659,7 @@ EventsAuditLog (page.tsx)
   - Include relevant columns only
 
 #### Deliverables - Phase 2
+
 - ✅ Revenue trend visualization
 - ✅ Tier distribution analytics
 - ✅ Subscription growth/churn charts
@@ -649,6 +674,7 @@ EventsAuditLog (page.tsx)
 **Goals:** Enable tier configuration and advanced administrative capabilities
 
 #### Week 6: Tier Management
+
 - [ ] **Task 6.1:** Build Tiers List page
   - File: `apps/web/app/dashboard/subscriptions/tiers/page.tsx`
   - Display all tiers in grid or table
@@ -692,6 +718,7 @@ EventsAuditLog (page.tsx)
     - `getTierSubscriberCount(tierId)` - for validation
 
 #### Week 7: Advanced Admin Features
+
 - [ ] **Task 7.1:** Implement bulk actions
   - Component: `apps/web/components/subscriptions/BulkActions.tsx`
   - Actions:
@@ -734,6 +761,7 @@ EventsAuditLog (page.tsx)
   - Use case: Support context, special arrangements
 
 #### Deliverables - Phase 3
+
 - ✅ Full tier CRUD operations
 - ✅ Tier subscriber count display
 - ✅ Bulk export of subscriptions
@@ -764,6 +792,7 @@ COMMENT ON COLUMN public.user_subscriptions.admin_notes IS
 ```
 
 **Structure of admin_notes JSONB:**
+
 ```json
 [
   {
@@ -863,7 +892,6 @@ All endpoints will use the existing Supabase client pattern. New service methods
 
 ```typescript
 export class AdminSubscriptionService {
-
   // List and filter subscriptions
   async getAllSubscriptionsAdmin(options: {
     page?: number;
@@ -875,16 +903,18 @@ export class AdminSubscriptionService {
     dateTo?: Date;
     cancelAtPeriodEnd?: boolean;
     expiringInDays?: number;
-  }): Promise<PaginatedSubscriptions>
+  }): Promise<PaginatedSubscriptions>;
 
   // Get single subscription
-  async getSubscriptionByIdAdmin(subscriptionId: string): Promise<UserSubscriptionWithTier>
+  async getSubscriptionByIdAdmin(
+    subscriptionId: string,
+  ): Promise<UserSubscriptionWithTier>;
 
   // Update subscription
   async updateSubscriptionAdmin(
     subscriptionId: string,
-    updates: Partial<UserSubscription>
-  ): Promise<UserSubscription>
+    updates: Partial<UserSubscription>,
+  ): Promise<UserSubscription>;
 
   // Cancel subscription (admin override)
   async cancelSubscriptionAdmin(
@@ -892,15 +922,15 @@ export class AdminSubscriptionService {
     options: {
       immediate?: boolean;
       reason?: string;
-    }
-  ): Promise<UserSubscription>
+    },
+  ): Promise<UserSubscription>;
 
   // Extend subscription period
   async extendSubscription(
     subscriptionId: string,
     extensionDays: number,
-    reason: string
-  ): Promise<UserSubscription>
+    reason: string,
+  ): Promise<UserSubscription>;
 
   // Change tier (admin override)
   async changeTierAdmin(
@@ -909,8 +939,8 @@ export class AdminSubscriptionService {
     options: {
       prorate?: boolean;
       effectiveDate?: Date;
-    }
-  ): Promise<UserSubscription>
+    },
+  ): Promise<UserSubscription>;
 
   // Manual subscription creation
   async createManualSubscription(data: {
@@ -919,25 +949,34 @@ export class AdminSubscriptionService {
     startDate: Date;
     endDate?: Date;
     isComplimentary?: boolean;
-  }): Promise<UserSubscription>
+  }): Promise<UserSubscription>;
 
   // Transfer subscription
   async transferSubscription(
     subscriptionId: string,
     toUserId: string,
-    reason: string
-  ): Promise<UserSubscription>
+    reason: string,
+  ): Promise<UserSubscription>;
 
   // Tier management
-  async createTier(tierData: Omit<SubscriptionTier, 'id' | 'created_at'>): Promise<SubscriptionTier>
-  async updateTier(tierId: string, updates: Partial<SubscriptionTier>): Promise<SubscriptionTier>
-  async deleteTier(tierId: string): Promise<void>
-  async getTierSubscriberCount(tierId: string): Promise<number>
+  async createTier(
+    tierData: Omit<SubscriptionTier, "id" | "created_at">,
+  ): Promise<SubscriptionTier>;
+  async updateTier(
+    tierId: string,
+    updates: Partial<SubscriptionTier>,
+  ): Promise<SubscriptionTier>;
+  async deleteTier(tierId: string): Promise<void>;
+  async getTierSubscriberCount(tierId: string): Promise<number>;
 
   // Admin notes
-  async addAdminNote(subscriptionId: string, note: string): Promise<void>
-  async updateAdminNote(subscriptionId: string, noteId: string, note: string): Promise<void>
-  async deleteAdminNote(subscriptionId: string, noteId: string): Promise<void>
+  async addAdminNote(subscriptionId: string, note: string): Promise<void>;
+  async updateAdminNote(
+    subscriptionId: string,
+    noteId: string,
+    note: string,
+  ): Promise<void>;
+  async deleteAdminNote(subscriptionId: string, noteId: string): Promise<void>;
 
   // Events
   async getAllSubscriptionEvents(options: {
@@ -947,13 +986,13 @@ export class AdminSubscriptionService {
     userId?: string;
     dateFrom?: Date;
     dateTo?: Date;
-  }): Promise<PaginatedEvents>
+  }): Promise<PaginatedEvents>;
 
   // Analytics
-  async getRevenueTrend(months: number): Promise<RevenueTrendData[]>
-  async getTierDistribution(): Promise<TierDistributionData[]>
-  async getChurnAnalysis(days: number): Promise<ChurnAnalysisData>
-  async getSubscriptionGrowth(months: number): Promise<GrowthData[]>
+  async getRevenueTrend(months: number): Promise<RevenueTrendData[]>;
+  async getTierDistribution(): Promise<TierDistributionData[]>;
+  async getChurnAnalysis(days: number): Promise<ChurnAnalysisData>;
+  async getSubscriptionGrowth(months: number): Promise<GrowthData[]>;
 }
 ```
 
@@ -964,16 +1003,16 @@ export class AdminSubscriptionService {
 ```typescript
 export class ExportService {
   // Export subscriptions to CSV
-  exportSubscriptionsToCSV(subscriptions: UserSubscriptionWithTier[]): string
+  exportSubscriptionsToCSV(subscriptions: UserSubscriptionWithTier[]): string;
 
   // Export events to CSV
-  exportEventsToCSV(events: SubscriptionEvent[]): string
+  exportEventsToCSV(events: SubscriptionEvent[]): string;
 
   // Export to JSON
-  exportToJSON(data: any): string
+  exportToJSON(data: any): string;
 
   // Generate PDF report (Phase 3)
-  generatePDFReport(reportData: ReportData): Blob
+  generatePDFReport(reportData: ReportData): Blob;
 }
 ```
 
@@ -982,6 +1021,7 @@ export class ExportService {
 ## UI/UX Design
 
 ### Design Principles
+
 1. **Consistency:** Match existing admin pages (rooms, bookings, users)
 2. **Clarity:** Clear labels, helpful tooltips, obvious actions
 3. **Efficiency:** Minimize clicks, provide keyboard shortcuts
@@ -992,21 +1032,22 @@ export class ExportService {
 
 ```typescript
 const statusColors = {
-  active: 'green',      // bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
-  cancelled: 'red',     // bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
-  past_due: 'orange',   // bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300
-  trialing: 'blue',     // bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300
-  incomplete: 'gray',   // bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300
-  unpaid: 'red',        // bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
+  active: "green", // bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
+  cancelled: "red", // bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
+  past_due: "orange", // bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300
+  trialing: "blue", // bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300
+  incomplete: "gray", // bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300
+  unpaid: "red", // bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
 };
 
 const tierColors = {
-  free: 'gray',         // bg-gray-100 text-gray-800
-  premium: 'purple',    // bg-purple-100 text-purple-800
+  free: "gray", // bg-gray-100 text-gray-800
+  premium: "purple", // bg-purple-100 text-purple-800
 };
 ```
 
 ### Responsive Breakpoints
+
 - Mobile: < 640px (stacked cards, simplified table)
 - Tablet: 640px - 1024px (2-column layout)
 - Desktop: > 1024px (full multi-column tables)
@@ -1014,6 +1055,7 @@ const tierColors = {
 ### Key UI Components
 
 #### Stats Card
+
 ```
 ┌─────────────────────────────┐
 │ 🎯 Total Subscriptions      │
@@ -1023,6 +1065,7 @@ const tierColors = {
 ```
 
 #### Subscription Table Row
+
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │ [Avatar] John Doe              │ Premium  │ Active  │ Actions ▼ │
@@ -1032,6 +1075,7 @@ const tierColors = {
 ```
 
 #### Timeline Event
+
 ```
 ┌────────────────────────────────────────────┐
 │ 🟢 subscription_created                    │
@@ -1060,6 +1104,7 @@ Dashboard
 ```
 
 ### Accessibility Features
+
 - ARIA labels on all interactive elements
 - Keyboard shortcuts:
   - `/` - Focus search
@@ -1077,23 +1122,26 @@ Dashboard
 ### Role-Based Access Control (RBAC)
 
 #### Admin Role Check
+
 **Pattern:**
+
 1. Frontend: `AdminRoute` component checks user role
 2. Backend: RLS policies enforce admin-only access
 3. Double validation: Never trust client-side alone
 
 **Implementation:**
+
 ```typescript
 // apps/web/lib/hooks/use-admin.ts
 export function useAdmin() {
   const { user } = useAuth();
   const { data: userData, isLoading } = useQuery({
-    queryKey: ['user', user?.id],
+    queryKey: ["user", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user?.id)
+        .from("users")
+        .select("role")
+        .eq("id", user?.id)
         .single();
       if (error) throw error;
       return data;
@@ -1102,7 +1150,7 @@ export function useAdmin() {
   });
 
   return {
-    isAdmin: userData?.role === 'admin',
+    isAdmin: userData?.role === "admin",
     isLoading,
   };
 }
@@ -1111,16 +1159,19 @@ export function useAdmin() {
 ### Data Access Policies
 
 #### Subscription Data
+
 - **Admins:** Full read/write access to all subscriptions
 - **Service Role:** Full access for Stripe webhooks and system operations
 - **Users:** Read-only access to their own subscription (existing policy)
 
 #### Tier Data
+
 - **Admins:** Full CRUD operations on tiers
 - **Service Role:** Full access
 - **Users:** Read-only access to active tiers (existing policy)
 
 #### Event Logs
+
 - **Admins:** Read access to all events
 - **Service Role:** Write access for event creation
 - **Users:** Read access to their own events (existing policy)
@@ -1134,9 +1185,9 @@ async function logAdminAction(
   userId: string,
   subscriptionId: string,
   eventType: SubscriptionEventType,
-  metadata: Record<string, any>
+  metadata: Record<string, any>,
 ) {
-  await supabase.from('subscription_events').insert({
+  await supabase.from("subscription_events").insert({
     user_id: userId,
     subscription_id: subscriptionId,
     event_type: eventType,
@@ -1151,6 +1202,7 @@ async function logAdminAction(
 ```
 
 **Events to Log:**
+
 - `admin_cancellation` - When admin cancels subscription
 - `admin_extension` - When admin extends period
 - `admin_tier_change` - When admin changes tier
@@ -1177,7 +1229,11 @@ export const adminExtendSubscriptionSchema = z.object({
 });
 
 export const adminCreateTierSchema = z.object({
-  name: z.string().min(2).max(50).regex(/^[a-z0-9-]+$/),
+  name: z
+    .string()
+    .min(2)
+    .max(50)
+    .regex(/^[a-z0-9-]+$/),
   display_name: z.string().min(2).max(100),
   description: z.string().max(500).optional(),
   price_monthly: z.number().min(0),
@@ -1190,6 +1246,7 @@ export const adminCreateTierSchema = z.object({
 ### Rate Limiting
 
 Implement rate limiting for admin actions (future enhancement):
+
 - Max 100 subscription updates per minute per admin
 - Max 10 tier modifications per hour per admin
 - Prevent accidental bulk operations
@@ -1197,11 +1254,13 @@ Implement rate limiting for admin actions (future enhancement):
 ### Sensitive Data Handling
 
 **Protected Fields:**
+
 - Stripe customer ID (display only, no editing)
 - Stripe subscription ID (display only)
 - Payment method details (fetch from Stripe API, never store)
 
 **Data Masking:**
+
 - Email: Show full (admins need it for support)
 - Phone: Show full (admins need it for support)
 - Stripe IDs: Show with copy button
@@ -1215,9 +1274,11 @@ Implement rate limiting for admin actions (future enhancement):
 **Target Coverage:** 80%+
 
 #### Service Layer Tests
+
 **File:** `packages/supabase/src/services/admin-subscription.test.ts`
 
 Test cases:
+
 - ✅ `getAllSubscriptionsAdmin()` returns paginated results
 - ✅ `getAllSubscriptionsAdmin()` filters by status correctly
 - ✅ `getAllSubscriptionsAdmin()` filters by tier correctly
@@ -1230,9 +1291,11 @@ Test cases:
 - ✅ `addAdminNote()` appends to admin_notes array
 
 #### Component Tests
+
 **Tool:** React Testing Library
 
 Files to test:
+
 - `SubscriptionStatsCards.test.tsx`
 - `SubscriptionTable.test.tsx`
 - `TierForm.test.tsx`
@@ -1240,6 +1303,7 @@ Files to test:
 - `AdminRoute.test.tsx`
 
 Test cases:
+
 - ✅ Stats cards display correct values
 - ✅ Table renders rows correctly
 - ✅ Table sorting works
@@ -1252,6 +1316,7 @@ Test cases:
 **Tool:** Playwright or Cypress
 
 #### End-to-End Flows
+
 1. **Admin Login and Navigate to Subscriptions**
    - Login as admin
    - Navigate to /dashboard/subscriptions
@@ -1290,6 +1355,7 @@ Test cases:
 ### Performance Tests
 
 **Goals:**
+
 - Page load < 2 seconds
 - Table pagination < 500ms
 - Search results < 1 second
@@ -1300,12 +1366,14 @@ Test cases:
 ### Security Tests
 
 #### Access Control Tests
+
 - ✅ Non-admin cannot access /dashboard/subscriptions
 - ✅ Non-admin API calls to admin endpoints fail
 - ✅ RLS policies prevent unauthorized data access
 - ✅ SQL injection attempts blocked by parameterized queries
 
 #### Data Validation Tests
+
 - ✅ Invalid subscription IDs rejected
 - ✅ Negative extension days rejected
 - ✅ XSS attempts in notes sanitized
@@ -1345,6 +1413,7 @@ LIMIT 10;
 ### Pre-Launch Checklist
 
 #### Development
+
 - [ ] All Phase 1 features implemented
 - [ ] Unit tests passing (80%+ coverage)
 - [ ] Integration tests passing
@@ -1354,6 +1423,7 @@ LIMIT 10;
 - [ ] Performance benchmarks met
 
 #### Security
+
 - [ ] Admin role check implemented on all routes
 - [ ] RLS policies tested and verified
 - [ ] Input validation schemas applied
@@ -1361,6 +1431,7 @@ LIMIT 10;
 - [ ] Penetration testing completed (if required)
 
 #### Documentation
+
 - [ ] API documentation updated
 - [ ] Component storybook created (optional)
 - [ ] Admin user guide written
@@ -1368,6 +1439,7 @@ LIMIT 10;
 - [ ] Troubleshooting guide created
 
 #### Infrastructure
+
 - [ ] Database migrations tested on staging
 - [ ] Rollback plan documented
 - [ ] Monitoring alerts configured
@@ -1377,6 +1449,7 @@ LIMIT 10;
 ### Deployment Strategy
 
 #### Stage 1: Staging Deployment (Week 3)
+
 - Deploy to staging environment
 - Internal team testing
 - Admin users perform UAT
@@ -1385,6 +1458,7 @@ LIMIT 10;
 - Fix critical bugs
 
 #### Stage 2: Canary Release (Week 4)
+
 - Deploy to production for select admins only
 - Monitor error rates
 - Gather feedback from early adopters
@@ -1392,6 +1466,7 @@ LIMIT 10;
 - Validate analytics data accuracy
 
 #### Stage 3: Full Production Release (Week 5)
+
 - Enable for all admin users
 - Announce feature via:
   - Email to admin team
@@ -1401,6 +1476,7 @@ LIMIT 10;
 - Be ready for hotfixes
 
 #### Stage 4: Phase 2 & 3 Rollout (Weeks 6-8)
+
 - Follow same pattern for subsequent phases
 - Incremental feature releases
 - Continuous monitoring and improvement
@@ -1408,12 +1484,14 @@ LIMIT 10;
 ### Rollback Plan
 
 **Triggers for Rollback:**
+
 - Error rate > 5%
 - Performance degradation > 50%
 - Security vulnerability discovered
 - Data corruption detected
 
 **Rollback Steps:**
+
 1. Disable subscription routes (feature flag or route removal)
 2. Revert database migrations if necessary
 3. Notify admin team of rollback
@@ -1424,6 +1502,7 @@ LIMIT 10;
 ### Monitoring and Alerts
 
 **Key Metrics to Monitor:**
+
 - Page load times (p95, p99)
 - API response times
 - Error rates (4xx, 5xx)
@@ -1431,11 +1510,13 @@ LIMIT 10;
 - User engagement (page views, actions taken)
 
 **Alerts:**
+
 - Error rate > 2% - Slack notification
 - API response time > 3s - Email notification
 - Database connection failures - PagerDuty alert
 
 **Tools:**
+
 - Application monitoring: Vercel Analytics or similar
 - Error tracking: Sentry
 - Database monitoring: Supabase Dashboard
@@ -1448,6 +1529,7 @@ LIMIT 10;
 ### Business Metrics
 
 #### Primary KPIs
+
 1. **Admin Efficiency**
    - **Metric:** Time to resolve subscription support tickets
    - **Target:** Reduce from 30 minutes to 10 minutes
@@ -1464,6 +1546,7 @@ LIMIT 10;
    - **Measurement:** Tier change log
 
 #### Secondary KPIs
+
 1. **Revenue Optimization**
    - **Metric:** MRR growth
    - **Target:** Maintain or increase (not decrease due to admin errors)
@@ -1477,17 +1560,20 @@ LIMIT 10;
 ### Technical Metrics
 
 #### Performance
+
 - **Page Load Time:** < 2 seconds (p95)
 - **Search Response Time:** < 1 second
 - **Table Pagination:** < 500ms
 - **Export Generation:** < 5 seconds for 1000 records
 
 #### Reliability
+
 - **Uptime:** 99.9%
 - **Error Rate:** < 1%
 - **Data Accuracy:** 100% (subscription data matches Stripe)
 
 #### Adoption
+
 - **Admin User Adoption:** 100% of admins use portal within 1 month
 - **Feature Usage:** 80% of admins use dashboard weekly
 - **Export Usage:** Average 10 exports per week
@@ -1495,11 +1581,13 @@ LIMIT 10;
 ### User Satisfaction
 
 #### Feedback Collection
+
 - Post-launch survey to admin users
 - Monthly feedback sessions
 - Feature request tracking
 
 #### Target Scores
+
 - **Ease of Use:** 4.5/5
 - **Feature Completeness:** 4/5
 - **Performance:** 4.5/5
@@ -1568,6 +1656,7 @@ Week 8: [███████████████████████�
 This implementation plan provides a comprehensive roadmap for building a subscription management portal in the web application. By following this phased approach, we can deliver value incrementally while maintaining code quality, security, and user experience standards.
 
 **Next Steps:**
+
 1. Review and approve this plan with stakeholders
 2. Finalize timeline and assign resources
 3. Set up project tracking (Jira, Linear, etc.)
@@ -1575,6 +1664,7 @@ This implementation plan provides a comprehensive roadmap for building a subscri
 5. Schedule weekly progress reviews
 
 **Document Maintenance:**
+
 - This plan should be updated as implementation progresses
 - Document actual vs. estimated timelines
 - Track deviations and learnings

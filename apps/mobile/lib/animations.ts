@@ -8,8 +8,8 @@ import {
   Easing,
   interpolate,
   Extrapolation,
-} from 'react-native-reanimated';
-import { useEffect } from 'react';
+} from "react-native-reanimated";
+import { useEffect } from "react";
 
 /**
  * Animation utilities using react-native-reanimated
@@ -29,7 +29,7 @@ export const useFadeIn = (delay = 0, duration = 500) => {
       withTiming(1, {
         duration,
         easing: Easing.out(Easing.ease),
-      })
+      }),
     );
   }, []);
 
@@ -56,14 +56,14 @@ export const useSlideUp = (delay = 0, duration = 500, distance = 50) => {
       withSpring(0, {
         damping: 15,
         stiffness: 100,
-      })
+      }),
     );
     opacity.value = withDelay(
       delay,
       withTiming(1, {
         duration: duration * 0.7,
         easing: Easing.out(Easing.ease),
-      })
+      }),
     );
   }, []);
 
@@ -89,14 +89,14 @@ export const useScaleIn = (delay = 0) => {
       withSpring(1, {
         damping: 12,
         stiffness: 100,
-      })
+      }),
     );
     opacity.value = withDelay(
       delay,
       withTiming(1, {
         duration: 300,
         easing: Easing.out(Easing.ease),
-      })
+      }),
     );
   }, []);
 
@@ -152,7 +152,7 @@ export const useListItemAnimation = (index: number, delay = 80) => {
       withTiming(1, {
         duration: 400,
         easing: Easing.out(Easing.ease),
-      })
+      }),
     );
 
     translateY.value = withDelay(
@@ -160,7 +160,7 @@ export const useListItemAnimation = (index: number, delay = 80) => {
       withSpring(0, {
         damping: 15,
         stiffness: 100,
-      })
+      }),
     );
   }, [index]);
 
@@ -184,7 +184,7 @@ export const useShake = () => {
       withTiming(10, { duration: 50 }),
       withTiming(-10, { duration: 50 }),
       withTiming(10, { duration: 50 }),
-      withTiming(0, { duration: 50 })
+      withTiming(0, { duration: 50 }),
     );
   };
 
@@ -205,7 +205,7 @@ export const usePulse = (enabled = true) => {
     if (enabled) {
       scale.value = withSequence(
         withTiming(1.05, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) })
+        withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
       );
     }
   }, [enabled]);

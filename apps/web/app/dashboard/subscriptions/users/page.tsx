@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { AdminRoute } from '../../../../components/admin/AdminRoute';
-import { SubscriptionTable } from '../../../../components/subscriptions/SubscriptionTable';
-import { useSubscriptions } from '../../../../lib/hooks/use-subscriptions';
-import { SubscriptionStatus } from '@workspace/types';
-import { Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { AdminRoute } from "../../../../components/admin/AdminRoute";
+import { SubscriptionTable } from "../../../../components/subscriptions/SubscriptionTable";
+import { useSubscriptions } from "../../../../lib/hooks/use-subscriptions";
+import { SubscriptionStatus } from "@workspace/types";
+import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default function UserSubscriptionsPage() {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<SubscriptionStatus[]>([]);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
 
   const { subscriptions, total, totalPages, isLoading } = useSubscriptions({
     page,
@@ -40,8 +40,8 @@ export default function UserSubscriptionsPage() {
 
   const clearFilters = () => {
     setStatusFilter([]);
-    setSearch('');
-    setSearchInput('');
+    setSearch("");
+    setSearchInput("");
     setPage(1);
   };
 
@@ -117,11 +117,12 @@ export default function UserSubscriptionsPage() {
                 onClick={() => handleStatusFilterChange(status)}
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                   statusFilter.includes(status)
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? "bg-primary text-white"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
                 }`}
               >
-                {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                {status.charAt(0).toUpperCase() +
+                  status.slice(1).replace("_", " ")}
               </button>
             ))}
             {(statusFilter.length > 0 || search) && (
@@ -146,7 +147,10 @@ export default function UserSubscriptionsPage() {
         </div>
 
         {/* Table */}
-        <SubscriptionTable subscriptions={subscriptions} isLoading={isLoading} />
+        <SubscriptionTable
+          subscriptions={subscriptions}
+          isLoading={isLoading}
+        />
 
         {/* Pagination */}
         {totalPages > 1 && (

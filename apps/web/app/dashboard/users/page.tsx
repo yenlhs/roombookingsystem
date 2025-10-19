@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { supabase } from '@workspace/supabase';
-import type { User, Database } from '@workspace/types';
-import { UserStatus } from '@workspace/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { supabase } from "@workspace/supabase";
+import type { User, Database } from "@workspace/types";
+import { UserStatus } from "@workspace/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader2,
   Search,
@@ -23,7 +23,7 @@ import {
   Calendar,
   Mail,
   Phone,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function UsersPage() {
   return (
@@ -39,25 +39,25 @@ function UsersContent() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<UserStatus | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<UserStatus | "all">("all");
 
   useEffect(() => {
     loadUsers();
 
     // Subscribe to real-time updates
     const channel = supabase
-      .channel('users-changes')
+      .channel("users-changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'users',
+          event: "*",
+          schema: "public",
+          table: "users",
         },
         () => {
           loadUsers();
-        }
+        },
       )
       .subscribe();
 
@@ -72,9 +72,9 @@ function UsersContent() {
       setError(null);
 
       const query = supabase
-        .from('users')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("users")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       const { data, error: fetchError } = await query;
 
@@ -82,29 +82,35 @@ function UsersContent() {
 
       setUsers(data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load users');
+      setError(err instanceof Error ? err.message : "Failed to load users");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggleStatus = async (userId: string, currentStatus: UserStatus) => {
-    const newStatus = currentStatus === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
-    const action = newStatus === UserStatus.ACTIVE ? 'activate' : 'deactivate';
+  const handleToggleStatus = async (
+    userId: string,
+    currentStatus: UserStatus,
+  ) => {
+    const newStatus =
+      currentStatus === UserStatus.ACTIVE
+        ? UserStatus.INACTIVE
+        : UserStatus.ACTIVE;
+    const action = newStatus === UserStatus.ACTIVE ? "activate" : "deactivate";
 
     if (!confirm(`Are you sure you want to ${action} this user?`)) {
       return;
     }
 
     try {
-      const updateData: Database['public']['Tables']['users']['Update'] = {
-        status: newStatus
+      const updateData: Database["public"]["Tables"]["users"]["Update"] = {
+        status: newStatus,
       };
       const { error: updateError } = await supabase
-        .from('users')
+        .from("users")
         // @ts-expect-error - Supabase type inference issue with update method
         .update(updateData)
-        .eq('id', userId);
+        .eq("id", userId);
 
       if (updateError) throw updateError;
 
@@ -116,16 +122,16 @@ function UsersContent() {
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const filteredUsers = users.filter((user) => {
     // Status filter
-    if (statusFilter !== 'all' && user.status !== statusFilter) {
+    if (statusFilter !== "all" && user.status !== statusFilter) {
       return false;
     }
 
@@ -144,21 +150,21 @@ function UsersContent() {
 
   const getStatusBadge = (status: UserStatus) => {
     return status === UserStatus.ACTIVE
-      ? 'bg-green-100 text-green-800'
-      : 'bg-gray-100 text-gray-800';
+      ? "bg-green-100 text-green-800"
+      : "bg-gray-100 text-gray-800";
   };
 
   const getRoleBadge = (role: string) => {
-    return role === 'admin'
-      ? 'bg-purple-100 text-purple-800'
-      : 'bg-blue-100 text-blue-800';
+    return role === "admin"
+      ? "bg-purple-100 text-purple-800"
+      : "bg-blue-100 text-blue-800";
   };
 
   const stats = {
     total: users.length,
     active: users.filter((u) => u.status === UserStatus.ACTIVE).length,
     inactive: users.filter((u) => u.status === UserStatus.INACTIVE).length,
-    admins: users.filter((u) => u.role === 'admin').length,
+    admins: users.filter((u) => u.role === "admin").length,
   };
 
   return (
@@ -167,13 +173,19 @@ function UsersContent() {
       <header className="border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/dashboard")}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold">User Management</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{currentUser?.email}</span>
+            <span className="text-sm text-muted-foreground">
+              {currentUser?.email}
+            </span>
             <Button variant="outline" onClick={signOut}>
               Sign Out
             </Button>
@@ -186,7 +198,9 @@ function UsersContent() {
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -206,19 +220,25 @@ function UsersContent() {
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {stats.active}
+              </div>
               <p className="text-xs text-muted-foreground">Active Users</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-gray-600">{stats.inactive}</div>
+              <div className="text-2xl font-bold text-gray-600">
+                {stats.inactive}
+              </div>
               <p className="text-xs text-muted-foreground">Inactive Users</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-purple-600">{stats.admins}</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {stats.admins}
+              </div>
               <p className="text-xs text-muted-foreground">Administrators</p>
             </CardContent>
           </Card>
@@ -253,7 +273,9 @@ function UsersContent() {
                 <select
                   id="status"
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as UserStatus | 'all')}
+                  onChange={(e) =>
+                    setStatusFilter(e.target.value as UserStatus | "all")
+                  }
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <option value="all">All Status</option>
@@ -274,9 +296,9 @@ function UsersContent() {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
-                {searchQuery || statusFilter !== 'all'
-                  ? 'No users found matching your criteria.'
-                  : 'No users found.'}
+                {searchQuery || statusFilter !== "all"
+                  ? "No users found matching your criteria."
+                  : "No users found."}
               </p>
             </CardContent>
           </Card>
@@ -291,7 +313,9 @@ function UsersContent() {
                       <div className="flex items-start gap-6">
                         <div className="flex-1">
                           <div className="flex items-center gap-3">
-                            <h3 className="text-lg font-semibold">{user.full_name}</h3>
+                            <h3 className="text-lg font-semibold">
+                              {user.full_name}
+                            </h3>
                             <span
                               className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusBadge(user.status)}`}
                             >
@@ -335,7 +359,9 @@ function UsersContent() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleToggleStatus(user.id, user.status)}
+                          onClick={() =>
+                            handleToggleStatus(user.id, user.status)
+                          }
                         >
                           {user.status === UserStatus.ACTIVE ? (
                             <>
@@ -361,7 +387,8 @@ function UsersContent() {
         {/* Stats */}
         {!loading && filteredUsers.length > 0 && (
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            Showing {filteredUsers.length} of {users.length} user{users.length !== 1 ? 's' : ''}
+            Showing {filteredUsers.length} of {users.length} user
+            {users.length !== 1 ? "s" : ""}
           </div>
         )}
       </div>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { supabase, createSubscriptionService } from '@workspace/supabase';
+import { useQuery } from "@tanstack/react-query";
+import { supabase, createSubscriptionService } from "@workspace/supabase";
 
 interface SubscriptionStats {
   total_subscriptions: number;
@@ -16,7 +16,7 @@ interface SubscriptionStats {
  */
 export function useSubscriptionStats() {
   const { data, isLoading, error, refetch } = useQuery<SubscriptionStats>({
-    queryKey: ['subscription-stats'],
+    queryKey: ["subscription-stats"],
     queryFn: async () => {
       const service = createSubscriptionService(supabase);
       return await service.getSubscriptionStats();

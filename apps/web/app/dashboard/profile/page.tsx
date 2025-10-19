@@ -1,20 +1,23 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { createProfileService, supabase } from '@workspace/supabase';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { updateProfileSchema, type UpdateProfileInput } from '@workspace/validation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Upload, ArrowLeft, Camera } from 'lucide-react';
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { createProfileService, supabase } from "@workspace/supabase";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  updateProfileSchema,
+  type UpdateProfileInput,
+} from "@workspace/validation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2, Upload, ArrowLeft, Camera } from "lucide-react";
 
 export default function ProfilePage() {
   return (
@@ -63,11 +66,11 @@ function ProfileContent() {
       setProfile(data);
       reset({
         full_name: data.full_name,
-        phone: data.phone || '',
-        avatar_url: data.avatar_url || '',
+        phone: data.phone || "",
+        avatar_url: data.avatar_url || "",
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load profile');
+      setError(err instanceof Error ? err.message : "Failed to load profile");
     } finally {
       setLoading(false);
     }
@@ -82,13 +85,13 @@ function ProfileContent() {
       await profileService.updateProfile(data);
       await loadProfile();
 
-      setSuccess('Profile updated successfully!');
+      setSuccess("Profile updated successfully!");
       setIsEditing(false);
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
+      setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
       setLoading(false);
     }
@@ -99,14 +102,14 @@ function ProfileContent() {
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file');
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file");
       return;
     }
 
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      setError('Image must be less than 5MB');
+      setError("Image must be less than 5MB");
       return;
     }
 
@@ -117,10 +120,10 @@ function ProfileContent() {
       const avatarUrl = await profileService.uploadAvatar(file);
       await loadProfile();
 
-      setSuccess('Avatar uploaded successfully!');
+      setSuccess("Avatar uploaded successfully!");
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to upload avatar');
+      setError(err instanceof Error ? err.message : "Failed to upload avatar");
     } finally {
       setUploading(false);
     }
@@ -131,16 +134,16 @@ function ProfileContent() {
     setError(null);
     reset({
       full_name: profile?.full_name,
-      phone: profile?.phone || '',
-      avatar_url: profile?.avatar_url || '',
+      phone: profile?.phone || "",
+      avatar_url: profile?.avatar_url || "",
     });
   };
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
+      .split(" ")
       .map((n) => n[0])
-      .join('')
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -162,7 +165,7 @@ function ProfileContent() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => router.push('/dashboard')}
+              onClick={() => router.push("/dashboard")}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -182,14 +185,18 @@ function ProfileContent() {
         {/* Success Message */}
         {success && (
           <Alert className="mb-6 border-green-200 bg-green-50">
-            <AlertDescription className="text-green-800">{success}</AlertDescription>
+            <AlertDescription className="text-green-800">
+              {success}
+            </AlertDescription>
           </Alert>
         )}
 
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -202,9 +209,12 @@ function ProfileContent() {
             <div className="mb-6 flex items-center gap-6">
               <div className="relative">
                 <Avatar className="h-24 w-24">
-                  <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name} />
+                  <AvatarImage
+                    src={profile?.avatar_url || undefined}
+                    alt={profile?.full_name}
+                  />
                   <AvatarFallback className="bg-blue-100 text-2xl text-blue-600">
-                    {profile?.full_name ? getInitials(profile.full_name) : '?'}
+                    {profile?.full_name ? getInitials(profile.full_name) : "?"}
                   </AvatarFallback>
                 </Avatar>
                 {uploading && (
@@ -214,8 +224,12 @@ function ProfileContent() {
                 )}
               </div>
               <div>
-                <h3 className="text-lg font-semibold">{profile?.full_name || 'User'}</h3>
-                <p className="text-sm text-muted-foreground">{profile?.email}</p>
+                <h3 className="text-lg font-semibold">
+                  {profile?.full_name || "User"}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {profile?.email}
+                </p>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -253,13 +267,15 @@ function ProfileContent() {
                   <Label htmlFor="full_name">Full Name</Label>
                   <Input
                     id="full_name"
-                    {...register('full_name')}
+                    {...register("full_name")}
                     placeholder="Enter your full name"
                     disabled={loading}
-                    className={errors.full_name ? 'border-red-500' : ''}
+                    className={errors.full_name ? "border-red-500" : ""}
                   />
                   {errors.full_name && (
-                    <p className="text-sm text-red-600">{errors.full_name.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.full_name.message}
+                    </p>
                   )}
                 </div>
 
@@ -268,13 +284,15 @@ function ProfileContent() {
                   <Label htmlFor="phone">Phone (Optional)</Label>
                   <Input
                     id="phone"
-                    {...register('phone')}
+                    {...register("phone")}
                     placeholder="1234567890"
                     disabled={loading}
-                    className={errors.phone ? 'border-red-500' : ''}
+                    className={errors.phone ? "border-red-500" : ""}
                   />
                   {errors.phone && (
-                    <p className="text-sm text-red-600">{errors.phone.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.phone.message}
+                    </p>
                   )}
                 </div>
 
@@ -296,7 +314,7 @@ function ProfileContent() {
                         Saving...
                       </>
                     ) : (
-                      'Save Changes'
+                      "Save Changes"
                     )}
                   </Button>
                 </div>
@@ -304,18 +322,24 @@ function ProfileContent() {
             ) : (
               <div className="space-y-4">
                 <div className="space-y-1 border-b pb-4">
-                  <Label className="text-xs uppercase text-muted-foreground">Full Name</Label>
-                  <p className="text-base">{profile?.full_name || 'Not set'}</p>
+                  <Label className="text-xs uppercase text-muted-foreground">
+                    Full Name
+                  </Label>
+                  <p className="text-base">{profile?.full_name || "Not set"}</p>
                 </div>
 
                 <div className="space-y-1 border-b pb-4">
-                  <Label className="text-xs uppercase text-muted-foreground">Email</Label>
+                  <Label className="text-xs uppercase text-muted-foreground">
+                    Email
+                  </Label>
                   <p className="text-base">{profile?.email}</p>
                 </div>
 
                 <div className="space-y-1 border-b pb-4">
-                  <Label className="text-xs uppercase text-muted-foreground">Phone</Label>
-                  <p className="text-base">{profile?.phone || 'Not set'}</p>
+                  <Label className="text-xs uppercase text-muted-foreground">
+                    Phone
+                  </Label>
+                  <p className="text-base">{profile?.phone || "Not set"}</p>
                 </div>
 
                 <Button onClick={() => setIsEditing(true)} className="w-full">

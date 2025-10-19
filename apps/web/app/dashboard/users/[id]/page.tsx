@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { createBookingService, supabase } from '@workspace/supabase';
-import type { User, BookingWithDetails, Database } from '@workspace/types';
-import { UserStatus } from '@workspace/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { createBookingService, supabase } from "@workspace/supabase";
+import type { User, BookingWithDetails, Database } from "@workspace/types";
+import { UserStatus } from "@workspace/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader2,
   ArrowLeft,
@@ -22,7 +22,7 @@ import {
   UserCheck,
   UserX,
   Activity,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function UserDetailsPage() {
   return (
@@ -61,30 +61,32 @@ function UserDetailsContent() {
 
       // Load user
       const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
+        .from("users")
+        .select("*")
+        .eq("id", userId)
         .single();
 
       if (userError) throw userError;
       setUser(userData);
 
       // Load user's bookings
-      const userBookings = await bookingService.getBookings({ user_id: userId });
+      const userBookings = await bookingService.getBookings({
+        user_id: userId,
+      });
       setBookings(userBookings);
 
       // Calculate stats
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       setBookingStats({
         total: userBookings.length,
         upcoming: userBookings.filter(
-          (b) => b.status === 'confirmed' && b.booking_date >= today
+          (b) => b.status === "confirmed" && b.booking_date >= today,
         ).length,
-        completed: userBookings.filter((b) => b.status === 'completed').length,
-        cancelled: userBookings.filter((b) => b.status === 'cancelled').length,
+        completed: userBookings.filter((b) => b.status === "completed").length,
+        cancelled: userBookings.filter((b) => b.status === "cancelled").length,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load user data');
+      setError(err instanceof Error ? err.message : "Failed to load user data");
     } finally {
       setLoading(false);
     }
@@ -93,22 +95,25 @@ function UserDetailsContent() {
   const handleToggleStatus = async () => {
     if (!user) return;
 
-    const newStatus = user.status === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
-    const action = newStatus === UserStatus.ACTIVE ? 'activate' : 'deactivate';
+    const newStatus =
+      user.status === UserStatus.ACTIVE
+        ? UserStatus.INACTIVE
+        : UserStatus.ACTIVE;
+    const action = newStatus === UserStatus.ACTIVE ? "activate" : "deactivate";
 
     if (!confirm(`Are you sure you want to ${action} this user?`)) {
       return;
     }
 
     try {
-      const updateData: Database['public']['Tables']['users']['Update'] = {
-        status: newStatus
+      const updateData: Database["public"]["Tables"]["users"]["Update"] = {
+        status: newStatus,
       };
-      const { error: updateError} = await supabase
-        .from('users')
+      const { error: updateError } = await supabase
+        .from("users")
         // @ts-expect-error - Supabase type inference issue with update method
         .update(updateData)
-        .eq('id', userId);
+        .eq("id", userId);
 
       if (updateError) throw updateError;
 
@@ -120,31 +125,31 @@ function UserDetailsContent() {
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const formatTime = (timeString: string): string => {
-    const [hours, minutes] = timeString.split(':');
+    const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const hour12 = hour % 12 || 12;
     return `${hour12}:${minutes} ${ampm}`;
   };
 
   const getStatusBadge = (status: UserStatus) => {
     return status === UserStatus.ACTIVE
-      ? 'bg-green-100 text-green-800'
-      : 'bg-gray-100 text-gray-800';
+      ? "bg-green-100 text-green-800"
+      : "bg-gray-100 text-gray-800";
   };
 
   const getRoleBadge = (role: string) => {
-    return role === 'admin'
-      ? 'bg-purple-100 text-purple-800'
-      : 'bg-blue-100 text-blue-800';
+    return role === "admin"
+      ? "bg-purple-100 text-purple-800"
+      : "bg-blue-100 text-blue-800";
   };
 
   if (loading) {
@@ -161,7 +166,10 @@ function UserDetailsContent() {
         <div className="text-center">
           <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
           <p className="text-lg text-muted-foreground">User not found</p>
-          <Button className="mt-4" onClick={() => router.push('/dashboard/users')}>
+          <Button
+            className="mt-4"
+            onClick={() => router.push("/dashboard/users")}
+          >
             Back to Users
           </Button>
         </div>
@@ -175,13 +183,19 @@ function UserDetailsContent() {
       <header className="border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/users')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/dashboard/users")}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold">User Details</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{currentUser?.email}</span>
+            <span className="text-sm text-muted-foreground">
+              {currentUser?.email}
+            </span>
             <Button variant="outline" onClick={signOut}>
               Sign Out
             </Button>
@@ -194,7 +208,9 @@ function UserDetailsContent() {
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -275,12 +291,18 @@ function UserDetailsContent() {
                   <Calendar className="h-4 w-4" />
                   <span>Joined</span>
                 </div>
-                <p className="mt-1 text-base font-medium">{formatDate(user.created_at)}</p>
+                <p className="mt-1 text-base font-medium">
+                  {formatDate(user.created_at)}
+                </p>
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-muted-foreground">User ID</div>
-                <p className="mt-1 font-mono text-xs text-muted-foreground">{user.id}</p>
+                <div className="text-sm font-semibold text-muted-foreground">
+                  User ID
+                </div>
+                <p className="mt-1 font-mono text-xs text-muted-foreground">
+                  {user.id}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -300,18 +322,30 @@ function UserDetailsContent() {
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-muted-foreground">Upcoming</div>
-                <p className="mt-1 text-2xl font-bold text-green-600">{bookingStats.upcoming}</p>
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Upcoming
+                </div>
+                <p className="mt-1 text-2xl font-bold text-green-600">
+                  {bookingStats.upcoming}
+                </p>
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-muted-foreground">Completed</div>
-                <p className="mt-1 text-xl font-bold text-gray-600">{bookingStats.completed}</p>
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Completed
+                </div>
+                <p className="mt-1 text-xl font-bold text-gray-600">
+                  {bookingStats.completed}
+                </p>
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-muted-foreground">Cancelled</div>
-                <p className="mt-1 text-xl font-bold text-red-600">{bookingStats.cancelled}</p>
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Cancelled
+                </div>
+                <p className="mt-1 text-xl font-bold text-red-600">
+                  {bookingStats.cancelled}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -324,7 +358,9 @@ function UserDetailsContent() {
           </CardHeader>
           <CardContent>
             {bookings.length === 0 ? (
-              <p className="py-8 text-center text-muted-foreground">No bookings found</p>
+              <p className="py-8 text-center text-muted-foreground">
+                No bookings found
+              </p>
             ) : (
               <div className="space-y-3">
                 {bookings.slice(0, 10).map((booking) => (
@@ -335,18 +371,19 @@ function UserDetailsContent() {
                     <div className="flex-1">
                       <div className="font-semibold">{booking.room?.name}</div>
                       <div className="text-sm text-muted-foreground">
-                        {formatDate(booking.booking_date)} •{' '}
-                        {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                        {formatDate(booking.booking_date)} •{" "}
+                        {formatTime(booking.start_time)} -{" "}
+                        {formatTime(booking.end_time)}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span
                         className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                          booking.status === 'confirmed'
-                            ? 'bg-green-100 text-green-800'
-                            : booking.status === 'cancelled'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-gray-100 text-gray-800'
+                          booking.status === "confirmed"
+                            ? "bg-green-100 text-green-800"
+                            : booking.status === "cancelled"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-gray-100 text-gray-800"
                         }`}
                       >
                         {booking.status}

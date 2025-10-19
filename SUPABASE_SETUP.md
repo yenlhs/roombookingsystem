@@ -10,6 +10,7 @@
 ### 1. Create Supabase Account & Project
 
 #### A. Sign Up for Supabase
+
 1. Go to [https://supabase.com](https://supabase.com)
 2. Click **"Start your project"** or **"Sign in"**
 3. Sign up using one of these methods:
@@ -18,6 +19,7 @@
 4. Verify your email if using email/password method
 
 #### B. Create New Project
+
 1. After logging in, click **"New Project"**
 2. Fill in the project details:
    - **Name:** `room-booking-system` (or your preferred name)
@@ -37,12 +39,14 @@
 Once your project is ready, you'll need to copy these values:
 
 #### A. Project URL
+
 1. Go to **Settings** → **API** in the left sidebar
 2. Find **"Project URL"**
    - Example: `https://abcdefghijklmn.supabase.co`
 3. **Copy this URL** - you'll need it for your apps
 
 #### B. Anon/Public Key
+
 1. Still in **Settings** → **API**
 2. Find **"Project API keys"** section
 3. Copy the **"anon" / "public"** key
@@ -51,6 +55,7 @@ Once your project is ready, you'll need to copy these values:
 4. **Copy this key** - you'll need it for your apps
 
 #### C. Service Role Key (Optional - for admin operations)
+
 1. In the same section, find **"service_role"** key
 2. **⚠️ IMPORTANT:** This key has admin access - NEVER expose it in frontend code
 3. Copy it only if you need server-side admin operations
@@ -60,6 +65,7 @@ Once your project is ready, you'll need to copy these values:
 ### 3. Save Your Credentials Securely
 
 **Create a secure note with:**
+
 ```
 Project Name: room-booking-system
 Project URL: https://your-project.supabase.co
@@ -75,6 +81,7 @@ Service Role Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (keep secret!)
 Once you have your credentials, we'll configure both apps:
 
 #### Web App (.env.local)
+
 ```bash
 # In apps/web/.env.local
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -82,6 +89,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 #### Mobile App (.env)
+
 ```bash
 # In apps/mobile/.env
 EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -105,6 +113,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ## What's Next?
 
 After completing this task, we'll move to:
+
 - **Task 1.2.2:** Design Database Schema
 - **Task 1.2.3:** Implement Row Level Security (RLS)
 - **Task 1.2.4:** Create Database Functions
@@ -115,15 +124,18 @@ After completing this task, we'll move to:
 ## Troubleshooting
 
 ### Project Creation Taking Too Long?
+
 - Refresh the page after 3-5 minutes
 - Check your internet connection
 - Try a different region if issues persist
 
 ### Can't Find API Settings?
+
 - Look for **Settings** (gear icon) in the left sidebar
 - Click **API** under the Project Settings section
 
 ### Forgot Database Password?
+
 - Go to **Settings** → **Database**
 - Click **"Reset database password"**
 - ⚠️ This will disconnect all current connections
@@ -133,15 +145,18 @@ After completing this task, we'll move to:
 ## Security Notes
 
 ### ✅ SAFE to Expose (Frontend)
+
 - Project URL
 - Anon/Public key (this is designed for client-side use)
 
 ### ⚠️ NEVER Expose (Keep Secret)
+
 - Database password
 - Service role key
 - JWT secret
 
 ### Best Practices
+
 - Use environment variables (never hardcode)
 - Add `.env*` to `.gitignore` (already done ✅)
 - Use different projects for development and production

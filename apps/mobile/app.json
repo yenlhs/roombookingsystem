@@ -1,71 +1,71 @@
 {
-	"expo": {
-		"name": "Room Booking System",
-		"slug": "room-booking-mobile",
-		"version": "1.1.0",
-		"orientation": "portrait",
-		"icon": "./assets/icon.png",
-		"userInterfaceStyle": "automatic",
-		"scheme": "roombooking",
-		"newArchEnabled": true,
-		"splash": {
-			"image": "./assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true,
-			"bundleIdentifier": "com.yenlhs.roombooking",
-			"config": {
-				"usesNonExemptEncryption": false
-			},
-			"infoPlist": {
-				"UIBackgroundModes": ["fetch"],
-				"NSAppTransportSecurity": {
-					"NSAllowsArbitraryLoads": false
-				}
-			}
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			},
-			"package": "com.yenlhs.roombooking",
-			"permissions": ["NOTIFICATIONS", "VIBRATE"],
-			"enableProguardInReleaseBuilds": true,
-			"enableShrinkResourcesInReleaseBuilds": true,
-			"googleServicesFile": "./google-services.json"
-		},
-		"web": {
-			"favicon": "./assets/favicon.png",
-			"bundler": "metro"
-		},
-		"plugins": [
-			"expo-router",
-			"expo-secure-store",
-			"expo-haptics",
-			[
-				"expo-notifications",
-				{
-					"icon": "./assets/icon.png",
-					"color": "#ffffff",
-					"sounds": []
-				}
-			]
-		],
-		"experiments": {
-			"typedRoutes": true
-		},
-		"extra": {
-			"eas": {
-				"projectId": "628d6894-73d6-48a1-a480-94de302e0c76"
-			}
-		},
-		"updates": {
-			"fallbackToCacheTimeout": 0
-		},
-		"jsEngine": "hermes"
-	}
+  "expo": {
+    "name": "Room Booking System",
+    "slug": "room-booking-mobile",
+    "version": "1.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "roombooking",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yenlhs.roombooking",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch"],
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        }
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.yenlhs.roombooking",
+      "permissions": ["NOTIFICATIONS", "VIBRATE"],
+      "enableProguardInReleaseBuilds": true,
+      "enableShrinkResourcesInReleaseBuilds": true,
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-haptics",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "sounds": []
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "628d6894-73d6-48a1-a480-94de302e0c76"
+      }
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "jsEngine": "hermes"
+  }
 }

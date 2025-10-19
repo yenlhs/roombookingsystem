@@ -1,26 +1,31 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
 });
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@workspace/types', '@workspace/utils', '@workspace/validation', '@workspace/supabase'],
+  transpilePackages: [
+    "@workspace/types",
+    "@workspace/utils",
+    "@workspace/validation",
+    "@workspace/supabase",
+  ],
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**.supabase.co',
+        protocol: "https",
+        hostname: "**.supabase.co",
       },
     ],
   },
   // Enable React compiler for better performance
   experimental: {
-    optimizePackageImports: ['lucide-react', '@/components/ui'],
+    optimizePackageImports: ["lucide-react", "@/components/ui"],
   },
   // Production optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === "production",
   },
 };
 

@@ -3,6 +3,7 @@
 ## ✅ What's Fixed
 
 The notification database tables have been successfully created:
+
 - `push_tokens` - Stores push notification tokens
 - `notification_preferences` - User notification settings (defaults created for all users)
 - `notification_log` - Tracks all sent notifications
@@ -14,6 +15,7 @@ The notification database tables have been successfully created:
 Go to: https://supabase.com/dashboard/project/nladwgkecjkcjsdawzoc/settings/functions
 
 Click on **Edge Functions** → **Secrets** and verify you have:
+
 - `RESEND_API_KEY` = `re_...` (your API key from https://resend.com)
 
 If not set, add it now.
@@ -21,6 +23,7 @@ If not set, add it now.
 ### 2. Restart the Edge Function (if needed)
 
 After adding environment variables, you may need to redeploy:
+
 ```bash
 npx supabase functions deploy send-booking-notification
 ```
@@ -84,6 +87,7 @@ LIMIT 10;
    - CLI: `npx supabase functions logs send-booking-notification --project-ref nladwgkecjkcjsdawzoc`
 
 2. **Check notification_log for errors:**
+
    ```sql
    SELECT error_message, metadata
    FROM notification_log
@@ -104,18 +108,21 @@ LIMIT 10;
 ### "Function timeout"
 
 The edge function has a 60-second timeout. Email sending should be quick, but if Resend is slow:
+
 - Check Resend status: https://status.resend.com
 - Try again in a few minutes
 
 ### "CORS error in mobile app"
 
 This shouldn't happen since we're calling via the Supabase client, but if you see CORS errors:
+
 - Make sure you're using `createNotificationService(supabase)` not direct fetch
 - Check that the Supabase client is properly initialized
 
 ## 📊 Expected Behavior
 
 When you create a booking:
+
 1. Booking is created in database ✅
 2. Mobile app calls `notificationService.sendBookingNotification()` ✅
 3. Edge function receives request ✅
@@ -126,6 +133,7 @@ When you create a booking:
 8. User receives email (check inbox/spam) ✅
 
 The mobile app will show console logs:
+
 - Success: `[Booking] Notification sent successfully`
 - Warning (non-fatal): `[Booking] Failed to send notification: ...`
 

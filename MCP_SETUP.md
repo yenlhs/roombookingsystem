@@ -7,6 +7,7 @@
 ## What is MCP?
 
 The Supabase MCP Server enables AI tools to:
+
 - ✅ Create and manage database tables
 - ✅ Run SQL queries and migrations
 - ✅ Manage project configurations
@@ -49,10 +50,7 @@ The token looks like: `sbp_abc123...`
   "mcpServers": {
     "supabase": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@supabase/mcp-server@latest"
-      ],
+      "args": ["-y", "@supabase/mcp-server@latest"],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "YOUR_TOKEN_HERE",
         "SUPABASE_PROJECT_ID": "nladwgkecjkcjsdawzoc"
@@ -92,22 +90,26 @@ Once configured, you can ask Claude to:
 The Supabase MCP provides these capabilities:
 
 ### Database Management
+
 - `list_tables` - List all tables in your database
 - `describe_table` - Get table schema and columns
 - `execute_sql` - Run SQL queries (read or write)
 - `get_table_data` - Fetch data from tables
 
 ### Project Management
+
 - `list_projects` - Show all your Supabase projects
 - `get_project_config` - View project settings
 - `list_branches` - Show database branches (if using branching)
 
 ### Schema Management
+
 - `generate_migration` - Create new migration files
 - `run_migration` - Apply migrations
 - `generate_types` - Create TypeScript types from schema
 
 ### Logs & Debugging
+
 - `get_logs` - Retrieve database logs
 - `get_api_logs` - View API request logs
 
@@ -116,12 +118,14 @@ The Supabase MCP provides these capabilities:
 ## Security Best Practices
 
 ### ✅ DO:
+
 - Use with development/staging projects
 - Set read-only mode if connecting to production
 - Scope to specific project ID
 - Store tokens in secure locations (MCP settings, not in code)
 
 ### ⚠️ DON'T:
+
 - Share your access token
 - Commit tokens to git
 - Use in production without read-only mode
@@ -138,10 +142,7 @@ If you want to limit MCP to read-only operations:
   "mcpServers": {
     "supabase": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@supabase/mcp-server@latest"
-      ],
+      "args": ["-y", "@supabase/mcp-server@latest"],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "YOUR_TOKEN_HERE",
         "SUPABASE_PROJECT_ID": "nladwgkecjkcjsdawzoc",
@@ -157,21 +158,25 @@ If you want to limit MCP to read-only operations:
 ## Troubleshooting
 
 ### "Connection failed"
+
 - Check your access token is valid
 - Verify project ID is correct: `nladwgkecjkcjsdawzoc`
 - Make sure you have internet connection
 
 ### "Permission denied"
+
 - Access token may have expired
 - Generate a new token
 - Check token has correct permissions
 
 ### "MCP server not found"
+
 - Restart VS Code / Claude Code
 - Check MCP settings file exists
 - Verify `npx` is available in your PATH
 
 ### Test Connection
+
 ```bash
 # Test if MCP server can be installed
 npx -y @supabase/mcp-server@latest --version
@@ -186,16 +191,16 @@ Once MCP is configured, you can interact naturally:
 **Example Conversations:**
 
 👤 "Apply the migration we created"
-🤖 *Uses MCP to run the migration SQL*
+🤖 _Uses MCP to run the migration SQL_
 
 👤 "Show me all users with role = 'admin'"
-🤖 *Queries database and shows results*
+🤖 _Queries database and shows results_
 
 👤 "Create a new index on bookings.booking_date"
-🤖 *Generates and applies migration*
+🤖 _Generates and applies migration_
 
 👤 "What's the schema of the rooms table?"
-🤖 *Describes table structure*
+🤖 _Describes table structure_
 
 ---
 

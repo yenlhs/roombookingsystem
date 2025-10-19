@@ -12,7 +12,7 @@ export function isValidEmail(email: string): boolean {
  * Validate phone number (US format)
  */
 export function isValidPhone(phone: string): boolean {
-  const cleaned = phone.replace(/\D/g, '');
+  const cleaned = phone.replace(/\D/g, "");
   return cleaned.length === 10;
 }
 
@@ -26,23 +26,23 @@ export function isStrongPassword(password: string): {
   const errors: string[] = [];
 
   if (password.length < 8) {
-    errors.push('Password must be at least 8 characters long');
+    errors.push("Password must be at least 8 characters long");
   }
 
   if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push("Password must contain at least one lowercase letter");
   }
 
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push("Password must contain at least one uppercase letter");
   }
 
   if (!/[0-9]/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push("Password must contain at least one number");
   }
 
   if (!/[^a-zA-Z0-9]/.test(password)) {
-    errors.push('Password must contain at least one special character');
+    errors.push("Password must contain at least one special character");
   }
 
   return {
@@ -88,7 +88,10 @@ export function isValidDate(dateString: string): boolean {
 /**
  * Validate that end time is after start time
  */
-export function isEndTimeAfterStartTime(startTime: string, endTime: string): boolean {
+export function isEndTimeAfterStartTime(
+  startTime: string,
+  endTime: string,
+): boolean {
   const start = new Date(`1970-01-01T${startTime}`);
   const end = new Date(`1970-01-01T${endTime}`);
   return end > start;
@@ -106,12 +109,12 @@ export function isInRange(value: number, min: number, max: number): boolean {
  */
 export function sanitizeHtml(html: string): string {
   const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '/': '&#x2F;',
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#x27;",
+    "/": "&#x2F;",
   };
   const reg = /[&<>"'/]/gi;
   return html.replace(reg, (match) => map[match]);
@@ -120,15 +123,21 @@ export function sanitizeHtml(html: string): string {
 /**
  * Validate file type
  */
-export function isValidFileType(fileName: string, allowedTypes: string[]): boolean {
-  const extension = fileName.split('.').pop()?.toLowerCase();
+export function isValidFileType(
+  fileName: string,
+  allowedTypes: string[],
+): boolean {
+  const extension = fileName.split(".").pop()?.toLowerCase();
   return extension ? allowedTypes.includes(extension) : false;
 }
 
 /**
  * Validate file size (in bytes)
  */
-export function isValidFileSize(fileSize: number, maxSizeInMB: number): boolean {
+export function isValidFileSize(
+  fileSize: number,
+  maxSizeInMB: number,
+): boolean {
   const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
   return fileSize <= maxSizeInBytes;
 }

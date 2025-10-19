@@ -5,12 +5,14 @@ Thank you for your interest in contributing! This document provides guidelines a
 ## Getting Started
 
 1. **Fork and Clone**
+
    ```bash
    git clone https://github.com/yenlhs/roombookingsystem.git
    cd roombookingsystem
    ```
 
 2. **Install Dependencies**
+
    ```bash
    npm install
    ```
@@ -33,6 +35,7 @@ git checkout -b feat/your-feature-name
 ```
 
 **Branch Naming Convention:**
+
 - `feat/feature-name` - New features
 - `fix/bug-name` - Bug fixes
 - `chore/task-name` - Maintenance tasks
@@ -52,6 +55,7 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 **Format:** `type(scope): description`
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `chore`: Maintenance tasks
@@ -62,12 +66,14 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 - `ci`: CI/CD changes
 
 **Scopes:**
+
 - `web`: Web application
 - `mobile`: Mobile application
 - `supabase`: Database/backend
 - `shared`: Shared packages
 
 **Examples:**
+
 ```bash
 git commit -m "feat(mobile): Add push notification settings screen"
 git commit -m "fix(web): Resolve booking calendar timezone issue"
@@ -81,6 +87,7 @@ git push origin feat/your-feature-name
 ```
 
 Then create a Pull Request on GitHub:
+
 - Fill out the PR template completely
 - Link any related issues
 - Request review from maintainers
@@ -117,35 +124,42 @@ Then create a Pull Request on GitHub:
 ## CI/CD Pipeline
 
 ### Web App (Vercel)
+
 - **All PRs:** Preview deployment created automatically
 - **Main branch:** Production deployment
 
 ### Mobile App (EAS)
+
 - **Main branch only:** Production build → Auto-submit to TestFlight
 - **Manual builds:** Can be triggered for development/testing
 
 ### Supabase Migrations
+
 - **Main branch only:** Migrations applied to production database
 - **Testing:** Test migrations locally before pushing
 
 ## Code Style
 
 ### TypeScript
+
 - Use strict TypeScript settings
 - Avoid `any` types when possible
 - Define proper interfaces and types
 
 ### React/React Native
+
 - Use functional components with hooks
 - Follow React best practices
 - Keep components focused and reusable
 
 ### Styling
+
 - Web: Use Tailwind CSS utility classes
 - Mobile: Use NativeWind (Tailwind for React Native)
 - Follow existing patterns
 
 ### File Organization
+
 ```
 apps/
   web/           # Next.js web application
@@ -159,6 +173,7 @@ packages/
 ## Testing
 
 ### Running Tests
+
 ```bash
 # Run all tests
 npm test
@@ -168,6 +183,7 @@ npm test --workspace apps/web
 ```
 
 ### Writing Tests
+
 - Write tests for new features
 - Update tests when modifying existing code
 - Aim for meaningful test coverage
@@ -177,6 +193,7 @@ npm test --workspace apps/web
 ### Creating Migrations
 
 1. **Create migration file:**
+
    ```bash
    cd apps/supabase
    supabase migration new your_migration_name
@@ -194,6 +211,7 @@ npm test --workspace apps/web
    ```
 
 ### Migration Guidelines
+
 - One logical change per migration
 - Include descriptive comments
 - Test on sample data

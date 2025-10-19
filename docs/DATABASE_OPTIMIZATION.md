@@ -9,6 +9,7 @@ This document outlines the database optimization strategies, indexes, and best p
 ### Current Optimizations
 
 #### Bookings Table
+
 - **`idx_bookings_user_date_status`**: Composite index for user booking history queries with date and status filters
 - **`idx_bookings_room_date_time`**: Optimizes room availability checks for specific dates and times
 - **`idx_bookings_active`**: Partial index for confirmed bookings on/after current date (reduces index size)
@@ -16,11 +17,13 @@ This document outlines the database optimization strategies, indexes, and best p
 - **`idx_bookings_time_overlap`**: GiST index for efficient time range overlap detection
 
 #### Rooms Table
+
 - **`idx_rooms_amenities_gin`**: GIN index for JSONB amenities searching (`WHERE amenities @> '{"wifi": true}'`)
 - **`idx_rooms_active`**: Partial index for active rooms with name and capacity
 - **`idx_rooms_capacity`**: Supports capacity-based searches for active rooms
 
 #### Users Table
+
 - **`idx_users_role_status_created`**: Composite index for admin user management queries
 - **`idx_users_active`**: Partial index for active users with name and email
 
@@ -29,6 +32,7 @@ This document outlines the database optimization strategies, indexes, and best p
 ### 1. Booking Availability Checks
 
 **Optimized Query:**
+
 ```sql
 -- Check if room is available for a specific time slot
 SELECT EXISTS (
@@ -48,6 +52,7 @@ SELECT EXISTS (
 ### 2. User Booking History
 
 **Optimized Query:**
+
 ```sql
 -- Get user's upcoming bookings
 SELECT *
@@ -64,6 +69,7 @@ LIMIT 50;
 ### 3. Room Search with Amenities
 
 **Optimized Query:**
+
 ```sql
 -- Find rooms with specific amenities
 SELECT *
@@ -79,6 +85,7 @@ ORDER BY capacity ASC;
 ### 4. Admin Dashboard Statistics
 
 **Optimized Query:**
+
 ```sql
 -- Get booking statistics for date range
 SELECT
@@ -98,6 +105,7 @@ ORDER BY booking_date DESC;
 ### Built-in Functions
 
 #### 1. Analyze Slow Queries
+
 ```sql
 -- Find queries taking longer than 100ms on average
 SELECT * FROM public.analyze_slow_queries(100);
@@ -106,29 +114,34 @@ SELECT * FROM public.analyze_slow_queries(100);
 **Requirements:** Enable `pg_stat_statements` extension in Supabase Dashboard → Database → Extensions
 
 #### 2. Check Table Health
+
 ```sql
 -- Review table statistics and identify maintenance needs
 SELECT * FROM public.check_table_health();
 ```
 
 **What to Look For:**
+
 - High `dead_tuples` count (indicates need for VACUUM)
 - `last_vacuum` or `last_analyze` is NULL or old (run ANALYZE)
 - Disproportionate index size vs table size
 
 #### 3. Check Index Usage
+
 ```sql
 -- Identify unused or rarely used indexes
 SELECT * FROM public.check_index_usage();
 ```
 
 **What to Look For:**
+
 - Indexes with `index_scans` = 0 (unused indexes consuming space)
 - Large indexes with low scan counts (candidates for removal)
 
 ### Manual Performance Analysis
 
 #### Explain Query Plans
+
 ```sql
 -- Always use EXPLAIN ANALYZE for query optimization
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE)
@@ -139,6 +152,7 @@ WHERE room_id = 'uuid-here'
 ```
 
 **Key Metrics to Monitor:**
+
 - **Execution Time**: Should be < 10ms for simple queries, < 100ms for complex
 - **Index Scan vs Seq Scan**: Index scans are faster for selective queries
 - **Rows Returned vs Rows Scanned**: Should be similar (indicates good index selectivity)
@@ -148,12 +162,14 @@ WHERE room_id = 'uuid-here'
 ### 1. Query Patterns
 
 ✅ **DO:**
+
 - Use prepared statements to enable query plan caching
 - Add `LIMIT` clauses to paginated queries
 - Use partial indexes for frequently filtered columns
 - Leverage covering indexes to avoid table lookups
 
 ❌ **DON'T:**
+
 - Use `SELECT *` when you only need specific columns
 - Filter on computed columns without function indexes
 - Use `OR` conditions that span multiple indexes (use UNION instead)
@@ -162,6 +178,7 @@ WHERE room_id = 'uuid-here'
 ### 2. JSONB Usage
 
 ✅ **DO:**
+
 ```sql
 -- Efficient JSONB containment query
 WHERE amenities @> '{"wifi": true}'
@@ -171,6 +188,7 @@ WHERE jsonb_path_exists(amenities, '$.features[*] ? (@ == "parking")')
 ```
 
 ❌ **DON'T:**
+
 ```sql
 -- Inefficient: casting and string operations
 WHERE amenities::text LIKE '%wifi%'
@@ -182,6 +200,7 @@ WHERE (amenities->>'wifi')::boolean = true
 ### 3. Date and Time Queries
 
 ✅ **DO:**
+
 ```sql
 -- Use date comparisons directly
 WHERE booking_date >= CURRENT_DATE
@@ -191,6 +210,7 @@ WHERE (start_time, end_time) OVERLAPS ($1::time, $2::time)
 ```
 
 ❌ **DON'T:**
+
 ```sql
 -- Avoid date/time conversions that prevent index usage
 WHERE DATE(created_at) = CURRENT_DATE
@@ -210,10 +230,12 @@ The application uses Supabase's built-in connection pooling, but keep in mind:
 ## Maintenance Schedule
 
 ### Daily (Automated by Supabase)
+
 - Auto-vacuum runs when 20% of rows are dead tuples
 - Statistics updated on INSERT/UPDATE operations
 
 ### Weekly (Recommended)
+
 ```sql
 -- Update query planner statistics
 ANALYZE public.users;
@@ -222,6 +244,7 @@ ANALYZE public.bookings;
 ```
 
 ### Monthly (Recommended)
+
 ```sql
 -- Check for unused indexes
 SELECT * FROM public.check_index_usage() WHERE index_scans < 10;
@@ -234,6 +257,7 @@ SELECT * FROM public.check_table_health();
 ```
 
 ### Quarterly (As Needed)
+
 ```sql
 -- Full vacuum (requires maintenance window)
 VACUUM FULL ANALYZE public.bookings;
@@ -258,6 +282,7 @@ VACUUM FULL ANALYZE public.bookings;
 ### Supabase Caching
 
 Supabase automatically caches:
+
 - Query results for authenticated requests (short TTL)
 - Static assets and schemas
 - Realtime subscriptions use WebSocket connections

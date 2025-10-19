@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { createRoomService, supabase } from '@workspace/supabase';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { updateRoomSchema, type UpdateRoomInput } from '@workspace/validation';
-import type { Room } from '@workspace/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { createRoomService, supabase } from "@workspace/supabase";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updateRoomSchema, type UpdateRoomInput } from "@workspace/validation";
+import type { Room } from "@workspace/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, ArrowLeft } from "lucide-react";
 
 export default function EditRoomPage() {
   return (
@@ -60,7 +60,7 @@ function EditRoomContent() {
       reset({
         id: data.id,
         name: data.name,
-        description: data.description || '',
+        description: data.description || "",
         capacity: data.capacity || undefined,
         status: data.status,
         operating_hours_start: data.operating_hours_start.slice(0, 5), // HH:mm format
@@ -69,7 +69,7 @@ function EditRoomContent() {
         is_exclusive: data.is_exclusive,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load room');
+      setError(err instanceof Error ? err.message : "Failed to load room");
     } finally {
       setLoadingRoom(false);
     }
@@ -83,7 +83,7 @@ function EditRoomContent() {
       await roomService.updateRoom(data);
       router.push(`/dashboard/rooms/${roomId}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update room');
+      setError(err instanceof Error ? err.message : "Failed to update room");
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,10 @@ function EditRoomContent() {
       <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="text-center">
           <p className="text-muted-foreground">Room not found</p>
-          <Button className="mt-4" onClick={() => router.push('/dashboard/rooms')}>
+          <Button
+            className="mt-4"
+            onClick={() => router.push("/dashboard/rooms")}
+          >
             Back to Rooms
           </Button>
         </div>
@@ -139,7 +142,9 @@ function EditRoomContent() {
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -147,13 +152,14 @@ function EditRoomContent() {
           <CardHeader>
             <CardTitle>Edit Room Information</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Update the room details below. Changes will affect future bookings.
+              Update the room details below. Changes will affect future
+              bookings.
             </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Hidden ID field */}
-              <input type="hidden" {...register('id')} value={roomId} />
+              <input type="hidden" {...register("id")} value={roomId} />
 
               {/* Room Name */}
               <div className="space-y-2">
@@ -162,10 +168,10 @@ function EditRoomContent() {
                 </Label>
                 <Input
                   id="name"
-                  {...register('name')}
+                  {...register("name")}
                   placeholder="e.g., Conference Room A"
                   disabled={loading}
-                  className={errors.name ? 'border-red-500' : ''}
+                  className={errors.name ? "border-red-500" : ""}
                 />
                 {errors.name && (
                   <p className="text-sm text-red-600">{errors.name.message}</p>
@@ -177,16 +183,18 @@ function EditRoomContent() {
                 <Label htmlFor="description">Description</Label>
                 <textarea
                   id="description"
-                  {...register('description')}
+                  {...register("description")}
                   placeholder="Brief description of the room"
                   disabled={loading}
                   rows={3}
                   className={`flex w-full rounded-md border ${
-                    errors.description ? 'border-red-500' : 'border-input'
+                    errors.description ? "border-red-500" : "border-input"
                   } bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50`}
                 />
                 {errors.description && (
-                  <p className="text-sm text-red-600">{errors.description.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
 
@@ -196,13 +204,15 @@ function EditRoomContent() {
                 <Input
                   id="capacity"
                   type="number"
-                  {...register('capacity', { valueAsNumber: true })}
+                  {...register("capacity", { valueAsNumber: true })}
                   placeholder="e.g., 10"
                   disabled={loading}
-                  className={errors.capacity ? 'border-red-500' : ''}
+                  className={errors.capacity ? "border-red-500" : ""}
                 />
                 {errors.capacity && (
-                  <p className="text-sm text-red-600">{errors.capacity.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.capacity.message}
+                  </p>
                 )}
               </div>
 
@@ -213,9 +223,11 @@ function EditRoomContent() {
                   <Input
                     id="operating_hours_start"
                     type="time"
-                    {...register('operating_hours_start')}
+                    {...register("operating_hours_start")}
                     disabled={loading}
-                    className={errors.operating_hours_start ? 'border-red-500' : ''}
+                    className={
+                      errors.operating_hours_start ? "border-red-500" : ""
+                    }
                   />
                   {errors.operating_hours_start && (
                     <p className="text-sm text-red-600">
@@ -229,9 +241,11 @@ function EditRoomContent() {
                   <Input
                     id="operating_hours_end"
                     type="time"
-                    {...register('operating_hours_end')}
+                    {...register("operating_hours_end")}
                     disabled={loading}
-                    className={errors.operating_hours_end ? 'border-red-500' : ''}
+                    className={
+                      errors.operating_hours_end ? "border-red-500" : ""
+                    }
                   />
                   {errors.operating_hours_end && (
                     <p className="text-sm text-red-600">
@@ -248,7 +262,9 @@ function EditRoomContent() {
                 </Label>
                 <select
                   id="slot_duration_minutes"
-                  {...register('slot_duration_minutes', { valueAsNumber: true })}
+                  {...register("slot_duration_minutes", {
+                    valueAsNumber: true,
+                  })}
                   disabled={loading}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -274,7 +290,7 @@ function EditRoomContent() {
                 <input
                   type="checkbox"
                   id="is_exclusive"
-                  {...register('is_exclusive')}
+                  {...register("is_exclusive")}
                   disabled={loading}
                   className="mt-0.5 h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
@@ -289,7 +305,8 @@ function EditRoomContent() {
                     </span>
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    Only users with an active premium subscription can book this room
+                    Only users with an active premium subscription can book this
+                    room
                   </p>
                 </div>
               </div>
@@ -299,7 +316,7 @@ function EditRoomContent() {
                 <Label htmlFor="status">Status</Label>
                 <select
                   id="status"
-                  {...register('status')}
+                  {...register("status")}
                   disabled={loading}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -307,7 +324,9 @@ function EditRoomContent() {
                   <option value="inactive">Inactive</option>
                 </select>
                 {errors.status && (
-                  <p className="text-sm text-red-600">{errors.status.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.status.message}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   Inactive rooms won&apos;t be available for new bookings
@@ -332,7 +351,7 @@ function EditRoomContent() {
                       Saving...
                     </>
                   ) : (
-                    'Save Changes'
+                    "Save Changes"
                   )}
                 </Button>
               </div>
@@ -350,8 +369,8 @@ function EditRoomContent() {
                   Editing Active Room
                 </p>
                 <p className="mt-1 text-sm text-yellow-800">
-                  Changes to operating hours or slot duration may affect existing bookings.
-                  Please review carefully before saving.
+                  Changes to operating hours or slot duration may affect
+                  existing bookings. Please review carefully before saving.
                 </p>
               </div>
             </div>

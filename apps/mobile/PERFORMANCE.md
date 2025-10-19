@@ -13,21 +13,24 @@ This document outlines the performance optimizations implemented in the React Na
 **Solution**: Replaced `ScrollView` with `FlatList` for all list screens.
 
 **Files Modified**:
+
 - `app/(tabs)/rooms.tsx` - Room list virtualization
 - `app/(tabs)/bookings.tsx` - Booking list virtualization
 
 **Configuration** (`lib/performance.ts`):
+
 ```typescript
 export const FLATLIST_CONFIG = {
-  windowSize: 10,              // Items to render outside visible area
-  initialNumToRender: 10,      // Initial render batch
-  maxToRenderPerBatch: 5,      // Max items per batch
+  windowSize: 10, // Items to render outside visible area
+  initialNumToRender: 10, // Initial render batch
+  maxToRenderPerBatch: 5, // Max items per batch
   updateCellsBatchingPeriod: 50, // Batch update interval
   removeClippedSubviews: true, // Remove off-screen views (Android)
 };
 ```
 
 **Performance Impact**:
+
 - 60% reduction in initial render time
 - 70% reduction in memory usage for long lists
 - Smooth 60fps scrolling even with 100+ items
@@ -39,16 +42,19 @@ export const FLATLIST_CONFIG = {
 **Solution**: Implemented 300ms debounce on search input.
 
 **Code**:
+
 ```typescript
 const debouncedSetSearch = useMemo(
-  () => debounce((query: string) => {
-    setDebouncedSearchQuery(query);
-  }, 300),
-  []
+  () =>
+    debounce((query: string) => {
+      setDebouncedSearchQuery(query);
+    }, 300),
+  [],
 );
 ```
 
 **Performance Impact**:
+
 - 80% reduction in filter operations during typing
 - Smoother typing experience
 - Reduced CPU usage
@@ -58,6 +64,7 @@ const debouncedSetSearch = useMemo(
 **Configuration**: Enabled Hermes engine in `app.json`.
 
 **Benefits**:
+
 - 50% faster app startup time
 - 30% reduction in APK/IPA size
 - Improved memory efficiency
@@ -66,10 +73,12 @@ const debouncedSetSearch = useMemo(
 ### 4. Android Build Optimizations
 
 **Enabled** (`app.json`):
+
 - ProGuard in release builds (code minification)
 - Resource shrinking (removes unused resources)
 
 **Performance Impact**:
+
 - 40% smaller APK size
 - Faster installation and updates
 - Reduced storage footprint
@@ -79,6 +88,7 @@ const debouncedSetSearch = useMemo(
 **Enabled**: `"newArchEnabled": true` in `app.json`
 
 **Benefits**:
+
 - Improved rendering performance
 - Better interop with native modules
 - Reduced bridge overhead
@@ -89,12 +99,13 @@ const debouncedSetSearch = useMemo(
 **File**: `lib/performance.ts`
 
 **Functions**:
+
 ```typescript
 // Measure async function execution time
-await measureAsync('fetchRooms', () => roomService.getActiveRooms());
+await measureAsync("fetchRooms", () => roomService.getActiveRooms());
 
 // Defer non-critical work
-await runAfterInteractions(() => analytics.track('screen_view'));
+await runAfterInteractions(() => analytics.track("screen_view"));
 
 // Debounce search inputs
 const debouncedSearch = debounce(handleSearch, 300);
@@ -108,6 +119,7 @@ const throttledScroll = throttle(handleScroll, 100);
 ### List Rendering
 
 ✅ **DO:**
+
 ```typescript
 // Use FlatList for lists
 <FlatList
@@ -119,6 +131,7 @@ const throttledScroll = throttle(handleScroll, 100);
 ```
 
 ❌ **DON'T:**
+
 ```typescript
 // Don't use ScrollView + map for long lists
 <ScrollView>
@@ -129,23 +142,28 @@ const throttledScroll = throttle(handleScroll, 100);
 ### Component Optimization
 
 ✅ **DO:**
+
 ```typescript
 // Memoize expensive components
 const MemoizedCard = React.memo(RoomCard);
 
 // Use useMemo for expensive calculations
 const filteredItems = useMemo(
-  () => items.filter(item => item.status === 'active'),
-  [items]
+  () => items.filter((item) => item.status === "active"),
+  [items],
 );
 
 // Use useCallback for stable function references
-const handlePress = useCallback((id: string) => {
-  navigate(`/room/${id}`);
-}, [navigate]);
+const handlePress = useCallback(
+  (id: string) => {
+    navigate(`/room/${id}`);
+  },
+  [navigate],
+);
 ```
 
 ❌ **DON'T:**
+
 ```typescript
 // Don't recreate functions on every render
 function Component() {
@@ -157,6 +175,7 @@ function Component() {
 ### Image Optimization
 
 ✅ **DO:**
+
 ```typescript
 // Use FastImage for better caching
 import FastImage from 'react-native-fast-image';
@@ -169,6 +188,7 @@ import FastImage from 'react-native-fast-image';
 ```
 
 ❌ **DON'T:**
+
 ```typescript
 // Don't load full-resolution images
 <Image source={{ uri: highResImageUrl }} />
@@ -177,6 +197,7 @@ import FastImage from 'react-native-fast-image';
 ### State Management
 
 ✅ **DO:**
+
 ```typescript
 // Localize state to component level
 function RoomCard({ room }) {
@@ -186,6 +207,7 @@ function RoomCard({ room }) {
 ```
 
 ❌ **DON'T:**
+
 ```typescript
 // Don't put UI state in global store
 const globalState = {
@@ -197,18 +219,20 @@ const globalState = {
 ### Animations
 
 ✅ **DO:**
+
 ```typescript
 // Use react-native-reanimated for 60fps animations
-import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useSharedValue, withSpring } from "react-native-reanimated";
 
 const translateY = useSharedValue(0);
 translateY.value = withSpring(100);
 ```
 
 ❌ **DON'T:**
+
 ```typescript
 // Don't use Animated API for complex animations
-import { Animated } from 'react-native';
+import { Animated } from "react-native";
 // JS thread animations can drop frames
 ```
 
@@ -217,6 +241,7 @@ import { Animated } from 'react-native';
 ### Development Tools
 
 1. **React DevTools Profiler**
+
    ```bash
    # Install standalone React DevTools
    npm install -g react-devtools
@@ -237,6 +262,7 @@ import { Animated } from 'react-native';
 ### Production Monitoring
 
 **Recommended Services**:
+
 - **Sentry**: Error tracking and performance monitoring
 - **Firebase Performance**: Real-time performance data
 - **New Relic**: APM for mobile apps
@@ -292,6 +318,7 @@ import { Animated } from 'react-native';
 **Symptoms**: Dropped frames, janky scrolling
 
 **Solutions**:
+
 1. Use FlatList with proper configuration
 2. Simplify list item components
 3. Use `getItemLayout` if item heights are fixed
@@ -303,6 +330,7 @@ import { Animated } from 'react-native';
 **Symptoms**: Delay when switching screens
 
 **Solutions**:
+
 1. Lazy load screens with `React.lazy`
 2. Preload next screen data
 3. Use `InteractionManager.runAfterInteractions`
@@ -314,6 +342,7 @@ import { Animated } from 'react-native';
 **Symptoms**: App crashes on low-end devices
 
 **Solutions**:
+
 1. Clear image caches periodically
 2. Remove event listeners on unmount
 3. Avoid storing large objects in state
@@ -325,6 +354,7 @@ import { Animated } from 'react-native';
 **Symptoms**: Slow updates, high bandwidth usage
 
 **Solutions**:
+
 1. Use dynamic imports for large libraries
 2. Enable tree shaking
 3. Remove unused dependencies

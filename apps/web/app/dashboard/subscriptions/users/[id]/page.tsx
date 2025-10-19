@@ -1,19 +1,34 @@
-'use client';
+"use client";
 
-import { use } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { AdminRoute } from '../../../../../components/admin/AdminRoute';
-import { StatusBadge } from '../../../../../components/subscriptions/StatusBadge';
-import { supabase, createAdminSubscriptionService } from '@workspace/supabase';
-import Link from 'next/link';
-import { ChevronLeft, ExternalLink, User, CreditCard, Calendar, AlertCircle } from 'lucide-react';
-import { format } from 'date-fns';
+import { use } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AdminRoute } from "../../../../../components/admin/AdminRoute";
+import { StatusBadge } from "../../../../../components/subscriptions/StatusBadge";
+import { supabase, createAdminSubscriptionService } from "@workspace/supabase";
+import Link from "next/link";
+import {
+  ChevronLeft,
+  ExternalLink,
+  User,
+  CreditCard,
+  Calendar,
+  AlertCircle,
+} from "lucide-react";
+import { format } from "date-fns";
 
-export default function SubscriptionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function SubscriptionDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
 
-  const { data: subscription, isLoading, error } = useQuery({
-    queryKey: ['subscription-detail', id],
+  const {
+    data: subscription,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["subscription-detail", id],
     queryFn: async () => {
       const service = createAdminSubscriptionService(supabase);
       return await service.getSubscriptionByIdAdmin(id);
@@ -21,18 +36,21 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
   });
 
   const formatDate = (dateString?: string | null) => {
-    if (!dateString) return '-';
+    if (!dateString) return "-";
     try {
-      return format(new Date(dateString), 'PPP p');
+      return format(new Date(dateString), "PPP p");
     } catch {
       return dateString;
     }
   };
 
-  const getStripeUrl = (type: 'customer' | 'subscription', stripeId?: string | null) => {
+  const getStripeUrl = (
+    type: "customer" | "subscription",
+    stripeId?: string | null,
+  ) => {
     if (!stripeId) return null;
-    const baseUrl = 'https://dashboard.stripe.com';
-    return type === 'customer'
+    const baseUrl = "https://dashboard.stripe.com";
+    return type === "customer"
       ? `${baseUrl}/customers/${stripeId}`
       : `${baseUrl}/subscriptions/${stripeId}`;
   };
@@ -73,7 +91,9 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                   Error loading subscription
                 </h3>
                 <p className="text-sm text-red-700 dark:text-red-400 mt-1">
-                  {error instanceof Error ? error.message : 'Unknown error occurred'}
+                  {error instanceof Error
+                    ? error.message
+                    : "Unknown error occurred"}
                 </p>
               </div>
             </div>
@@ -102,29 +122,35 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                   ) : (
                     <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                       <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
-                        {(subscription as any).user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                        {(subscription as any).user?.full_name
+                          ?.charAt(0)
+                          ?.toUpperCase() || "U"}
                       </span>
                     </div>
                   )}
                   <div>
                     <div className="font-medium text-gray-900 dark:text-white">
-                      {(subscription as any).user?.full_name || 'Unknown User'}
+                      {(subscription as any).user?.full_name || "Unknown User"}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {(subscription as any).user?.email || '-'}
+                      {(subscription as any).user?.email || "-"}
                     </div>
                   </div>
                 </div>
                 {(subscription as any).user?.phone && (
                   <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Phone: </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      Phone:{" "}
+                    </span>
                     <span className="text-sm text-gray-900 dark:text-white">
                       {(subscription as any).user.phone}
                     </span>
                   </div>
                 )}
                 <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">User Since: </span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    User Since:{" "}
+                  </span>
                   <span className="text-sm text-gray-900 dark:text-white">
                     {formatDate((subscription as any).user?.created_at)}
                   </span>
@@ -142,10 +168,15 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
               </div>
               <div className="space-y-3">
                 <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Tier: </span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Tier:{" "}
+                  </span>
                   {subscription.tier && (
                     <>
-                      <StatusBadge status={subscription.tier.name} type="tier" />
+                      <StatusBadge
+                        status={subscription.tier.name}
+                        type="tier"
+                      />
                       <span className="ml-2 text-sm text-gray-900 dark:text-white">
                         {subscription.tier.display_name}
                       </span>
@@ -153,8 +184,13 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                   )}
                 </div>
                 <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Status: </span>
-                  <StatusBadge status={subscription.status} type="subscription" />
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    Status:{" "}
+                  </span>
+                  <StatusBadge
+                    status={subscription.status}
+                    type="subscription"
+                  />
                   {subscription.cancel_at_period_end && (
                     <span className="ml-2 text-sm text-orange-600 dark:text-orange-400">
                       (Cancels at period end)
@@ -163,7 +199,9 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                 </div>
                 {subscription.tier && subscription.tier.price_monthly > 0 && (
                   <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Price: </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      Price:{" "}
+                    </span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       ${subscription.tier.price_monthly}/month
                     </span>
@@ -182,27 +220,35 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
               </div>
               <div className="space-y-3">
                 <div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Period Start</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Period Start
+                  </div>
                   <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {formatDate(subscription.current_period_start)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Period End</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Period End
+                  </div>
                   <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {formatDate(subscription.current_period_end)}
                   </div>
                 </div>
                 {subscription.cancelled_at && (
                   <div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Cancelled At</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Cancelled At
+                    </div>
                     <div className="text-sm font-medium text-red-600 dark:text-red-400">
                       {formatDate(subscription.cancelled_at)}
                     </div>
                   </div>
                 )}
                 <div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">Created At</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    Created At
+                  </div>
                   <div className="text-sm font-medium text-gray-900 dark:text-white">
                     {formatDate(subscription.created_at)}
                   </div>
@@ -226,7 +272,12 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                         Customer ID
                       </div>
                       <a
-                        href={getStripeUrl('customer', subscription.stripe_customer_id) || '#'}
+                        href={
+                          getStripeUrl(
+                            "customer",
+                            subscription.stripe_customer_id,
+                          ) || "#"
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
@@ -242,7 +293,10 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                         </div>
                         <a
                           href={
-                            getStripeUrl('subscription', subscription.stripe_subscription_id) || '#'
+                            getStripeUrl(
+                              "subscription",
+                              subscription.stripe_subscription_id,
+                            ) || "#"
                           }
                           target="_blank"
                           rel="noopener noreferrer"
@@ -256,7 +310,8 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
                   </>
                 ) : (
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    No Stripe information (possibly a complimentary subscription)
+                    No Stripe information (possibly a complimentary
+                    subscription)
                   </p>
                 )}
               </div>

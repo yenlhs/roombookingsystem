@@ -3,16 +3,16 @@
  * Handles push notifications and email notifications
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface PushToken {
   id: string;
   user_id: string;
   token: string;
-  token_type: 'expo' | 'fcm' | 'apns';
+  token_type: "expo" | "fcm" | "apns";
   device_id?: string;
   device_name?: string;
-  platform?: 'ios' | 'android';
+  platform?: "ios" | "android";
   app_version?: string;
   is_active: boolean;
   last_used_at: string;
@@ -41,9 +41,13 @@ export interface NotificationLog {
   id: string;
   user_id?: string;
   booking_id?: string;
-  notification_type: 'booking_confirmed' | 'booking_cancelled' | 'booking_reminder' | 'booking_updated';
-  channel: 'email' | 'push';
-  status: 'pending' | 'sent' | 'failed' | 'delivered';
+  notification_type:
+    | "booking_confirmed"
+    | "booking_cancelled"
+    | "booking_reminder"
+    | "booking_updated";
+  channel: "email" | "push";
+  status: "pending" | "sent" | "failed" | "delivered";
   recipient: string;
   subject?: string;
   body?: string;
@@ -56,10 +60,10 @@ export interface NotificationLog {
 
 export interface RegisterPushTokenParams {
   token: string;
-  token_type: 'expo' | 'fcm' | 'apns';
+  token_type: "expo" | "fcm" | "apns";
   device_id?: string;
   device_name?: string;
-  platform?: 'ios' | 'android';
+  platform?: "ios" | "android";
   app_version?: string;
 }
 
@@ -78,7 +82,11 @@ export interface UpdateNotificationPreferencesParams {
 
 export interface SendBookingNotificationParams {
   bookingId: string;
-  notificationType: 'booking_confirmed' | 'booking_cancelled' | 'booking_reminder' | 'booking_updated';
+  notificationType:
+    | "booking_confirmed"
+    | "booking_cancelled"
+    | "booking_reminder"
+    | "booking_updated";
 }
 
 export function createNotificationService(supabase: SupabaseClient) {
@@ -86,13 +94,17 @@ export function createNotificationService(supabase: SupabaseClient) {
     /**
      * Register a push notification token for the current user
      */
-    async registerPushToken(params: RegisterPushTokenParams): Promise<{ id: string }> {
-      const { data: { user } } = await supabase.auth.getUser();
+    async registerPushToken(
+      params: RegisterPushTokenParams,
+    ): Promise<{ id: string }> {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
-      const { data, error } = await supabase.rpc('register_push_token', {
+      const { data, error } = await supabase.rpc("register_push_token", {
         p_user_id: user.id,
         p_token: params.token,
         p_token_type: params.token_type,
@@ -113,12 +125,14 @@ export function createNotificationService(supabase: SupabaseClient) {
      * Deactivate a push notification token
      */
     async deactivatePushToken(token: string): Promise<void> {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
-      const { error } = await supabase.rpc('deactivate_push_token', {
+      const { error } = await supabase.rpc("deactivate_push_token", {
         p_user_id: user.id,
         p_token: token,
       });
@@ -132,17 +146,19 @@ export function createNotificationService(supabase: SupabaseClient) {
      * Get active push tokens for the current user
      */
     async getPushTokens(): Promise<PushToken[]> {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
       const { data, error } = await supabase
-        .from('push_tokens')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .order('last_used_at', { ascending: false });
+        .from("push_tokens")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("is_active", true)
+        .order("last_used_at", { ascending: false });
 
       if (error) {
         throw error;
@@ -155,20 +171,22 @@ export function createNotificationService(supabase: SupabaseClient) {
      * Get notification preferences for the current user
      */
     async getNotificationPreferences(): Promise<NotificationPreferences | null> {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
       const { data, error } = await supabase
-        .from('notification_preferences')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("notification_preferences")
+        .select("*")
+        .eq("user_id", user.id)
         .single();
 
       if (error) {
         // Return null if not found, throw on other errors
-        if (error.code === 'PGRST116') {
+        if (error.code === "PGRST116") {
           return null;
         }
         throw error;
@@ -181,20 +199,22 @@ export function createNotificationService(supabase: SupabaseClient) {
      * Update notification preferences for the current user
      */
     async updateNotificationPreferences(
-      params: UpdateNotificationPreferencesParams
+      params: UpdateNotificationPreferencesParams,
     ): Promise<NotificationPreferences> {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
       const { data, error } = await supabase
-        .from('notification_preferences')
+        .from("notification_preferences")
         .update({
           ...params,
           updated_at: new Date().toISOString(),
         })
-        .eq('user_id', user.id)
+        .eq("user_id", user.id)
         .select()
         .single();
 
@@ -209,16 +229,18 @@ export function createNotificationService(supabase: SupabaseClient) {
      * Get notification logs for the current user
      */
     async getNotificationLogs(limit: number = 50): Promise<NotificationLog[]> {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
       const { data, error } = await supabase
-        .from('notification_log')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        .from("notification_log")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
         .limit(limit);
 
       if (error) {
@@ -232,10 +254,15 @@ export function createNotificationService(supabase: SupabaseClient) {
      * Send booking notification (triggers email and/or push notification)
      * This calls a Supabase Edge Function
      */
-    async sendBookingNotification(params: SendBookingNotificationParams): Promise<void> {
-      const { error } = await supabase.functions.invoke('send-booking-notification', {
-        body: params,
-      });
+    async sendBookingNotification(
+      params: SendBookingNotificationParams,
+    ): Promise<void> {
+      const { error } = await supabase.functions.invoke(
+        "send-booking-notification",
+        {
+          body: params,
+        },
+      );
 
       if (error) {
         throw error;
@@ -246,16 +273,21 @@ export function createNotificationService(supabase: SupabaseClient) {
      * Test notification - sends a test notification to the current user
      */
     async sendTestNotification(): Promise<void> {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('Not authenticated');
+        throw new Error("Not authenticated");
       }
 
-      const { error } = await supabase.functions.invoke('send-test-notification', {
-        body: {
-          userId: user.id,
+      const { error } = await supabase.functions.invoke(
+        "send-test-notification",
+        {
+          body: {
+            userId: user.id,
+          },
         },
-      });
+      );
 
       if (error) {
         throw error;

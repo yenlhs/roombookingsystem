@@ -28,6 +28,7 @@ All migrations have been created in `supabase/migrations/`:
 5. `20251018000004_update_rls_for_exclusive_rooms.sql` - Access control
 
 **To apply migrations:**
+
 ```bash
 # Local development
 cd supabase
@@ -50,6 +51,7 @@ Three Stripe integration functions have been created:
 3. **`create-portal-session`** - Creates billing portal for subscription management
 
 **To deploy Edge Functions:**
+
 ```bash
 supabase functions deploy stripe-webhooks
 supabase functions deploy create-checkout-session
@@ -71,7 +73,7 @@ supabase functions deploy create-portal-session
 **File**: `apps/mobile/app/_layout.tsx`
 
 ```tsx
-import { StripeProvider } from '@stripe/stripe-react-native';
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 const STRIPE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
 
@@ -89,9 +91,9 @@ export default function RootLayout() {
 **File**: `apps/mobile/hooks/useSubscription.ts`
 
 ```tsx
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { createSubscriptionService } from '@workspace/supabase';
-import { useSupabase } from '@/providers/SupabaseProvider';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createSubscriptionService } from "@workspace/supabase";
+import { useSupabase } from "@/providers/SupabaseProvider";
 
 export function useSubscription() {
   const supabase = useSupabase();
@@ -99,21 +101,26 @@ export function useSubscription() {
   const subscriptionService = createSubscriptionService(supabase);
 
   const { data: subscription, isLoading } = useQuery({
-    queryKey: ['user-subscription'],
+    queryKey: ["user-subscription"],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return null;
       return subscriptionService.getUserSubscription(user.id);
     },
   });
 
   const { data: tiers } = useQuery({
-    queryKey: ['subscription-tiers'],
+    queryKey: ["subscription-tiers"],
     queryFn: () => subscriptionService.getTiers(),
   });
 
-  const hasExclusiveAccess = subscription?.tier?.features?.exclusive_rooms === true;
-  const isPremium = hasExclusiveAccess && ['active', 'trialing'].includes(subscription?.status || '');
+  const hasExclusiveAccess =
+    subscription?.tier?.features?.exclusive_rooms === true;
+  const isPremium =
+    hasExclusiveAccess &&
+    ["active", "trialing"].includes(subscription?.status || "");
 
   return {
     subscription,
@@ -130,11 +137,11 @@ export function useSubscription() {
 **File**: `apps/mobile/hooks/useCheckout.ts`
 
 ```tsx
-import { useMutation } from '@tanstack/react-query';
-import { useStripe } from '@stripe/stripe-react-native';
-import { createSubscriptionService } from '@workspace/supabase';
-import { useSupabase } from '@/providers/SupabaseProvider';
-import { Alert } from 'react-native';
+import { useMutation } from "@tanstack/react-query";
+import { useStripe } from "@stripe/stripe-react-native";
+import { createSubscriptionService } from "@workspace/supabase";
+import { useSupabase } from "@/providers/SupabaseProvider";
+import { Alert } from "react-native";
 
 export function useCheckout() {
   const supabase = useSupabase();
@@ -146,14 +153,14 @@ export function useCheckout() {
       // Create checkout session
       const session = await subscriptionService.createCheckoutSession({
         tier_id: tierId,
-        success_url: 'myapp://subscription/success',
-        cancel_url: 'myapp://subscription/cancel',
+        success_url: "myapp://subscription/success",
+        cancel_url: "myapp://subscription/cancel",
       });
 
       // Open Stripe checkout (web view)
       // For React Native, you'll use Linking to open the URL
       const { error } = await stripe.createPaymentMethod({
-        paymentMethodType: 'Card',
+        paymentMethodType: "Card",
       });
 
       if (error) {
@@ -163,10 +170,10 @@ export function useCheckout() {
       return session;
     },
     onSuccess: () => {
-      Alert.alert('Success', 'Subscription activated!');
+      Alert.alert("Success", "Subscription activated!");
     },
     onError: (error: Error) => {
-      Alert.alert('Error', error.message);
+      Alert.alert("Error", error.message);
     },
   });
 
@@ -182,10 +189,16 @@ export function useCheckout() {
 **File**: `apps/mobile/app/(app)/subscription.tsx`
 
 ```tsx
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from 'react-native';
-import { useSubscription } from '@/hooks/useSubscription';
-import { useCheckout } from '@/hooks/useCheckout';
-import { Ionicons } from '@expo/vector-icons';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useCheckout } from "@/hooks/useCheckout";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function SubscriptionScreen() {
   const { subscription, tiers, isLoading, isPremium } = useSubscription();
@@ -199,7 +212,7 @@ export default function SubscriptionScreen() {
     );
   }
 
-  const premiumTier = tiers?.find((t) => t.name === 'premium');
+  const premiumTier = tiers?.find((t) => t.name === "premium");
 
   return (
     <ScrollView className="flex-1 bg-gray-50 p-4">
@@ -207,11 +220,12 @@ export default function SubscriptionScreen() {
       <View className="bg-white rounded-lg p-6 mb-4">
         <Text className="text-lg font-semibold mb-2">Current Plan</Text>
         <Text className="text-2xl font-bold text-blue-600">
-          {isPremium ? 'Premium' : 'Free'}
+          {isPremium ? "Premium" : "Free"}
         </Text>
         {isPremium && subscription?.current_period_end && (
           <Text className="text-gray-600 mt-2">
-            Renews on {new Date(subscription.current_period_end).toLocaleDateString()}
+            Renews on{" "}
+            {new Date(subscription.current_period_end).toLocaleDateString()}
           </Text>
         )}
       </View>
@@ -220,7 +234,9 @@ export default function SubscriptionScreen() {
       {!isPremium && premiumTier && (
         <>
           <View className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg p-6 mb-4">
-            <Text className="text-white text-2xl font-bold mb-2">Go Premium</Text>
+            <Text className="text-white text-2xl font-bold mb-2">
+              Go Premium
+            </Text>
             <Text className="text-white text-4xl font-bold mb-4">
               ${premiumTier.price_monthly}/month
             </Text>
@@ -252,7 +268,9 @@ export default function SubscriptionScreen() {
       {/* Manage Subscription (if premium) */}
       {isPremium && (
         <Pressable className="bg-white rounded-lg p-4 items-center">
-          <Text className="text-blue-600 font-semibold">Manage Subscription</Text>
+          <Text className="text-blue-600 font-semibold">
+            Manage Subscription
+          </Text>
         </Pressable>
       )}
     </ScrollView>
@@ -274,10 +292,10 @@ function FeatureItem({ text }: { text: string }) {
 **File**: `apps/mobile/components/SubscriptionBanner.tsx`
 
 ```tsx
-import { View, Text, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useSubscription } from '@/hooks/useSubscription';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Pressable } from "react-native";
+import { useRouter } from "expo-router";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Ionicons } from "@expo/vector-icons";
 
 export function SubscriptionBanner() {
   const { isPremium } = useSubscription();
@@ -287,13 +305,15 @@ export function SubscriptionBanner() {
 
   return (
     <Pressable
-      onPress={() => router.push('/(app)/subscription')}
+      onPress={() => router.push("/(app)/subscription")}
       className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 m-4 rounded-lg flex-row items-center"
     >
       <Ionicons name="star" size={24} color="white" />
       <View className="ml-3 flex-1">
         <Text className="text-white font-bold">Unlock Premium Rooms</Text>
-        <Text className="text-white text-sm">Get access to exclusive spaces</Text>
+        <Text className="text-white text-sm">
+          Get access to exclusive spaces
+        </Text>
       </View>
       <Ionicons name="chevron-forward" size={20} color="white" />
     </Pressable>
@@ -308,8 +328,8 @@ export function SubscriptionBanner() {
 Add this logic to your existing rooms list:
 
 ```tsx
-import { useSubscription } from '@/hooks/useSubscription';
-import { Ionicons } from '@expo/vector-icons';
+import { useSubscription } from "@/hooks/useSubscription";
+import { Ionicons } from "@expo/vector-icons";
 
 // In your RoomCard component:
 function RoomCard({ room }: { room: Room }) {
@@ -321,12 +341,12 @@ function RoomCard({ room }: { room: Room }) {
     <Pressable
       onPress={() => {
         if (isLocked) {
-          router.push('/(app)/subscription');
+          router.push("/(app)/subscription");
         } else {
           router.push(`/(app)/rooms/${room.id}`);
         }
       }}
-      className={`bg-white rounded-lg p-4 mb-3 ${isLocked ? 'opacity-75' : ''}`}
+      className={`bg-white rounded-lg p-4 mb-3 ${isLocked ? "opacity-75" : ""}`}
     >
       <View className="flex-row justify-between items-start">
         <View className="flex-1">
@@ -341,9 +361,7 @@ function RoomCard({ room }: { room: Room }) {
           </View>
           <Text className="text-gray-600 mt-1">{room.description}</Text>
         </View>
-        {isLocked && (
-          <Ionicons name="lock-closed" size={24} color="#9ca3af" />
-        )}
+        {isLocked && <Ionicons name="lock-closed" size={24} color="#9ca3af" />}
       </View>
     </Pressable>
   );
@@ -361,8 +379,14 @@ function RoomCard({ room }: { room: Room }) {
 Add this field to your existing form:
 
 ```tsx
-import { FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
-import { Checkbox } from '@/components/ui/checkbox';
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+} from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // In your form:
 <FormField
@@ -371,10 +395,7 @@ import { Checkbox } from '@/components/ui/checkbox';
   render={({ field }) => (
     <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
       <FormControl>
-        <Checkbox
-          checked={field.value}
-          onCheckedChange={field.onChange}
-        />
+        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
       </FormControl>
       <div className="space-y-1 leading-none">
         <FormLabel>Premium Exclusive Room</FormLabel>
@@ -384,7 +405,7 @@ import { Checkbox } from '@/components/ui/checkbox';
       </div>
     </FormItem>
   )}
-/>
+/>;
 ```
 
 ### 2. Create Admin Subscriptions Dashboard
@@ -392,18 +413,18 @@ import { Checkbox } from '@/components/ui/checkbox';
 **File**: `apps/web/app/(dashboard)/subscriptions/page.tsx`
 
 ```tsx
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { createSubscriptionService } from '@workspace/supabase';
-import { useSupabase } from '@/providers/SupabaseProvider';
+import { useQuery } from "@tanstack/react-query";
+import { createSubscriptionService } from "@workspace/supabase";
+import { useSupabase } from "@/providers/SupabaseProvider";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -411,20 +432,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 export default function SubscriptionsPage() {
   const supabase = useSupabase();
   const subscriptionService = createSubscriptionService(supabase);
 
   const { data: stats } = useQuery({
-    queryKey: ['subscription-stats'],
+    queryKey: ["subscription-stats"],
     queryFn: () => subscriptionService.getSubscriptionStats(),
   });
 
   const { data: subscriptions } = useQuery({
-    queryKey: ['all-subscriptions'],
+    queryKey: ["all-subscriptions"],
     queryFn: () => subscriptionService.getAllSubscriptions(1, 50),
   });
 
@@ -432,7 +453,9 @@ export default function SubscriptionsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Subscriptions</h1>
-        <p className="text-gray-600">Manage user subscriptions and view statistics</p>
+        <p className="text-gray-600">
+          Manage user subscriptions and view statistics
+        </p>
       </div>
 
       {/* Stats Cards */}
@@ -459,7 +482,7 @@ export default function SubscriptionsPage() {
           <CardHeader className="pb-2">
             <CardDescription>Monthly Revenue (MRR)</CardDescription>
             <CardTitle className="text-3xl">
-              ${stats?.mrr.toFixed(2) || '0.00'}
+              ${stats?.mrr.toFixed(2) || "0.00"}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -468,7 +491,7 @@ export default function SubscriptionsPage() {
           <CardHeader className="pb-2">
             <CardDescription>Churn Rate</CardDescription>
             <CardTitle className="text-3xl">
-              {stats?.churn_rate.toFixed(1) || '0.0'}%
+              {stats?.churn_rate.toFixed(1) || "0.0"}%
             </CardTitle>
           </CardHeader>
         </Card>
@@ -496,19 +519,25 @@ export default function SubscriptionsPage() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{sub.user?.full_name}</div>
-                      <div className="text-sm text-gray-500">{sub.user?.email}</div>
+                      <div className="text-sm text-gray-500">
+                        {sub.user?.email}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>{sub.tier?.display_name}</TableCell>
                   <TableCell>
-                    <Badge variant={sub.status === 'active' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        sub.status === "active" ? "default" : "secondary"
+                      }
+                    >
                       {sub.status}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     {sub.current_period_end
                       ? new Date(sub.current_period_end).toLocaleDateString()
-                      : 'N/A'}
+                      : "N/A"}
                   </TableCell>
                   <TableCell>
                     {sub.stripe_customer_id && (
@@ -553,6 +582,7 @@ export default function SubscriptionsPage() {
 ### 2. Set Environment Variables
 
 **Supabase Secrets** (for Edge Functions):
+
 ```bash
 supabase secrets set STRIPE_SECRET_KEY=sk_test_...
 supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
@@ -560,11 +590,13 @@ supabase secrets set STRIPE_PREMIUM_PRICE_ID=price_...
 ```
 
 **Mobile App** (`apps/mobile/.env`):
+
 ```env
 EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 **Web App** (`apps/web/.env.local`):
+
 ```env
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
@@ -604,6 +636,7 @@ WHERE name = 'premium';
 ### Payment Flow Testing
 
 Use Stripe test cards:
+
 - Success: `4242 4242 4242 4242`
 - Declined: `4000 0000 0000 0002`
 
@@ -618,6 +651,7 @@ Use Stripe test cards:
 ### UI Testing
 
 **Mobile:**
+
 - [ ] Subscription banner appears for free users
 - [ ] Exclusive rooms show lock icon
 - [ ] Tapping locked room redirects to subscription page
@@ -625,6 +659,7 @@ Use Stripe test cards:
 - [ ] Premium users see "Manage Subscription" option
 
 **Web:**
+
 - [ ] Room form has exclusive checkbox
 - [ ] Exclusive rooms display premium badge
 - [ ] Subscriptions dashboard shows correct stats
@@ -697,6 +732,7 @@ eas build --platform android
 ## Support
 
 For issues or questions:
+
 - Check Stripe dashboard for payment issues
 - Check Supabase logs for database/function errors
 - Review RLS policies if access control fails

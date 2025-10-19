@@ -13,7 +13,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPasswordSchema, type ForgotPasswordInput } from "@workspace/validation";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordInput,
+} from "@workspace/validation";
 import { useAuth } from "../lib/auth/context";
 
 export default function ForgotPasswordScreen() {
@@ -83,8 +86,8 @@ export default function ForgotPasswordScreen() {
                     Check your email
                   </Text>
                   <Text className="text-base text-gray-600 text-center leading-relaxed">
-                    We've sent you a password reset link. Please check your email
-                    and follow the instructions.
+                    We've sent you a password reset link. Please check your
+                    email and follow the instructions.
                   </Text>
                 </View>
                 <Link href="/login" asChild>

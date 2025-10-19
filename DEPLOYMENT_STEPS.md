@@ -20,6 +20,7 @@ supabase db push
 ```
 
 **Migrations applied:**
+
 - ✅ `20251018000000_add_subscription_tiers.sql` - Subscription plans
 - ✅ `20251018000001_add_user_subscriptions.sql` - User subscriptions
 - ✅ `20251018000002_add_subscription_events.sql` - Audit trail
@@ -31,10 +32,12 @@ supabase db push
 ## Step 2: Set Up Stripe
 
 ### Create Stripe Account
+
 1. Go to https://dashboard.stripe.com/register
 2. Complete account setup
 
 ### Create Products
+
 1. Go to **Products** → **Add Product**
 2. Create "Premium Subscription":
    - Name: `Premium Subscription`
@@ -43,6 +46,7 @@ supabase db push
 3. **Copy the Price ID** (starts with `price_...`)
 
 ### Get API Keys
+
 1. Go to **Developers** → **API keys**
 2. Copy:
    - **Publishable key** (`pk_test_...`)
@@ -65,6 +69,7 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_YOUR_SECRET_HERE
 ### Mobile App
 
 Update `apps/mobile/.env`:
+
 ```env
 EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
 ```
@@ -72,6 +77,7 @@ EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
 ### Web App (if needed)
 
 Create/update `apps/web/.env.local`:
+
 ```env
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
 ```
@@ -121,6 +127,7 @@ WHERE name = 'premium';
 ```
 
 Run this in Supabase SQL Editor or via:
+
 ```bash
 supabase db execute -f update-price-id.sql
 ```
@@ -143,6 +150,7 @@ SELECT user_has_exclusive_access('user-uuid');
 ### Test Mobile App
 
 1. **Start the app**:
+
    ```bash
    cd apps/mobile
    pnpm start
@@ -161,6 +169,7 @@ SELECT user_has_exclusive_access('user-uuid');
 ### Test Web Admin
 
 1. **Start the app**:
+
    ```bash
    cd apps/web
    pnpm dev
@@ -200,16 +209,19 @@ supabase functions logs --tail
 ### Common Issues
 
 **Webhook not receiving events:**
+
 - Verify webhook URL is correct
 - Check webhook secret matches in Supabase
 - Test webhook manually in Stripe dashboard
 
 **Payment not activating subscription:**
+
 - Check Edge Function logs for errors
 - Verify `stripe_price_id` matches in database
 - Check `subscription_events` table for error logs
 
 **RLS blocking access:**
+
 - Test: `SELECT user_has_exclusive_access('user-id');`
 - Verify subscription status is 'active' or 'trialing'
 - Check `current_period_end` is in the future
@@ -234,6 +246,7 @@ supabase functions logs --tail
 ### Deploy Apps
 
 **Mobile (Expo)**:
+
 ```bash
 cd apps/mobile
 eas build --platform ios
@@ -242,6 +255,7 @@ eas submit
 ```
 
 **Web (Vercel)**:
+
 ```bash
 cd apps/web
 vercel --prod
@@ -252,12 +266,14 @@ vercel --prod
 ## Testing Checklist
 
 ### Database & RLS
+
 - [ ] New users get free tier automatically
 - [ ] Free users cannot book exclusive rooms
 - [ ] Premium users can book exclusive rooms
 - [ ] RLS policies prevent unauthorized access
 
 ### Payment Flow
+
 - [ ] Checkout completes successfully
 - [ ] Webhook updates subscription
 - [ ] User gains immediate access
@@ -266,6 +282,7 @@ vercel --prod
 - [ ] Cancellation reverts to free tier
 
 ### UI/UX
+
 - [ ] Subscription banner shows for free users
 - [ ] Exclusive rooms show premium badge
 - [ ] Lock icon on inaccessible rooms
@@ -277,6 +294,7 @@ vercel --prod
 ## 🎉 You're All Set!
 
 Your subscription feature is now live. Users can:
+
 - Browse rooms with exclusive premium options
 - Subscribe via Stripe for $9.99/month
 - Access exclusive rooms with active subscription
@@ -285,6 +303,7 @@ Your subscription feature is now live. Users can:
 ## Support
 
 For issues:
+
 - Check Supabase function logs
 - Review Stripe webhook deliveries
 - Verify RLS policies

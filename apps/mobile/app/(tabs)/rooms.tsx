@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -7,29 +7,39 @@ import {
   TextInput,
   ActivityIndicator,
   ListRenderItem,
-} from 'react-native';
-import Animated from 'react-native-reanimated';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '../../lib/supabase';
-import { createRoomService } from '@workspace/supabase';
-import type { Room, RoomStatus } from '@workspace/types';
-import { useFadeIn, useListItemAnimation } from '../../lib/animations';
-import { lightImpact, selectionFeedback } from '../../lib/haptics';
-import { FLATLIST_CONFIG, debounce } from '../../lib/performance';
-import { SubscriptionBanner } from '../../components/SubscriptionBanner';
-import { useSubscription } from '../../lib/hooks/use-subscription';
+} from "react-native";
+import Animated from "react-native-reanimated";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../lib/supabase";
+import { createRoomService } from "@workspace/supabase";
+import type { Room, RoomStatus } from "@workspace/types";
+import { useFadeIn, useListItemAnimation } from "../../lib/animations";
+import { lightImpact, selectionFeedback } from "../../lib/haptics";
+import { FLATLIST_CONFIG, debounce } from "../../lib/performance";
+import { SubscriptionBanner } from "../../components/SubscriptionBanner";
+import { useSubscription } from "../../lib/hooks/use-subscription";
 
 // Room Card Component with animations
-function RoomCard({ room, index, onPress, isLocked }: { room: Room; index: number; onPress: () => void; isLocked?: boolean }) {
+function RoomCard({
+  room,
+  index,
+  onPress,
+  isLocked,
+}: {
+  room: Room;
+  index: number;
+  onPress: () => void;
+  isLocked?: boolean;
+}) {
   const animatedStyle = useListItemAnimation(index);
 
   const getRoomStatusColor = (status: RoomStatus) => {
-    return status === 'active' ? 'bg-green-100' : 'bg-gray-100';
+    return status === "active" ? "bg-green-100" : "bg-gray-100";
   };
 
   const getRoomStatusTextColor = (status: RoomStatus) => {
-    return status === 'active' ? 'text-green-800' : 'text-gray-800';
+    return status === "active" ? "text-green-800" : "text-gray-800";
   };
 
   return (
@@ -39,17 +49,21 @@ function RoomCard({ room, index, onPress, isLocked }: { room: Room; index: numbe
           selectionFeedback();
           onPress();
         }}
-        className={`bg-white rounded-2xl p-5 shadow-sm border border-gray-200 ${isLocked ? 'opacity-75' : ''}`}
+        className={`bg-white rounded-2xl p-5 shadow-sm border border-gray-200 ${isLocked ? "opacity-75" : ""}`}
         activeOpacity={0.7}
       >
         <View className="flex-row justify-between items-start mb-3">
           <View className="flex-1 mr-4">
             <View className="flex-row items-center mb-1">
-              <Text className="text-xl font-bold text-gray-900">{room.name}</Text>
+              <Text className="text-xl font-bold text-gray-900">
+                {room.name}
+              </Text>
               {room.is_exclusive && (
                 <View className="ml-2 bg-purple-100 px-2 py-1 rounded-md flex-row items-center">
                   <Ionicons name="star" size={12} color="#7c3aed" />
-                  <Text className="text-purple-700 text-xs ml-1 font-semibold">Premium</Text>
+                  <Text className="text-purple-700 text-xs ml-1 font-semibold">
+                    Premium
+                  </Text>
                 </View>
               )}
               {isLocked && (
@@ -64,7 +78,9 @@ function RoomCard({ room, index, onPress, isLocked }: { room: Room; index: numbe
               </Text>
             )}
           </View>
-          <View className={`px-3 py-1 rounded-full ${getRoomStatusColor(room.status)}`}>
+          <View
+            className={`px-3 py-1 rounded-full ${getRoomStatusColor(room.status)}`}
+          >
             <Text
               className={`text-xs font-semibold ${getRoomStatusTextColor(room.status)} uppercase`}
             >
@@ -76,7 +92,9 @@ function RoomCard({ room, index, onPress, isLocked }: { room: Room; index: numbe
         <View className="border-t border-gray-100 pt-3 flex-row flex-wrap gap-4">
           <View className="flex-row items-center">
             <Text className="text-2xl mr-2">👥</Text>
-            <Text className="text-sm text-gray-700 font-medium">{room.capacity} seats</Text>
+            <Text className="text-sm text-gray-700 font-medium">
+              {room.capacity} seats
+            </Text>
           </View>
 
           <View className="flex-row items-center">
@@ -95,7 +113,9 @@ function RoomCard({ room, index, onPress, isLocked }: { room: Room; index: numbe
         </View>
 
         <View className="mt-3 pt-3 border-t border-gray-100">
-          <Text className="text-blue-600 font-semibold text-sm">View Details →</Text>
+          <Text className="text-blue-600 font-semibold text-sm">
+            View Details →
+          </Text>
         </View>
       </TouchableOpacity>
     </Animated.View>
@@ -109,9 +129,9 @@ export default function RoomsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | RoomStatus>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | RoomStatus>("all");
   const [minCapacity, setMinCapacity] = useState<number | null>(null);
 
   const roomService = createRoomService(supabase);
@@ -124,42 +144,42 @@ export default function RoomsScreen() {
       debounce((query: string) => {
         setDebouncedSearchQuery(query);
       }, 300),
-    []
+    [],
   );
 
   // Load rooms
   useEffect(() => {
-    console.log('[Rooms] Component mounted, loading rooms...');
+    console.log("[Rooms] Component mounted, loading rooms...");
 
     loadRooms().catch((err) => {
-      console.error('[Rooms] Failed to load rooms:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load rooms');
+      console.error("[Rooms] Failed to load rooms:", err);
+      setError(err instanceof Error ? err.message : "Failed to load rooms");
       setLoading(false);
     });
 
     // Subscribe to real-time updates
     const channel = supabase
-      .channel('rooms-changes')
+      .channel("rooms-changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'rooms',
+          event: "*",
+          schema: "public",
+          table: "rooms",
         },
         (payload) => {
-          console.log('[Rooms] Room change received:', payload);
+          console.log("[Rooms] Room change received:", payload);
           // Reload rooms when changes occur
           loadRooms().catch((err) => {
-            console.error('[Rooms] Failed to reload rooms:', err);
+            console.error("[Rooms] Failed to reload rooms:", err);
           });
-        }
+        },
       )
       .subscribe();
 
     // Cleanup subscription on unmount
     return () => {
-      console.log('[Rooms] Component unmounting, cleaning up...');
+      console.log("[Rooms] Component unmounting, cleaning up...");
       supabase.removeChannel(channel);
     };
   }, []);
@@ -180,7 +200,7 @@ export default function RoomsScreen() {
       const data = await roomService.getActiveRooms();
       setRooms(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load rooms');
+      setError(err instanceof Error ? err.message : "Failed to load rooms");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -201,18 +221,20 @@ export default function RoomsScreen() {
       filtered = filtered.filter(
         (room) =>
           room.name.toLowerCase().includes(query) ||
-          room.description?.toLowerCase().includes(query)
+          room.description?.toLowerCase().includes(query),
       );
     }
 
     // Filter by status
-    if (statusFilter !== 'all') {
+    if (statusFilter !== "all") {
       filtered = filtered.filter((room) => room.status === statusFilter);
     }
 
     // Filter by minimum capacity
     if (minCapacity !== null && minCapacity > 0) {
-      filtered = filtered.filter((room) => room.capacity && room.capacity >= minCapacity);
+      filtered = filtered.filter(
+        (room) => room.capacity && room.capacity >= minCapacity,
+      );
     }
 
     setFilteredRooms(filtered);
@@ -220,9 +242,9 @@ export default function RoomsScreen() {
 
   const clearFilters = () => {
     lightImpact();
-    setSearchQuery('');
-    setDebouncedSearchQuery('');
-    setStatusFilter('all');
+    setSearchQuery("");
+    setDebouncedSearchQuery("");
+    setStatusFilter("all");
     setMinCapacity(null);
   };
 
@@ -235,7 +257,7 @@ export default function RoomsScreen() {
         isLocked={isLocked}
         onPress={() => {
           if (isLocked) {
-            router.push('/subscription');
+            router.push("/subscription");
           } else {
             router.push(`/room-details/${item.id}`);
           }
@@ -248,8 +270,12 @@ export default function RoomsScreen() {
     <View>
       {/* Header */}
       <Animated.View style={headerAnimation} className="mb-6">
-        <Text className="text-3xl font-bold text-gray-900 mb-2">Browse Rooms</Text>
-        <Text className="text-base text-gray-600">Find the perfect space for your meeting</Text>
+        <Text className="text-3xl font-bold text-gray-900 mb-2">
+          Browse Rooms
+        </Text>
+        <Text className="text-base text-gray-600">
+          Find the perfect space for your meeting
+        </Text>
       </Animated.View>
 
       {/* Subscription Banner */}
@@ -275,22 +301,26 @@ export default function RoomsScreen() {
 
       {/* Filters */}
       <View className="mb-4">
-        <Text className="text-sm font-semibold text-gray-900 mb-2">Filters</Text>
+        <Text className="text-sm font-semibold text-gray-900 mb-2">
+          Filters
+        </Text>
         <View className="flex-row flex-wrap gap-2">
           {/* Status Filter */}
           <TouchableOpacity
             onPress={() => {
               lightImpact();
-              setStatusFilter('all');
+              setStatusFilter("all");
             }}
             className={`px-4 py-2 rounded-full border ${
-              statusFilter === 'all' ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'
+              statusFilter === "all"
+                ? "bg-blue-600 border-blue-600"
+                : "bg-white border-gray-300"
             }`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-sm font-medium ${
-                statusFilter === 'all' ? 'text-white' : 'text-gray-700'
+                statusFilter === "all" ? "text-white" : "text-gray-700"
               }`}
             >
               All Rooms
@@ -300,16 +330,18 @@ export default function RoomsScreen() {
           <TouchableOpacity
             onPress={() => {
               lightImpact();
-              setStatusFilter('active' as RoomStatus);
+              setStatusFilter("active" as RoomStatus);
             }}
             className={`px-4 py-2 rounded-full border ${
-              statusFilter === 'active' ? 'bg-blue-600 border-blue-600' : 'bg-white border-gray-300'
+              statusFilter === "active"
+                ? "bg-blue-600 border-blue-600"
+                : "bg-white border-gray-300"
             }`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-sm font-medium ${
-                statusFilter === 'active' ? 'text-white' : 'text-gray-700'
+                statusFilter === "active" ? "text-white" : "text-gray-700"
               }`}
             >
               Active
@@ -326,14 +358,14 @@ export default function RoomsScreen() {
               }}
               className={`px-4 py-2 rounded-full border ${
                 minCapacity === capacity
-                  ? 'bg-blue-600 border-blue-600'
-                  : 'bg-white border-gray-300'
+                  ? "bg-blue-600 border-blue-600"
+                  : "bg-white border-gray-300"
               }`}
               activeOpacity={0.7}
             >
               <Text
                 className={`text-sm font-medium ${
-                  minCapacity === capacity ? 'text-white' : 'text-gray-700'
+                  minCapacity === capacity ? "text-white" : "text-gray-700"
                 }`}
               >
                 {capacity}+ seats
@@ -342,12 +374,14 @@ export default function RoomsScreen() {
           ))}
 
           {/* Clear Filters */}
-          {(searchQuery || statusFilter !== 'all' || minCapacity !== null) && (
+          {(searchQuery || statusFilter !== "all" || minCapacity !== null) && (
             <TouchableOpacity
               onPress={clearFilters}
               className="px-4 py-2 rounded-full bg-gray-100 border border-gray-300"
             >
-              <Text className="text-sm font-medium text-gray-700">Clear All</Text>
+              <Text className="text-sm font-medium text-gray-700">
+                Clear All
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -356,7 +390,8 @@ export default function RoomsScreen() {
       {/* Results Count */}
       <View className="mb-4">
         <Text className="text-sm text-gray-600">
-          {filteredRooms.length} {filteredRooms.length === 1 ? 'room' : 'rooms'} found
+          {filteredRooms.length} {filteredRooms.length === 1 ? "room" : "rooms"}{" "}
+          found
         </Text>
       </View>
     </View>
@@ -365,11 +400,13 @@ export default function RoomsScreen() {
   const renderListEmpty = () => (
     <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-200 mx-6">
       <Text className="text-4xl mb-3">🔍</Text>
-      <Text className="text-xl font-bold text-gray-900 mb-2 text-center">No rooms found</Text>
+      <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
+        No rooms found
+      </Text>
       <Text className="text-sm text-gray-600 text-center mb-4">
         Try adjusting your search or filters
       </Text>
-      {(searchQuery || statusFilter !== 'all' || minCapacity !== null) && (
+      {(searchQuery || statusFilter !== "all" || minCapacity !== null) && (
         <TouchableOpacity
           onPress={clearFilters}
           className="bg-blue-600 rounded-lg px-6 py-3"

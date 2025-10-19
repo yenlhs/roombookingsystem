@@ -1,5 +1,9 @@
-import { supabase } from '@workspace/supabase';
-import type { LoginInput, RegisterInput, ForgotPasswordInput } from '@workspace/validation';
+import { supabase } from "@workspace/supabase";
+import type {
+  LoginInput,
+  RegisterInput,
+  ForgotPasswordInput,
+} from "@workspace/validation";
 
 /**
  * Auth Service

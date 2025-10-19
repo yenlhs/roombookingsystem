@@ -4,7 +4,7 @@
  * Format a date to YYYY-MM-DD
  */
 export function formatDateToISO(date: Date): string {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 }
 
 /**
@@ -25,7 +25,7 @@ export function getTodayISO(): string {
  * Check if a date is today
  */
 export function isToday(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISODate(date) : date;
+  const dateObj = typeof date === "string" ? parseISODate(date) : date;
   return formatDateToISO(dateObj) === getTodayISO();
 }
 
@@ -33,7 +33,7 @@ export function isToday(date: Date | string): boolean {
  * Check if a date is in the past
  */
 export function isPast(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISODate(date) : date;
+  const dateObj = typeof date === "string" ? parseISODate(date) : date;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   dateObj.setHours(0, 0, 0, 0);
@@ -44,7 +44,7 @@ export function isPast(date: Date | string): boolean {
  * Check if a date is in the future
  */
 export function isFuture(date: Date | string): boolean {
-  const dateObj = typeof date === 'string' ? parseISODate(date) : date;
+  const dateObj = typeof date === "string" ? parseISODate(date) : date;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   dateObj.setHours(0, 0, 0, 0);
@@ -79,14 +79,14 @@ export function getDateRange(startDate: Date, endDate: Date): Date[] {
  * Get day name from date
  */
 export function getDayName(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? parseISODate(date) : date;
-  return dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+  const dateObj = typeof date === "string" ? parseISODate(date) : date;
+  return dateObj.toLocaleDateString("en-US", { weekday: "long" });
 }
 
 /**
  * Get month name from date
  */
 export function getMonthName(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? parseISODate(date) : date;
-  return dateObj.toLocaleDateString('en-US', { month: 'long' });
+  const dateObj = typeof date === "string" ? parseISODate(date) : date;
+  return dateObj.toLocaleDateString("en-US", { month: "long" });
 }

@@ -1,39 +1,39 @@
 {
-	"cli": {
-		"version": ">= 16.10.1",
-		"appVersionSource": "remote"
-	},
-	"build": {
-		"development": {
-			"developmentClient": true,
-			"autoIncrement": true,
-			"channel": "development",
-			"environment": "development",
-			"distribution": "internal",
-			"node": "20.18.1"
-		},
-		"preview": {
-			"distribution": "internal",
-			"node": "20.18.1"
-		},
-		"production": {
-			"autoIncrement": true,
-			"channel": "production",
-			"environment": "production",
-			"node": "20.18.1",
-			"ios": {
-				"enterpriseProvisioning": "universal"
-			}
-		}
-	},
-	"submit": {
-		"production": {
-			"ios": {
-				"appleId": "yenlhs@gmail.com",
-				"ascAppId": "6754128439",
-				"appleTeamId": "T7KBVA29C4",
-				"bundleIdentifier": "com.yenlhs.roombooking"
-			}
-		}
-	}
+  "cli": {
+    "version": ">= 16.10.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "autoIncrement": true,
+      "channel": "development",
+      "environment": "development",
+      "distribution": "internal",
+      "node": "20.18.1"
+    },
+    "preview": {
+      "distribution": "internal",
+      "node": "20.18.1"
+    },
+    "production": {
+      "autoIncrement": true,
+      "channel": "production",
+      "environment": "production",
+      "node": "20.18.1",
+      "ios": {
+        "enterpriseProvisioning": "universal"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "yenlhs@gmail.com",
+        "ascAppId": "6754128439",
+        "appleTeamId": "T7KBVA29C4",
+        "bundleIdentifier": "com.yenlhs.roombooking"
+      }
+    }
+  }
 }

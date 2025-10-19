@@ -3,10 +3,10 @@
  * Handles notification permissions, registration, and handling
  */
 
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
+import { Platform } from "react-native";
+import Constants from "expo-constants";
 
 // Configure how notifications are handled when app is in foreground
 Notifications.setNotificationHandler({
@@ -21,14 +21,16 @@ Notifications.setNotificationHandler({
 
 export interface PushNotificationToken {
   token: string;
-  type: 'expo' | 'fcm' | 'apns';
+  type: "expo" | "fcm" | "apns";
 }
 
 /**
  * Check if push notifications are supported on this device
  */
 export function isPushNotificationSupported(): boolean {
-  return Device.isDevice && (Platform.OS === 'ios' || Platform.OS === 'android');
+  return (
+    Device.isDevice && (Platform.OS === "ios" || Platform.OS === "android")
+  );
 }
 
 /**
@@ -36,7 +38,7 @@ export function isPushNotificationSupported(): boolean {
  */
 export async function requestNotificationPermissions(): Promise<boolean> {
   if (!isPushNotificationSupported()) {
-    console.warn('Push notifications are not supported on this device');
+    console.warn("Push notifications are not supported on this device");
     return false;
   }
 
@@ -44,13 +46,13 @@ export async function requestNotificationPermissions(): Promise<boolean> {
   let finalStatus = existingStatus;
 
   // Request permission if not already granted
-  if (existingStatus !== 'granted') {
+  if (existingStatus !== "granted") {
     const { status } = await Notifications.requestPermissionsAsync();
     finalStatus = status;
   }
 
-  if (finalStatus !== 'granted') {
-    console.warn('Failed to get push notification permissions');
+  if (finalStatus !== "granted") {
+    console.warn("Failed to get push notification permissions");
     return false;
   }
 
@@ -71,7 +73,7 @@ export async function getExpoPushToken(): Promise<PushNotificationToken | null> 
     // Get project ID from app.json
     const projectId = Constants.expoConfig?.extra?.eas?.projectId;
     if (!projectId) {
-      console.error('No EAS project ID found. Configure in app.json');
+      console.error("No EAS project ID found. Configure in app.json");
       return null;
     }
 
@@ -81,10 +83,10 @@ export async function getExpoPushToken(): Promise<PushNotificationToken | null> 
 
     return {
       token: token.data,
-      type: 'expo',
+      type: "expo",
     };
   } catch (error) {
-    console.error('Error getting Expo push token:', error);
+    console.error("Error getting Expo push token:", error);
     return null;
   }
 }
@@ -94,39 +96,39 @@ export async function getExpoPushToken(): Promise<PushNotificationToken | null> 
  * Required for Android 8.0+ to show notifications
  */
 export async function configureAndroidNotificationChannel(): Promise<void> {
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'Default',
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("default", {
+      name: "Default",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#2563EB',
-      sound: 'default',
+      lightColor: "#2563EB",
+      sound: "default",
       enableVibrate: true,
       showBadge: true,
     });
 
     // Booking notifications channel
-    await Notifications.setNotificationChannelAsync('bookings', {
-      name: 'Booking Notifications',
+    await Notifications.setNotificationChannelAsync("bookings", {
+      name: "Booking Notifications",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#2563EB',
-      sound: 'default',
+      lightColor: "#2563EB",
+      sound: "default",
       enableVibrate: true,
       showBadge: true,
-      description: 'Notifications about your room bookings',
+      description: "Notifications about your room bookings",
     });
 
     // Reminders channel
-    await Notifications.setNotificationChannelAsync('reminders', {
-      name: 'Booking Reminders',
+    await Notifications.setNotificationChannelAsync("reminders", {
+      name: "Booking Reminders",
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#F59E0B',
-      sound: 'default',
+      lightColor: "#F59E0B",
+      sound: "default",
       enableVibrate: true,
       showBadge: true,
-      description: 'Reminders for upcoming bookings',
+      description: "Reminders for upcoming bookings",
     });
   }
 }
@@ -138,7 +140,7 @@ export async function scheduleLocalNotification(
   title: string,
   body: string,
   data?: Record<string, any>,
-  triggerSeconds?: number
+  triggerSeconds?: number,
 ): Promise<string> {
   let trigger: Notifications.NotificationTriggerInput = null;
 
@@ -155,9 +157,9 @@ export async function scheduleLocalNotification(
       title,
       body,
       data,
-      sound: 'default',
+      sound: "default",
       priority: Notifications.AndroidNotificationPriority.HIGH,
-      categoryIdentifier: data?.category || 'default',
+      categoryIdentifier: data?.category || "default",
     },
     trigger,
   });
@@ -168,7 +170,9 @@ export async function scheduleLocalNotification(
 /**
  * Cancel a scheduled notification
  */
-export async function cancelNotification(notificationId: string): Promise<void> {
+export async function cancelNotification(
+  notificationId: string,
+): Promise<void> {
   await Notifications.cancelScheduledNotificationAsync(notificationId);
 }
 
@@ -204,7 +208,7 @@ export async function clearBadgeCount(): Promise<void> {
  * Add listener for when notification is received while app is in foreground
  */
 export function addNotificationReceivedListener(
-  listener: (notification: Notifications.Notification) => void
+  listener: (notification: Notifications.Notification) => void,
 ): Notifications.Subscription {
   return Notifications.addNotificationReceivedListener(listener);
 }
@@ -213,7 +217,7 @@ export function addNotificationReceivedListener(
  * Add listener for when user taps on a notification
  */
 export function addNotificationResponseListener(
-  listener: (response: Notifications.NotificationResponse) => void
+  listener: (response: Notifications.NotificationResponse) => void,
 ): Notifications.Subscription {
   return Notifications.addNotificationResponseReceivedListener(listener);
 }
@@ -238,12 +242,12 @@ export async function initializeNotifications(): Promise<PushNotificationToken |
     const token = await getExpoPushToken();
 
     if (token) {
-      console.log('Push token obtained:', token.token);
+      console.log("Push token obtained:", token.token);
     }
 
     return token;
   } catch (error) {
-    console.error('Error initializing notifications:', error);
+    console.error("Error initializing notifications:", error);
     return null;
   }
 }
@@ -252,10 +256,10 @@ export async function initializeNotifications(): Promise<PushNotificationToken |
  * Notification types for this app
  */
 export enum NotificationType {
-  BOOKING_CONFIRMED = 'booking_confirmed',
-  BOOKING_CANCELLED = 'booking_cancelled',
-  BOOKING_REMINDER = 'booking_reminder',
-  ROOM_AVAILABLE = 'room_available',
+  BOOKING_CONFIRMED = "booking_confirmed",
+  BOOKING_CANCELLED = "booking_cancelled",
+  BOOKING_REMINDER = "booking_reminder",
+  ROOM_AVAILABLE = "room_available",
 }
 
 /**
@@ -263,7 +267,7 @@ export enum NotificationType {
  */
 export function createNotificationData(
   type: NotificationType,
-  data: Record<string, any>
+  data: Record<string, any>,
 ): Record<string, any> {
   return {
     type,
@@ -283,27 +287,32 @@ export async function scheduleBookingReminder(
   bookingId: string,
   roomName: string,
   bookingTime: Date,
-  minutesBefore: number = 15
+  minutesBefore: number = 15,
 ): Promise<string | null> {
   const now = new Date();
-  const reminderTime = new Date(bookingTime.getTime() - minutesBefore * 60 * 1000);
-  const secondsUntilReminder = Math.max(0, (reminderTime.getTime() - now.getTime()) / 1000);
+  const reminderTime = new Date(
+    bookingTime.getTime() - minutesBefore * 60 * 1000,
+  );
+  const secondsUntilReminder = Math.max(
+    0,
+    (reminderTime.getTime() - now.getTime()) / 1000,
+  );
 
   // Only schedule if reminder is in the future
   if (secondsUntilReminder <= 0) {
-    console.log('Booking reminder time has passed, not scheduling');
+    console.log("Booking reminder time has passed, not scheduling");
     return null;
   }
 
   const notificationId = await scheduleLocalNotification(
-    'Booking Reminder',
+    "Booking Reminder",
     `Your booking for ${roomName} starts in ${minutesBefore} minutes`,
     createNotificationData(NotificationType.BOOKING_REMINDER, {
       bookingId,
       roomName,
-      category: 'reminders',
+      category: "reminders",
     }),
-    secondsUntilReminder
+    secondsUntilReminder,
   );
 
   return notificationId;

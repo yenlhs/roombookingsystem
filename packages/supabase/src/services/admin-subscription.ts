@@ -1,4 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   UserSubscription,
   UserSubscriptionWithTier,
@@ -6,7 +6,7 @@ import type {
   SubscriptionEvent,
   SubscriptionStatus,
   SubscriptionEventType,
-} from '@workspace/types';
+} from "@workspace/types";
 import type {
   AdminSubscriptionFilterInput,
   AdminCancelSubscriptionInput,
@@ -17,7 +17,7 @@ import type {
   AdminCreateTierInput,
   AdminUpdateTierInput,
   AdminEventFilterInput,
-} from '@workspace/validation';
+} from "@workspace/validation";
 
 /**
  * Admin Subscription Service
@@ -30,8 +30,13 @@ export class AdminSubscriptionService {
    * Get all subscriptions with advanced filtering (admin only)
    */
   async getAllSubscriptionsAdmin(
-    filters: AdminSubscriptionFilterInput = {}
-  ): Promise<{ data: UserSubscriptionWithTier[]; total: number; page: number; totalPages: number }> {
+    filters: AdminSubscriptionFilterInput = {},
+  ): Promise<{
+    data: UserSubscriptionWithTier[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
     const {
       page = 1,
       perPage = 20,
@@ -47,38 +52,36 @@ export class AdminSubscriptionService {
     const from = (page - 1) * perPage;
     const to = from + perPage - 1;
 
-    let query = this.supabase
-      .from('user_subscriptions')
-      .select(
-        `
+    let query = this.supabase.from("user_subscriptions").select(
+      `
         *,
         tier:subscription_tiers(*),
         user:users(id, email, full_name, avatar_url)
       `,
-        { count: 'exact' }
-      );
+      { count: "exact" },
+    );
 
     // Apply status filter
     if (status && status.length > 0) {
-      query = query.in('status', status);
+      query = query.in("status", status);
     }
 
     // Apply tier filter
     if (tierIds && tierIds.length > 0) {
-      query = query.in('tier_id', tierIds);
+      query = query.in("tier_id", tierIds);
     }
 
     // Apply date filters
     if (dateFrom) {
-      query = query.gte('created_at', dateFrom);
+      query = query.gte("created_at", dateFrom);
     }
     if (dateTo) {
-      query = query.lte('created_at', dateTo);
+      query = query.lte("created_at", dateTo);
     }
 
     // Apply cancel_at_period_end filter
-    if (typeof cancelAtPeriodEnd === 'boolean') {
-      query = query.eq('cancel_at_period_end', cancelAtPeriodEnd);
+    if (typeof cancelAtPeriodEnd === "boolean") {
+      query = query.eq("cancel_at_period_end", cancelAtPeriodEnd);
     }
 
     // Apply expiring soon filter
@@ -86,22 +89,22 @@ export class AdminSubscriptionService {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + expiringInDays);
       query = query
-        .lte('current_period_end', futureDate.toISOString())
-        .gte('current_period_end', new Date().toISOString())
-        .in('status', ['active', 'trialing']);
+        .lte("current_period_end", futureDate.toISOString())
+        .gte("current_period_end", new Date().toISOString())
+        .in("status", ["active", "trialing"]);
     }
 
     // Apply search filter (searching in users table)
     if (search) {
       const { data: userIds } = await this.supabase
-        .from('users')
-        .select('id')
+        .from("users")
+        .select("id")
         .or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
 
       if (userIds && userIds.length > 0) {
         query = query.in(
-          'user_id',
-          userIds.map((u) => u.id)
+          "user_id",
+          userIds.map((u) => u.id),
         );
       } else {
         // No matching users, return empty result
@@ -115,7 +118,7 @@ export class AdminSubscriptionService {
     }
 
     const { data, error, count } = await query
-      .order('created_at', { ascending: false })
+      .order("created_at", { ascending: false })
       .range(from, to);
 
     if (error) {
@@ -136,17 +139,19 @@ export class AdminSubscriptionService {
   /**
    * Get a specific subscription by ID (admin only)
    */
-  async getSubscriptionByIdAdmin(subscriptionId: string): Promise<UserSubscriptionWithTier> {
+  async getSubscriptionByIdAdmin(
+    subscriptionId: string,
+  ): Promise<UserSubscriptionWithTier> {
     const { data, error } = await this.supabase
-      .from('user_subscriptions')
+      .from("user_subscriptions")
       .select(
         `
         *,
         tier:subscription_tiers(*),
         user:users(id, email, full_name, phone, avatar_url, created_at)
-      `
+      `,
       )
-      .eq('id', subscriptionId)
+      .eq("id", subscriptionId)
       .single();
 
     if (error) {
@@ -154,7 +159,7 @@ export class AdminSubscriptionService {
     }
 
     if (!data) {
-      throw new Error('Subscription not found');
+      throw new Error("Subscription not found");
     }
 
     return data as UserSubscriptionWithTier;
@@ -165,12 +170,12 @@ export class AdminSubscriptionService {
    */
   async updateSubscriptionAdmin(
     subscriptionId: string,
-    updates: Partial<UserSubscription>
+    updates: Partial<UserSubscription>,
   ): Promise<UserSubscription> {
     const { data, error } = await this.supabase
-      .from('user_subscriptions')
+      .from("user_subscriptions")
       .update(updates)
-      .eq('id', subscriptionId)
+      .eq("id", subscriptionId)
       .select()
       .single();
 
@@ -179,7 +184,7 @@ export class AdminSubscriptionService {
     }
 
     if (!data) {
-      throw new Error('Failed to update subscription');
+      throw new Error("Failed to update subscription");
     }
 
     return data as UserSubscription;
@@ -188,7 +193,9 @@ export class AdminSubscriptionService {
   /**
    * Cancel subscription (admin override)
    */
-  async cancelSubscriptionAdmin(input: AdminCancelSubscriptionInput): Promise<UserSubscription> {
+  async cancelSubscriptionAdmin(
+    input: AdminCancelSubscriptionInput,
+  ): Promise<UserSubscription> {
     const { subscriptionId, immediate, reason } = input;
 
     const updates: Partial<UserSubscription> = {
@@ -196,21 +203,24 @@ export class AdminSubscriptionService {
     };
 
     if (immediate) {
-      updates.status = 'cancelled' as SubscriptionStatus;
+      updates.status = "cancelled" as SubscriptionStatus;
       updates.cancelled_at = new Date().toISOString();
     }
 
-    const subscription = await this.updateSubscriptionAdmin(subscriptionId, updates);
+    const subscription = await this.updateSubscriptionAdmin(
+      subscriptionId,
+      updates,
+    );
 
     // Log admin action
     await this.logAdminEvent(
       subscription.user_id,
       subscriptionId,
-      'admin_cancellation' as SubscriptionEventType,
+      "admin_cancellation" as SubscriptionEventType,
       {
         immediate,
         reason,
-      }
+      },
     );
 
     return subscription;
@@ -219,7 +229,9 @@ export class AdminSubscriptionService {
   /**
    * Extend subscription period (admin grace period)
    */
-  async extendSubscription(input: AdminExtendSubscriptionInput): Promise<UserSubscription> {
+  async extendSubscription(
+    input: AdminExtendSubscriptionInput,
+  ): Promise<UserSubscription> {
     const { subscriptionId, extensionDays, reason } = input;
 
     // Get current subscription
@@ -235,18 +247,21 @@ export class AdminSubscriptionService {
       current_period_end: currentEnd.toISOString(),
     };
 
-    const updatedSubscription = await this.updateSubscriptionAdmin(subscriptionId, updates);
+    const updatedSubscription = await this.updateSubscriptionAdmin(
+      subscriptionId,
+      updates,
+    );
 
     // Log admin action
     await this.logAdminEvent(
       subscription.user_id,
       subscriptionId,
-      'admin_extension' as SubscriptionEventType,
+      "admin_extension" as SubscriptionEventType,
       {
         extension_days: extensionDays,
         new_end_date: currentEnd.toISOString(),
         reason,
-      }
+      },
     );
 
     return updatedSubscription;
@@ -255,7 +270,9 @@ export class AdminSubscriptionService {
   /**
    * Change subscription tier (admin override)
    */
-  async changeTierAdmin(input: AdminChangeTierInput): Promise<UserSubscription> {
+  async changeTierAdmin(
+    input: AdminChangeTierInput,
+  ): Promise<UserSubscription> {
     const { subscriptionId, newTierId, prorate, effectiveDate, reason } = input;
 
     // Get current subscription
@@ -266,20 +283,23 @@ export class AdminSubscriptionService {
       tier_id: newTierId,
     };
 
-    const updatedSubscription = await this.updateSubscriptionAdmin(subscriptionId, updates);
+    const updatedSubscription = await this.updateSubscriptionAdmin(
+      subscriptionId,
+      updates,
+    );
 
     // Log admin action
     await this.logAdminEvent(
       subscription.user_id,
       subscriptionId,
-      'admin_tier_change' as SubscriptionEventType,
+      "admin_tier_change" as SubscriptionEventType,
       {
         old_tier_id: oldTierId,
         new_tier_id: newTierId,
         prorate,
         effective_date: effectiveDate,
         reason,
-      }
+      },
     );
 
     return updatedSubscription;
@@ -289,14 +309,15 @@ export class AdminSubscriptionService {
    * Create manual subscription (complimentary, migrations, etc.)
    */
   async createManualSubscription(
-    input: AdminCreateManualSubscriptionInput
+    input: AdminCreateManualSubscriptionInput,
   ): Promise<UserSubscription> {
-    const { userId, tierId, startDate, endDate, isComplimentary, reason } = input;
+    const { userId, tierId, startDate, endDate, isComplimentary, reason } =
+      input;
 
     const subscriptionData = {
       user_id: userId,
       tier_id: tierId,
-      status: 'active' as SubscriptionStatus,
+      status: "active" as SubscriptionStatus,
       current_period_start: startDate,
       current_period_end: endDate || null,
       cancel_at_period_end: false,
@@ -306,7 +327,7 @@ export class AdminSubscriptionService {
     };
 
     const { data, error } = await this.supabase
-      .from('user_subscriptions')
+      .from("user_subscriptions")
       .insert(subscriptionData)
       .select()
       .single();
@@ -316,21 +337,21 @@ export class AdminSubscriptionService {
     }
 
     if (!data) {
-      throw new Error('Failed to create subscription');
+      throw new Error("Failed to create subscription");
     }
 
     // Log admin action
     await this.logAdminEvent(
       userId,
       data.id,
-      'admin_manual_creation' as SubscriptionEventType,
+      "admin_manual_creation" as SubscriptionEventType,
       {
         tier_id: tierId,
         is_complimentary: isComplimentary,
         start_date: startDate,
         end_date: endDate,
         reason,
-      }
+      },
     );
 
     return data as UserSubscription;
@@ -340,7 +361,7 @@ export class AdminSubscriptionService {
    * Transfer subscription to another user
    */
   async transferSubscription(
-    input: AdminTransferSubscriptionInput
+    input: AdminTransferSubscriptionInput,
   ): Promise<UserSubscription> {
     const { subscriptionId, toUserId, reason } = input;
 
@@ -352,31 +373,34 @@ export class AdminSubscriptionService {
       user_id: toUserId,
     };
 
-    const updatedSubscription = await this.updateSubscriptionAdmin(subscriptionId, updates);
+    const updatedSubscription = await this.updateSubscriptionAdmin(
+      subscriptionId,
+      updates,
+    );
 
     // Log admin action for both users
     await this.logAdminEvent(
       fromUserId,
       subscriptionId,
-      'admin_transfer' as SubscriptionEventType,
+      "admin_transfer" as SubscriptionEventType,
       {
         from_user_id: fromUserId,
         to_user_id: toUserId,
-        direction: 'from',
+        direction: "from",
         reason,
-      }
+      },
     );
 
     await this.logAdminEvent(
       toUserId,
       subscriptionId,
-      'admin_transfer' as SubscriptionEventType,
+      "admin_transfer" as SubscriptionEventType,
       {
         from_user_id: fromUserId,
         to_user_id: toUserId,
-        direction: 'to',
+        direction: "to",
         reason,
-      }
+      },
     );
 
     return updatedSubscription;
@@ -387,7 +411,7 @@ export class AdminSubscriptionService {
    */
   async createTier(tierData: AdminCreateTierInput): Promise<SubscriptionTier> {
     const { data, error } = await this.supabase
-      .from('subscription_tiers')
+      .from("subscription_tiers")
       .insert(tierData)
       .select()
       .single();
@@ -397,7 +421,7 @@ export class AdminSubscriptionService {
     }
 
     if (!data) {
-      throw new Error('Failed to create tier');
+      throw new Error("Failed to create tier");
     }
 
     return data as SubscriptionTier;
@@ -410,9 +434,9 @@ export class AdminSubscriptionService {
     const { tierId, updates } = input;
 
     const { data, error } = await this.supabase
-      .from('subscription_tiers')
+      .from("subscription_tiers")
       .update(updates)
-      .eq('id', tierId)
+      .eq("id", tierId)
       .select()
       .single();
 
@@ -421,7 +445,7 @@ export class AdminSubscriptionService {
     }
 
     if (!data) {
-      throw new Error('Failed to update tier');
+      throw new Error("Failed to update tier");
     }
 
     return data as SubscriptionTier;
@@ -436,10 +460,15 @@ export class AdminSubscriptionService {
     const count = await this.getTierSubscriberCount(tierId);
 
     if (count > 0) {
-      throw new Error(`Cannot delete tier: ${count} users are currently subscribed to this tier`);
+      throw new Error(
+        `Cannot delete tier: ${count} users are currently subscribed to this tier`,
+      );
     }
 
-    const { error } = await this.supabase.from('subscription_tiers').delete().eq('id', tierId);
+    const { error } = await this.supabase
+      .from("subscription_tiers")
+      .delete()
+      .eq("id", tierId);
 
     if (error) {
       throw new Error(error.message);
@@ -451,10 +480,10 @@ export class AdminSubscriptionService {
    */
   async getTierSubscriberCount(tierId: string): Promise<number> {
     const { count, error } = await this.supabase
-      .from('user_subscriptions')
-      .select('id', { count: 'exact', head: true })
-      .eq('tier_id', tierId)
-      .in('status', ['active', 'trialing']);
+      .from("user_subscriptions")
+      .select("id", { count: "exact", head: true })
+      .eq("tier_id", tierId)
+      .in("status", ["active", "trialing"]);
 
     if (error) {
       throw new Error(error.message);
@@ -467,40 +496,53 @@ export class AdminSubscriptionService {
    * Get all subscription events with filtering (admin only)
    */
   async getAllSubscriptionEvents(
-    filters: AdminEventFilterInput = {}
-  ): Promise<{ data: SubscriptionEvent[]; total: number; page: number; totalPages: number }> {
-    const { page = 1, perPage = 20, eventTypes, userId, subscriptionId, dateFrom, dateTo } = filters;
+    filters: AdminEventFilterInput = {},
+  ): Promise<{
+    data: SubscriptionEvent[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const {
+      page = 1,
+      perPage = 20,
+      eventTypes,
+      userId,
+      subscriptionId,
+      dateFrom,
+      dateTo,
+    } = filters;
 
     const from = (page - 1) * perPage;
     const to = from + perPage - 1;
 
     let query = this.supabase
-      .from('subscription_events')
-      .select('*', { count: 'exact' });
+      .from("subscription_events")
+      .select("*", { count: "exact" });
 
     // Apply filters
     if (eventTypes && eventTypes.length > 0) {
-      query = query.in('event_type', eventTypes);
+      query = query.in("event_type", eventTypes);
     }
 
     if (userId) {
-      query = query.eq('user_id', userId);
+      query = query.eq("user_id", userId);
     }
 
     if (subscriptionId) {
-      query = query.eq('subscription_id', subscriptionId);
+      query = query.eq("subscription_id", subscriptionId);
     }
 
     if (dateFrom) {
-      query = query.gte('created_at', dateFrom);
+      query = query.gte("created_at", dateFrom);
     }
 
     if (dateTo) {
-      query = query.lte('created_at', dateTo);
+      query = query.lte("created_at", dateTo);
     }
 
     const { data, error, count } = await query
-      .order('created_at', { ascending: false })
+      .order("created_at", { ascending: false })
       .range(from, to);
 
     if (error) {
@@ -525,7 +567,7 @@ export class AdminSubscriptionService {
     userId: string,
     subscriptionId: string,
     eventType: SubscriptionEventType,
-    metadata: Record<string, any>
+    metadata: Record<string, any>,
   ): Promise<void> {
     // Get current admin user (from Supabase auth)
     const {
@@ -544,10 +586,12 @@ export class AdminSubscriptionService {
       },
     };
 
-    const { error } = await this.supabase.from('subscription_events').insert(eventData);
+    const { error } = await this.supabase
+      .from("subscription_events")
+      .insert(eventData);
 
     if (error) {
-      console.error('Failed to log admin event:', error);
+      console.error("Failed to log admin event:", error);
       // Don't throw - logging should not block the operation
     }
   }
@@ -557,7 +601,7 @@ export class AdminSubscriptionService {
  * Factory function to create an AdminSubscriptionService instance
  */
 export const createAdminSubscriptionService = (
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
 ): AdminSubscriptionService => {
   return new AdminSubscriptionService(supabase);
 };

@@ -3,6 +3,7 @@
 ## Overview
 
 The Room Booking System now supports **both email and push notifications** for booking events. Notifications are sent automatically when users:
+
 - Create a new booking (confirmation)
 - Cancel a booking
 - Update a booking (when date/time changes)
@@ -46,11 +47,13 @@ EXPO_ACCESS_TOKEN=your-expo-access-token
 ```
 
 #### Getting Resend API Key:
+
 1. Sign up at https://resend.com
 2. Create a new API key
 3. Verify your domain or use Resend's test domain
 
 #### Getting Expo Access Token:
+
 1. Login to https://expo.dev
 2. Go to Settings → Access Tokens
 3. Create a new token with push notification permissions
@@ -68,11 +71,13 @@ The notification trigger migration has already been created at:
 `/supabase/migrations/20251016000002_booking_notification_trigger.sql`
 
 This creates:
+
 - `notification_queue` table for async processing
 - Trigger function that queues notifications on booking changes
 - Helper function to process the queue
 
 Apply it with:
+
 ```bash
 npx supabase db push
 ```
@@ -80,6 +85,7 @@ npx supabase db push
 ### 4. Push Token Registration
 
 The mobile app automatically:
+
 1. Requests notification permissions on launch
 2. Gets Expo push token
 3. Registers token with backend
@@ -128,12 +134,12 @@ Edge function invoked
 
 ### Notification Types
 
-| Event | Type | Trigger |
-|-------|------|---------|
-| New booking | `booking_confirmed` | After `createBooking()` |
-| Cancelled booking | `booking_cancelled` | After `cancelBooking()` |
-| Updated booking | `booking_updated` | After `updateBooking()` (only if date/time changed) |
-| Upcoming reminder | `booking_reminder` | 15 mins before (scheduled separately) |
+| Event             | Type                | Trigger                                             |
+| ----------------- | ------------------- | --------------------------------------------------- |
+| New booking       | `booking_confirmed` | After `createBooking()`                             |
+| Cancelled booking | `booking_cancelled` | After `cancelBooking()`                             |
+| Updated booking   | `booking_updated`   | After `updateBooking()` (only if date/time changed) |
+| Upcoming reminder | `booking_reminder`  | 15 mins before (scheduled separately)               |
 
 ## Notification Preferences
 
@@ -164,18 +170,22 @@ Default: All notifications enabled.
 Three email templates are available:
 
 ### 1. Booking Confirmed
+
 - Subject: `Booking Confirmed: {Room Name} on {Date}`
 - Content: Green checkmark, booking details, add to calendar reminder
 
 ### 2. Booking Cancelled
+
 - Subject: `Booking Cancelled: {Room Name} on {Date}`
 - Content: Red X icon, cancelled booking details, cancellation reason
 
 ### 3. Booking Reminder
+
 - Subject: `Reminder: {Room Name} booking starts in {X} minutes`
 - Content: Bell icon, reminder message, booking details
 
 All templates include:
+
 - Professional HTML with inline styles
 - Plain text fallback
 - Responsive design
@@ -212,11 +222,13 @@ Push notifications use the Expo format:
 ### Push Notification Testing
 
 **iOS Simulator:**
+
 - Remote push notifications DON'T work
 - Use local notification testing buttons in Profile tab
 - See `/NOTIFICATION_TESTING.md` for details
 
 **Physical Device:**
+
 1. Build app with `eas build --platform ios --profile preview`
 2. Install on device
 3. Create a booking
@@ -225,6 +237,7 @@ Push notifications use the Expo format:
 ### Debugging
 
 Check notification logs:
+
 ```sql
 SELECT * FROM notification_log
 WHERE user_id = 'your-user-id'
@@ -232,6 +245,7 @@ ORDER BY created_at DESC;
 ```
 
 Check push tokens:
+
 ```sql
 SELECT * FROM push_tokens
 WHERE user_id = 'your-user-id'
@@ -252,6 +266,7 @@ try {
 ```
 
 This ensures:
+
 - Bookings complete even if notification service is down
 - Users aren't blocked by email/push failures
 - Errors are logged for debugging
@@ -259,11 +274,13 @@ This ensures:
 ## Notification Queue (Optional)
 
 The database trigger creates a `notification_queue` for async processing. This is useful for:
+
 - Batch processing notifications
 - Retry failed notifications
 - Rate limiting
 
 To process the queue manually:
+
 ```sql
 SELECT * FROM process_notification_queue(10);
 ```

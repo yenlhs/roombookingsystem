@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import Link from 'next/link';
-import { ProtectedRoute } from '@/lib/auth/protected-route';
-import { useAuth } from '@/lib/auth/context';
-import { createBookingService, supabase } from '@workspace/supabase';
-import type { BookingWithDetails } from '@workspace/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { ProtectedRoute } from "@/lib/auth/protected-route";
+import { useAuth } from "@/lib/auth/context";
+import { createBookingService, supabase } from "@workspace/supabase";
+import type { BookingWithDetails } from "@workspace/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader2,
   ArrowLeft,
@@ -21,7 +21,7 @@ import {
   MapPin,
   FileText,
   AlertCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function BookingDetailsPage() {
   return (
@@ -53,14 +53,14 @@ function BookingDetailsContent() {
       const data = await bookingService.getBookingById(bookingId);
       setBooking(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load booking');
+      setError(err instanceof Error ? err.message : "Failed to load booking");
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancelBooking = async () => {
-    if (!confirm('Are you sure you want to cancel this booking?')) {
+    if (!confirm("Are you sure you want to cancel this booking?")) {
       return;
     }
 
@@ -68,14 +68,14 @@ function BookingDetailsContent() {
       await bookingService.cancelBooking({ id: bookingId });
       await loadBooking();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to cancel booking');
+      setError(err instanceof Error ? err.message : "Failed to cancel booking");
     }
   };
 
   const handleDeleteBooking = async () => {
     if (
       !confirm(
-        'Are you sure you want to permanently delete this booking? This action cannot be undone.'
+        "Are you sure you want to permanently delete this booking? This action cannot be undone.",
       )
     ) {
       return;
@@ -83,35 +83,35 @@ function BookingDetailsContent() {
 
     try {
       await bookingService.deleteBooking(bookingId);
-      router.push('/dashboard/bookings');
+      router.push("/dashboard/bookings");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete booking');
+      setError(err instanceof Error ? err.message : "Failed to delete booking");
     }
   };
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const formatTime = (timeString: string): string => {
-    const [hours, minutes] = timeString.split(':');
+    const [hours, minutes] = timeString.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const hour12 = hour % 12 || 12;
     return `${hour12}:${minutes} ${ampm}`;
   };
 
   const getStatusBadge = (status: string) => {
     const styles = {
-      confirmed: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
-      completed: 'bg-gray-100 text-gray-800',
+      confirmed: "bg-green-100 text-green-800",
+      cancelled: "bg-red-100 text-red-800",
+      completed: "bg-gray-100 text-gray-800",
     };
     return styles[status as keyof typeof styles] || styles.confirmed;
   };
@@ -130,7 +130,10 @@ function BookingDetailsContent() {
         <div className="text-center">
           <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
           <p className="text-lg text-muted-foreground">Booking not found</p>
-          <Button className="mt-4" onClick={() => router.push('/dashboard/bookings')}>
+          <Button
+            className="mt-4"
+            onClick={() => router.push("/dashboard/bookings")}
+          >
             Back to Bookings
           </Button>
         </div>
@@ -144,7 +147,11 @@ function BookingDetailsContent() {
       <header className="border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard/bookings')}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/dashboard/bookings")}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold">Booking Details</h1>
@@ -163,7 +170,9 @@ function BookingDetailsContent() {
         {/* Error Message */}
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
+            <AlertDescription className="text-red-800">
+              {error}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -172,7 +181,9 @@ function BookingDetailsContent() {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-2xl">{booking.room?.name || 'Unknown Room'}</CardTitle>
+                <CardTitle className="text-2xl">
+                  {booking.room?.name || "Unknown Room"}
+                </CardTitle>
                 <div className="mt-2 flex items-center gap-2">
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getStatusBadge(booking.status)}`}
@@ -182,7 +193,7 @@ function BookingDetailsContent() {
                 </div>
               </div>
               <div className="flex gap-2">
-                {booking.status === 'confirmed' && (
+                {booking.status === "confirmed" && (
                   <>
                     <Link href={`/dashboard/bookings/${bookingId}/edit`}>
                       <Button variant="outline">
@@ -217,7 +228,9 @@ function BookingDetailsContent() {
                   <Calendar className="h-4 w-4" />
                   <span>Date</span>
                 </div>
-                <p className="mt-1 text-base font-medium">{formatDate(booking.booking_date)}</p>
+                <p className="mt-1 text-base font-medium">
+                  {formatDate(booking.booking_date)}
+                </p>
               </div>
 
               <div>
@@ -226,7 +239,8 @@ function BookingDetailsContent() {
                   <span>Time</span>
                 </div>
                 <p className="mt-1 text-base font-medium">
-                  {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
+                  {formatTime(booking.start_time)} -{" "}
+                  {formatTime(booking.end_time)}
                 </p>
               </div>
 
@@ -235,9 +249,13 @@ function BookingDetailsContent() {
                   <MapPin className="h-4 w-4" />
                   <span>Room</span>
                 </div>
-                <p className="mt-1 text-base font-medium">{booking.room?.name}</p>
+                <p className="mt-1 text-base font-medium">
+                  {booking.room?.name}
+                </p>
                 {booking.room?.capacity && (
-                  <p className="text-sm text-muted-foreground">Capacity: {booking.room.capacity} people</p>
+                  <p className="text-sm text-muted-foreground">
+                    Capacity: {booking.room.capacity} people
+                  </p>
                 )}
               </div>
 
@@ -264,24 +282,34 @@ function BookingDetailsContent() {
                   <User className="h-4 w-4" />
                   <span>Booked By</span>
                 </div>
-                <p className="mt-1 text-base font-medium">{booking.user?.full_name || 'Unknown'}</p>
-                <p className="text-sm text-muted-foreground">{booking.user?.email}</p>
+                <p className="mt-1 text-base font-medium">
+                  {booking.user?.full_name || "Unknown"}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {booking.user?.email}
+                </p>
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-muted-foreground">Booking ID</div>
-                <p className="mt-1 font-mono text-xs text-muted-foreground">{booking.id}</p>
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Booking ID
+                </div>
+                <p className="mt-1 font-mono text-xs text-muted-foreground">
+                  {booking.id}
+                </p>
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-muted-foreground">Created At</div>
+                <div className="text-sm font-semibold text-muted-foreground">
+                  Created At
+                </div>
                 <p className="mt-1 text-sm">
-                  {new Date(booking.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
+                  {new Date(booking.created_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </p>
               </div>
@@ -290,30 +318,41 @@ function BookingDetailsContent() {
         </div>
 
         {/* Cancellation Info (if cancelled) */}
-        {booking.status === 'cancelled' && (
+        {booking.status === "cancelled" && (
           <Card className="border-red-200 bg-red-50">
             <CardHeader>
-              <CardTitle className="text-red-900">Cancellation Details</CardTitle>
+              <CardTitle className="text-red-900">
+                Cancellation Details
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {booking.cancelled_at && (
                 <div>
-                  <div className="text-sm font-semibold text-red-800">Cancelled At</div>
+                  <div className="text-sm font-semibold text-red-800">
+                    Cancelled At
+                  </div>
                   <p className="text-sm text-red-900">
-                    {new Date(booking.cancelled_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    {new Date(booking.cancelled_at).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      },
+                    )}
                   </p>
                 </div>
               )}
               {booking.cancellation_reason && (
                 <div>
-                  <div className="text-sm font-semibold text-red-800">Reason</div>
-                  <p className="text-sm text-red-900">{booking.cancellation_reason}</p>
+                  <div className="text-sm font-semibold text-red-800">
+                    Reason
+                  </div>
+                  <p className="text-sm text-red-900">
+                    {booking.cancellation_reason}
+                  </p>
                 </div>
               )}
             </CardContent>

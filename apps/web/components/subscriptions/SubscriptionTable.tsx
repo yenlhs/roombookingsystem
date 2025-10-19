@@ -1,15 +1,18 @@
-import Link from 'next/link';
-import { UserSubscriptionWithTier } from '@workspace/types';
-import { StatusBadge } from './StatusBadge';
-import { ExternalLink, Eye } from 'lucide-react';
-import { format } from 'date-fns';
+import Link from "next/link";
+import { UserSubscriptionWithTier } from "@workspace/types";
+import { StatusBadge } from "./StatusBadge";
+import { ExternalLink, Eye } from "lucide-react";
+import { format } from "date-fns";
 
 interface SubscriptionTableProps {
   subscriptions: UserSubscriptionWithTier[];
   isLoading?: boolean;
 }
 
-export function SubscriptionTable({ subscriptions, isLoading }: SubscriptionTableProps) {
+export function SubscriptionTable({
+  subscriptions,
+  isLoading,
+}: SubscriptionTableProps) {
   if (isLoading) {
     return (
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
@@ -64,14 +67,16 @@ export function SubscriptionTable({ subscriptions, isLoading }: SubscriptionTabl
   if (subscriptions.length === 0) {
     return (
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-8 text-center">
-        <p className="text-gray-500 dark:text-gray-400">No subscriptions found</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          No subscriptions found
+        </p>
       </div>
     );
   }
 
   const formatDate = (dateString?: string | null) => {
-    if (!dateString) return '-';
-    return format(new Date(dateString), 'MMM d, yyyy');
+    if (!dateString) return "-";
+    return format(new Date(dateString), "MMM d, yyyy");
   };
 
   const getStripeCustomerUrl = (stripeCustomerId?: string | null) => {
@@ -122,16 +127,18 @@ export function SubscriptionTable({ subscriptions, isLoading }: SubscriptionTabl
                     ) : (
                       <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center mr-3">
                         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                          {subscription.user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+                          {subscription.user?.full_name
+                            ?.charAt(0)
+                            ?.toUpperCase() || "U"}
                         </span>
                       </div>
                     )}
                     <div>
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {subscription.user?.full_name || 'Unknown'}
+                        {subscription.user?.full_name || "Unknown"}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {subscription.user?.email || '-'}
+                        {subscription.user?.email || "-"}
                       </div>
                     </div>
                   </div>
@@ -142,7 +149,10 @@ export function SubscriptionTable({ subscriptions, isLoading }: SubscriptionTabl
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <StatusBadge status={subscription.status} type="subscription" />
+                  <StatusBadge
+                    status={subscription.status}
+                    type="subscription"
+                  />
                   {subscription.cancel_at_period_end && (
                     <span className="ml-2 text-xs text-orange-600 dark:text-orange-400">
                       (Cancelling)
@@ -155,7 +165,10 @@ export function SubscriptionTable({ subscriptions, isLoading }: SubscriptionTabl
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {subscription.stripe_customer_id ? (
                     <a
-                      href={getStripeCustomerUrl(subscription.stripe_customer_id) || '#'}
+                      href={
+                        getStripeCustomerUrl(subscription.stripe_customer_id) ||
+                        "#"
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:text-primary/80 flex items-center gap-1"

@@ -1,8 +1,11 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import { supabase, createAdminSubscriptionService } from '@workspace/supabase';
-import type { UserSubscriptionWithTier, SubscriptionStatus } from '@workspace/types';
+import { useQuery } from "@tanstack/react-query";
+import { supabase, createAdminSubscriptionService } from "@workspace/supabase";
+import type {
+  UserSubscriptionWithTier,
+  SubscriptionStatus,
+} from "@workspace/types";
 
 interface UseSubscriptionsOptions {
   page?: number;
@@ -26,7 +29,7 @@ interface SubscriptionsResult {
  */
 export function useSubscriptions(options: UseSubscriptionsOptions = {}) {
   const { data, isLoading, error, refetch } = useQuery<SubscriptionsResult>({
-    queryKey: ['admin-subscriptions', options],
+    queryKey: ["admin-subscriptions", options],
     queryFn: async () => {
       const service = createAdminSubscriptionService(supabase);
       return await service.getAllSubscriptionsAdmin(options);

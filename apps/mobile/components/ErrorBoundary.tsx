@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -27,7 +27,7 @@ export class ErrorBoundary extends React.Component<
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error to console in development
     if (__DEV__) {
-      console.error('Error caught by boundary:', error, errorInfo);
+      console.error("Error caught by boundary:", error, errorInfo);
     }
 
     // In production, you would send this to an error logging service
@@ -62,10 +62,7 @@ export class ErrorBoundary extends React.Component<
                 </Text>
               </View>
             )}
-            <TouchableOpacity
-              style={styles.button}
-              onPress={this.handleReset}
-            >
+            <TouchableOpacity style={styles.button} onPress={this.handleReset}>
               <Text style={styles.buttonText}>Try Again</Text>
             </TouchableOpacity>
           </View>
@@ -80,17 +77,17 @@ export class ErrorBoundary extends React.Component<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   content: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -101,9 +98,9 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#fee',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#fee",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16,
   },
   icon: {
@@ -111,44 +108,44 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: 24,
   },
   errorDetails: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
-    width: '100%',
+    width: "100%",
   },
   errorTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
-    color: '#333',
+    color: "#333",
   },
   errorMessage: {
     fontSize: 12,
-    color: '#666',
-    fontFamily: 'monospace',
+    color: "#666",
+    fontFamily: "monospace",
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

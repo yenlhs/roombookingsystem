@@ -1,5 +1,5 @@
-import * as Haptics from 'expo-haptics';
-import { Platform } from 'react-native';
+import * as Haptics from "expo-haptics";
+import { Platform } from "react-native";
 
 /**
  * Haptic feedback utilities for enhanced mobile UX
@@ -9,12 +9,12 @@ import { Platform } from 'react-native';
  * Light impact haptic feedback for button taps and selections
  */
 export const lightImpact = async () => {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     } catch (error) {
       // Silently fail if haptics not available
-      console.debug('Haptics not available:', error);
+      console.debug("Haptics not available:", error);
     }
   }
 };
@@ -23,11 +23,11 @@ export const lightImpact = async () => {
  * Medium impact haptic feedback for confirmations
  */
 export const mediumImpact = async () => {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } catch (error) {
-      console.debug('Haptics not available:', error);
+      console.debug("Haptics not available:", error);
     }
   }
 };
@@ -36,11 +36,11 @@ export const mediumImpact = async () => {
  * Heavy impact haptic feedback for important actions
  */
 export const heavyImpact = async () => {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     } catch (error) {
-      console.debug('Haptics not available:', error);
+      console.debug("Haptics not available:", error);
     }
   }
 };
@@ -49,11 +49,11 @@ export const heavyImpact = async () => {
  * Success haptic feedback for successful operations
  */
 export const successFeedback = async () => {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
-      console.debug('Haptics not available:', error);
+      console.debug("Haptics not available:", error);
     }
   }
 };
@@ -62,11 +62,11 @@ export const successFeedback = async () => {
  * Warning haptic feedback for warnings
  */
 export const warningFeedback = async () => {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     } catch (error) {
-      console.debug('Haptics not available:', error);
+      console.debug("Haptics not available:", error);
     }
   }
 };
@@ -75,11 +75,11 @@ export const warningFeedback = async () => {
  * Error haptic feedback for errors
  */
 export const errorFeedback = async () => {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } catch (error) {
-      console.debug('Haptics not available:', error);
+      console.debug("Haptics not available:", error);
     }
   }
 };
@@ -88,11 +88,11 @@ export const errorFeedback = async () => {
  * Selection haptic feedback for list selections
  */
 export const selectionFeedback = async () => {
-  if (Platform.OS === 'ios' || Platform.OS === 'android') {
+  if (Platform.OS === "ios" || Platform.OS === "android") {
     try {
       await Haptics.selectionAsync();
     } catch (error) {
-      console.debug('Haptics not available:', error);
+      console.debug("Haptics not available:", error);
     }
   }
 };

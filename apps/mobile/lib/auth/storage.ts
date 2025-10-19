@@ -1,12 +1,14 @@
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
-const TOKEN_KEY = 'supabase.auth.token';
+const TOKEN_KEY = "supabase.auth.token";
 
 export const authStorage = {
   async getItem(key: string): Promise<string | null> {
     try {
       const value = await SecureStore.getItemAsync(key);
-      console.log(`[AuthStorage] Getting item for key: ${key}, found: ${!!value}`);
+      console.log(
+        `[AuthStorage] Getting item for key: ${key}, found: ${!!value}`,
+      );
       return value;
     } catch (error) {
       console.error(`[AuthStorage] Error getting item for key: ${key}`, error);

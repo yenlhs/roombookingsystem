@@ -13,6 +13,7 @@ npx supabase link --project-ref YOUR_PROJECT_REF
 ```
 
 To find your project ref:
+
 - Go to https://supabase.com/dashboard
 - Select your project
 - Go to Settings → General
@@ -29,9 +30,11 @@ npx supabase functions deploy send-booking-notification
 In Supabase Dashboard → Settings → Edge Functions → Add new secret:
 
 **Required for email notifications:**
+
 - `RESEND_API_KEY` - Get from https://resend.com (free tier available)
 
 **Optional (already working without this):**
+
 - `EXPO_ACCESS_TOKEN` - Get from https://expo.dev/settings/access-tokens
 
 ## Option 2: Deploy via Supabase Dashboard
@@ -61,6 +64,7 @@ But you'll also need to include the email templates. Here's a combined version:
 ### Step 3: Set environment variables
 
 In the same Edge Functions page:
+
 - Click on your function
 - Go to "Secrets" tab
 - Add:
@@ -70,6 +74,7 @@ In the same Edge Functions page:
 ## ✅ Migration Applied
 
 The notification database tables have been successfully created:
+
 - `push_tokens`
 - `notification_preferences`
 - `notification_log`
@@ -77,6 +82,7 @@ The notification database tables have been successfully created:
 ## Verify Deployment
 
 After deploying, test a booking:
+
 - Check logs: `npx supabase functions logs send-booking-notification`
 - Or view logs in Supabase Dashboard → Edge Functions → Your function → Logs
 - Check `notification_log` table for sent notifications
@@ -88,25 +94,30 @@ See **TEST_EMAIL_NOTIFICATIONS.md** for detailed testing instructions.
 ## Troubleshooting
 
 **"Function not found" error:**
+
 - Function isn't deployed yet (deploy it!)
 - Function name mismatch (must be `send-booking-notification`)
 
 **"Database tables not found" error:**
+
 - Migration has been applied ✅
 - Tables created: `push_tokens`, `notification_preferences`, `notification_log`
 
 **"Environment variable not set" error:**
+
 - Add `RESEND_API_KEY` if using email
 - Add `EXPO_ACCESS_TOKEN` if using push (optional)
 - Redeploy function after adding: `npx supabase functions deploy send-booking-notification`
 
 **Email not sending:**
+
 - Verify Resend API key is set in Edge Functions secrets
 - Check function logs for detailed error
 - Verify domain in Resend (or use test domain)
 - Check `notification_log` table for error messages
 
 **Push notifications not working:**
+
 - Check if user has registered push token: `SELECT * FROM push_tokens`
 - Verify notification permissions granted
 - Check if using physical device (simulator has limitations)

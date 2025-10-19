@@ -2,12 +2,15 @@
  * Performance monitoring utilities for React Native
  */
 
-import { InteractionManager, Platform } from 'react-native';
+import { InteractionManager, Platform } from "react-native";
 
 /**
  * Measure the execution time of an async function
  */
-export async function measureAsync<T>(name: string, fn: () => Promise<T>): Promise<T> {
+export async function measureAsync<T>(
+  name: string,
+  fn: () => Promise<T>,
+): Promise<T> {
   const start = performance.now();
   try {
     const result = await fn();
@@ -18,7 +21,10 @@ export async function measureAsync<T>(name: string, fn: () => Promise<T>): Promi
     return result;
   } catch (error) {
     const duration = performance.now() - start;
-    console.error(`[Performance] ${name} failed after ${duration.toFixed(2)}ms`, error);
+    console.error(
+      `[Performance] ${name} failed after ${duration.toFixed(2)}ms`,
+      error,
+    );
     throw error;
   }
 }
@@ -45,7 +51,7 @@ export function runAfterInteractions<T>(fn: () => T | Promise<T>): Promise<T> {
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -67,7 +73,7 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean = false;
 
@@ -89,7 +95,7 @@ export function throttle<T extends (...args: any[]) => any>(
  * Useful for disabling animations or reducing quality
  */
 export function isLowEndDevice(): boolean {
-  if (Platform.OS === 'android') {
+  if (Platform.OS === "android") {
     // On Android, we can check available memory
     // This is a heuristic - adjust thresholds as needed
     return false; // Would need native module to check memory
@@ -111,11 +117,11 @@ export function logRenderTime(componentName: string, startTime: number): void {
  * Memory warning handler
  */
 export function setupMemoryWarningHandler(): void {
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === "ios") {
     // iOS sends memory warnings
     // Would need native module to handle properly
     if (__DEV__) {
-      console.log('[Performance] Memory warning handler registered');
+      console.log("[Performance] Memory warning handler registered");
     }
   }
 }
@@ -133,7 +139,7 @@ export const FLATLIST_CONFIG = {
   // Update cells in batches
   updateCellsBatchingPeriod: 50,
   // Remove clipped subviews (Android)
-  removeClippedSubviews: Platform.OS === 'android',
+  removeClippedSubviews: Platform.OS === "android",
 };
 
 /**
@@ -141,11 +147,11 @@ export const FLATLIST_CONFIG = {
  */
 export const IMAGE_CONFIG = {
   // Cache images in memory
-  cache: 'memory-disk' as const,
+  cache: "memory-disk" as const,
   // Resize mode
-  resizeMode: 'cover' as const,
+  resizeMode: "cover" as const,
   // Priority for image loading
-  priority: 'normal' as const,
+  priority: "normal" as const,
   // Placeholder color while loading
-  placeholderColor: '#E5E7EB',
+  placeholderColor: "#E5E7EB",
 };
