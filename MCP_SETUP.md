@@ -196,8 +196,8 @@ Once MCP is configured, you can interact naturally:
 👤 "Show me all users with role = 'admin'"
 🤖 _Queries database and shows results_
 
-👤 "Create a new index on bookings.booking_date"
-🤖 _Generates and applies migration_
+👤 "Create a new index on bookings.booking*date"
+🤖 \_Generates and applies migration*
 
 👤 "What's the schema of the rooms table?"
 🤖 _Describes table structure_

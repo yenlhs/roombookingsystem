@@ -495,9 +495,7 @@ export class AdminSubscriptionService {
   /**
    * Get all subscription events with filtering (admin only)
    */
-  async getAllSubscriptionEvents(
-    filters: AdminEventFilterInput = {},
-  ): Promise<{
+  async getAllSubscriptionEvents(filters: AdminEventFilterInput = {}): Promise<{
     data: SubscriptionEvent[];
     total: number;
     page: number;
