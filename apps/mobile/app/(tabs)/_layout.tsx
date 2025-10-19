@@ -32,7 +32,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: "Dashboard",
+            title: "Home",
             headerTitle: "Room Booking System",
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons

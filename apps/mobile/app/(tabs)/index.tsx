@@ -1,74 +1,255 @@
-import { View, Text, ScrollView } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+} from "react-native";
 import Animated from "react-native-reanimated";
+import { useRouter } from "expo-router";
 import { useAuth } from "../../lib/auth/context";
-import { useFadeIn, useSlideUp } from "../../lib/animations";
+import { useSlideUp, useListItemAnimation } from "../../lib/animations";
+import { supabase } from "../../lib/supabase";
+import { createBookingService } from "@workspace/supabase";
+import type { BookingWithDetails } from "@workspace/types";
+import { lightImpact } from "../../lib/haptics";
 
-export default function DashboardScreen() {
+// Helper functions
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+const formatTime = (timeString: string): string => {
+  const [hours, minutes] = timeString.split(":");
+  const hour = parseInt(hours);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minutes} ${ampm}`;
+};
+
+// Simplified Booking Card for Home Screen
+function UpcomingBookingCard({
+  booking,
+  index,
+  onPress,
+}: {
+  booking: BookingWithDetails;
+  index: number;
+  onPress: () => void;
+}) {
+  const animatedStyle = useListItemAnimation(index);
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        onPress={() => {
+          lightImpact();
+          onPress();
+        }}
+        activeOpacity={0.7}
+      >
+        <View className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200">
+          {/* Room Name & Date */}
+          <View className="mb-3">
+            <Text className="text-xl font-bold text-gray-900 mb-1">
+              {booking.room?.name || "Unknown Room"}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              {formatDate(booking.booking_date)}
+            </Text>
+          </View>
+
+          {/* Time & Details */}
+          <View className="border-t border-gray-100 pt-3 space-y-2">
+            <View className="flex-row items-center">
+              <Text className="text-2xl mr-2">🕐</Text>
+              <Text className="text-sm text-gray-700 font-medium">
+                {formatTime(booking.start_time)} -{" "}
+                {formatTime(booking.end_time)}
+              </Text>
+            </View>
+
+            {booking.room?.capacity && (
+              <View className="flex-row items-center">
+                <Text className="text-2xl mr-2">👥</Text>
+                <Text className="text-sm text-gray-700 font-medium">
+                  Capacity: {booking.room.capacity} seats
+                </Text>
+              </View>
+            )}
+
+            {booking.notes && (
+              <View className="flex-row items-start">
+                <Text className="text-2xl mr-2">📝</Text>
+                <Text className="text-sm text-gray-700 flex-1">
+                  {booking.notes}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Status Badge */}
+          <View className="mt-3 pt-3 border-t border-gray-100">
+            <View className="bg-blue-100 px-3 py-1 rounded-full self-start">
+              <Text className="text-xs font-semibold text-blue-800 uppercase">
+                Upcoming
+              </Text>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+export default function HomeScreen() {
   const { user } = useAuth();
+  const router = useRouter();
+  const [upcomingBookings, setUpcomingBookings] = useState<
+    BookingWithDetails[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const headerAnimation = useFadeIn(0, 600);
-  const welcomeCardAnimation = useSlideUp(100, 500);
-  const statsAnimation = useSlideUp(200, 500);
-  const bannerAnimation = useSlideUp(300, 500);
+  const bookingService = createBookingService(supabase);
+
+  const welcomeCardAnimation = useSlideUp(0, 500);
+
+  useEffect(() => {
+    loadUpcomingBookings();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel("home-bookings-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "bookings",
+        },
+        (payload) => {
+          console.log("Booking change received on home:", payload);
+          loadUpcomingBookings();
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const loadUpcomingBookings = async () => {
+    try {
+      setLoading(true);
+      const bookings = await bookingService.getMyUpcomingBookings();
+      setUpcomingBookings(bookings);
+    } catch (err) {
+      console.error("Failed to load upcoming bookings:", err);
+      Alert.alert("Error", "Failed to load upcoming bookings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadUpcomingBookings();
+    setRefreshing(false);
+  };
+
+  const handleBookingPress = () => {
+    // Navigate to bookings tab to see full details
+    router.push(`/(tabs)/bookings`);
+  };
 
   return (
     <View className="flex-1 bg-slate-50">
-      <ScrollView className="flex-1 p-6">
+      <ScrollView
+        className="flex-1 p-6"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         {/* Welcome Card */}
         <Animated.View
           style={welcomeCardAnimation}
           className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-6"
         >
           <Text className="text-3xl font-bold text-gray-900 mb-3">
-            Welcome to your Dashboard
+            Welcome Home
           </Text>
           <Text className="text-base text-gray-600 mb-2">
-            You've successfully logged in!
+            Here are your upcoming bookings
           </Text>
           <Text className="text-sm text-gray-500">{user?.email}</Text>
         </Animated.View>
 
-        {/* Stats Grid */}
-        <Animated.View style={statsAnimation} className="gap-4 mb-6">
-          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <Text className="text-lg font-bold text-gray-900 mb-2">Rooms</Text>
-            <Text className="text-sm text-gray-600 mb-3">
-              Manage meeting rooms and spaces
+        {/* Upcoming Bookings Section */}
+        <View className="mb-6">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-xl font-bold text-gray-900">
+              Upcoming Bookings
             </Text>
-            <Text className="text-xs text-gray-500">(Coming in Phase 2)</Text>
+            {upcomingBookings.length > 0 && (
+              <TouchableOpacity
+                onPress={() => {
+                  lightImpact();
+                  router.push("/(tabs)/bookings");
+                }}
+              >
+                <Text className="text-blue-600 font-semibold">View All</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
-          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <Text className="text-lg font-bold text-gray-900 mb-2">
-              Bookings
-            </Text>
-            <Text className="text-sm text-gray-600 mb-3">
-              View and manage room bookings
-            </Text>
-            <Text className="text-xs text-gray-500">(Coming in Phase 3)</Text>
-          </View>
-
-          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-            <Text className="text-lg font-bold text-gray-900 mb-2">Users</Text>
-            <Text className="text-sm text-gray-600 mb-3">
-              Manage user accounts and permissions
-            </Text>
-            <Text className="text-xs text-gray-500">(Coming in Phase 4)</Text>
-          </View>
-        </Animated.View>
-
-        {/* Success Banner */}
-        <Animated.View
-          style={bannerAnimation}
-          className="bg-green-50 rounded-2xl p-5 border border-green-200"
-        >
-          <Text className="text-sm font-bold text-green-800 mb-2">
-            ✅ Task 1.3.5 Complete: Mobile App Auth Logic
-          </Text>
-          <Text className="text-xs text-green-700">
-            Authentication is fully functional with Supabase!
-          </Text>
-        </Animated.View>
+          {loading ? (
+            <View className="bg-white rounded-2xl p-12 items-center justify-center shadow-sm border border-gray-200">
+              <ActivityIndicator size="large" color="#2563eb" />
+              <Text className="text-gray-500 mt-4">Loading bookings...</Text>
+            </View>
+          ) : upcomingBookings.length === 0 ? (
+            <View className="bg-white rounded-2xl p-8 items-center justify-center shadow-sm border border-gray-200">
+              <Text className="text-6xl mb-4">📅</Text>
+              <Text className="text-lg font-semibold text-gray-900 mb-2">
+                No Upcoming Bookings
+              </Text>
+              <Text className="text-sm text-gray-600 text-center mb-4">
+                You don't have any upcoming room bookings
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  lightImpact();
+                  router.push("/(tabs)/rooms");
+                }}
+                className="bg-blue-600 rounded-lg px-6 py-3"
+              >
+                <Text className="text-white font-semibold">Browse Rooms</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View className="gap-4">
+              {upcomingBookings.map((booking, index) => (
+                <UpcomingBookingCard
+                  key={booking.id}
+                  booking={booking}
+                  index={index}
+                  onPress={handleBookingPress}
+                />
+              ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
