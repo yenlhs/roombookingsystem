@@ -18,29 +18,34 @@ export function SubscriptionBanner() {
   }
 
   return (
-    <Pressable
-      onPress={() => router.push("/subscription")}
-      className="mx-4 mt-4 mb-2 overflow-hidden rounded-xl shadow-md active:opacity-90"
-    >
-      <LinearGradient
-        colors={["#3b82f6", "#8b5cf6"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="flex-row items-center p-4"
+    <View className="mb-4">
+      <Pressable
+        onPress={() => router.push("/subscription")}
+        className="overflow-hidden rounded-xl shadow-md active:opacity-90"
       >
-        <View className="w-12 h-12 bg-white/20 rounded-full items-center justify-center">
-          <Ionicons name="star" size={24} color="white" />
-        </View>
-        <View className="ml-4 flex-1">
-          <Text className="text-white font-bold text-base mb-0.5">
-            Unlock Premium Rooms
-          </Text>
-          <Text className="text-white/90 text-sm">
-            Get access to exclusive spaces
-          </Text>
-        </View>
-        <Ionicons name="chevron-forward" size={22} color="white" />
-      </LinearGradient>
-    </Pressable>
+        <LinearGradient
+          colors={["#3b82f6", "#8b5cf6"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View className="flex-row items-center px-5 py-4">
+            <View className="w-12 h-12 bg-white/20 rounded-full items-center justify-center flex-shrink-0">
+              <Ionicons name="star" size={24} color="white" />
+            </View>
+            <View className="ml-4 flex-1">
+              <Text className="text-white font-bold text-base mb-1">
+                Unlock Premium Rooms
+              </Text>
+              <Text className="text-white/90 text-sm">
+                Get access to exclusive spaces
+              </Text>
+            </View>
+            <View className="ml-2 flex-shrink-0">
+              <Ionicons name="chevron-forward" size={22} color="white" />
+            </View>
+          </View>
+        </LinearGradient>
+      </Pressable>
+    </View>
   );
 }
