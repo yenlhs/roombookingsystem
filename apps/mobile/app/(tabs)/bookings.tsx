@@ -248,7 +248,10 @@ export default function BookingsScreen() {
   const applyFilters = () => {
     let filtered = [...bookings];
 
-    if (filterStatus !== 'all') {
+    if (filterStatus === 'all') {
+      // Exclude cancelled bookings from the default "All" view
+      filtered = filtered.filter((booking) => booking.status !== 'cancelled');
+    } else {
       filtered = filtered.filter((booking) => booking.status === filterStatus);
     }
 
@@ -338,7 +341,7 @@ export default function BookingsScreen() {
                 filterStatus === 'all' ? 'text-white' : 'text-gray-700'
               }`}
             >
-              All
+              Active
             </Text>
           </TouchableOpacity>
 
