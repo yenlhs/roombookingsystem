@@ -4,7 +4,7 @@
 
 ### 1. Vercel Project Configuration
 
-- Created Vercel project "web" for the Next.js web app
+- Created Vercel project "roombookingportal" for the Next.js web app
 - Project ID: `prj_y7orrORtz3ydUXhjtSUtQ0R2TMkA`
 - Linked to `/apps/web` directory in the monorepo
 
@@ -53,18 +53,18 @@ docs
 
 ### 1. Configure Vercel Project Root Directory
 
-The Vercel "web" project needs to have its Root Directory set to `apps/web`:
+The Vercel "roombookingportal" project needs to have its Root Directory set to `apps/web`:
 
-1. Go to https://vercel.com/yenlhs-projects/web/settings
+1. Go to https://vercel.com/yenlhs-projects/roombookingportal/settings
 2. Navigate to "General" → "Root Directory"
 3. Set to: `apps/web`
 4. Click "Save"
 
 ### 2. Connect GitHub Integration
 
-Ensure the "web" project is connected to the GitHub repository:
+Ensure the "roombookingportal" project is connected to the GitHub repository:
 
-1. Go to https://vercel.com/yenlhs-projects/web/settings/git
+1. Go to https://vercel.com/yenlhs-projects/roombookingportal/settings/git
 2. Verify the repository is connected to `yenlhs/roombookingsystem`
 3. Confirm automatic deployments are enabled for:
    - Production Branch: `main`
@@ -89,8 +89,8 @@ After completing the manual steps, trigger a deployment by:
 
 ## Deployment URLs
 
-- Production: https://web-yenlhs-projects.vercel.app
-- Latest deployments can be viewed at: https://vercel.com/yenlhs-projects/web
+- Production: https://roombookingportal-yenlhs-projects.vercel.app
+- Latest deployments can be viewed at: https://vercel.com/yenlhs-projects/roombookingportal
 
 ## Troubleshooting
 
