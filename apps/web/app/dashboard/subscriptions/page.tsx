@@ -30,10 +30,10 @@ function QuickActionCard({
   icon,
 }: QuickActionCardProps) {
   return (
-    <Link href={href}>
-      <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-4">
+    <Link href={href} className="h-full">
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+        <CardContent className="pt-6 h-full">
+          <div className="flex items-start gap-4 h-full">
             <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary flex-shrink-0">
               {icon}
             </div>
