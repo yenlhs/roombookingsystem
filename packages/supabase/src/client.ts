@@ -43,8 +43,31 @@ export function createSupabaseClientWithConfig(url: string, anonKey: string) {
   });
 }
 
-// Export a singleton instance (will be initialized by the consuming app)
-export const supabase = createSupabaseClient();
+// Lazy-initialized singleton to avoid errors during build time
+let _supabaseInstance: ReturnType<typeof createSupabaseClient> | null = null;
+
+/**
+ * Get the singleton Supabase client instance
+ * Lazy-initialized to avoid build-time errors when env vars are missing
+ */
+export const getSupabaseClient = () => {
+  if (!_supabaseInstance) {
+    _supabaseInstance = createSupabaseClient();
+  }
+  return _supabaseInstance;
+};
+
+// Export a singleton instance for backward compatibility
+// This will only be initialized when actually accessed
+export const supabase = new Proxy(
+  {} as ReturnType<typeof createSupabaseClient>,
+  {
+    get(target, prop) {
+      const client = getSupabaseClient();
+      return (client as any)[prop];
+    },
+  },
+);
 
 // Export the type for the client
 export type SupabaseClient = ReturnType<typeof createSupabaseClient>;
