@@ -76,18 +76,18 @@ export default function SubscriptionScreen() {
 
         {/* Premium Upsell (for free users) */}
         {!isPremium && premiumTier && (
-          <View className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-6 mb-4 shadow-md">
+          <View className="bg-white rounded-xl p-6 mb-4 shadow-sm">
             <View className="flex-row items-center mb-3">
-              <Ionicons name="star" size={32} color="white" />
-              <Text className="text-white text-2xl font-bold ml-2">
+              <Ionicons name="star" size={32} color="#3b82f6" />
+              <Text className="text-gray-900 text-2xl font-bold ml-2">
                 Go Premium
               </Text>
             </View>
 
-            <Text className="text-white text-5xl font-bold mb-1">
+            <Text className="text-blue-600 text-5xl font-bold mb-1">
               ${premiumTier.price_monthly}
             </Text>
-            <Text className="text-white text-lg mb-6">per month</Text>
+            <Text className="text-gray-600 text-lg mb-6">per month</Text>
 
             {/* Features List */}
             <View className="space-y-3 mb-6">
@@ -104,18 +104,18 @@ export default function SubscriptionScreen() {
             <Pressable
               onPress={handleUpgrade}
               disabled={isCheckingOut}
-              className="bg-white rounded-xl py-4 items-center active:opacity-80"
+              className="bg-blue-600 rounded-xl py-4 items-center active:opacity-80"
             >
               {isCheckingOut && selectedTier === premiumTier.id ? (
-                <ActivityIndicator color="#3b82f6" />
+                <ActivityIndicator color="white" />
               ) : (
-                <Text className="text-blue-600 font-bold text-lg">
+                <Text className="text-white font-bold text-lg">
                   Upgrade to Premium
                 </Text>
               )}
             </Pressable>
 
-            <Text className="text-white text-xs text-center mt-4 opacity-80">
+            <Text className="text-gray-500 text-xs text-center mt-4">
               Cancel anytime. Secure payment via Stripe.
             </Text>
           </View>
@@ -188,8 +188,8 @@ export default function SubscriptionScreen() {
 function FeatureItem({ icon, text }: { icon: any; text: string }) {
   return (
     <View className="flex-row items-center">
-      <Ionicons name={icon} size={22} color="white" />
-      <Text className="text-white ml-3 text-base">{text}</Text>
+      <Ionicons name={icon} size={22} color="#3b82f6" />
+      <Text className="text-gray-700 ml-3 text-base">{text}</Text>
     </View>
   );
 }
