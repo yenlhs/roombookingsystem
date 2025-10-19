@@ -24,13 +24,13 @@ export function AdminRoute({ children }: AdminRouteProps) {
   useEffect(() => {
     // Redirect to login if not authenticated
     if (!authLoading && !user) {
-      router.push("/login");
+      router.replace("/login");
       return;
     }
 
     // Redirect to dashboard if authenticated but not admin
     if (!loading && user && !isAdmin && !error) {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
   }, [user, authLoading, loading, isAdmin, error, router]);
 
@@ -60,7 +60,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
             page.
           </p>
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.replace("/dashboard")}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
           >
             Return to Dashboard

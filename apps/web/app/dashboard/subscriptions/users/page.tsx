@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminRoute } from "../../../../components/admin/AdminRoute";
 import { SubscriptionTable } from "../../../../components/subscriptions/SubscriptionTable";
 import { useSubscriptions } from "../../../../lib/hooks/use-subscriptions";
 import { SubscriptionStatus } from "@workspace/types";
-import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export default function UserSubscriptionsPage() {
@@ -14,12 +14,20 @@ export default function UserSubscriptionsPage() {
   const [statusFilter, setStatusFilter] = useState<SubscriptionStatus[]>([]);
   const [searchInput, setSearchInput] = useState("");
 
-  const { subscriptions, total, totalPages, isLoading } = useSubscriptions({
-    page,
-    perPage: 20,
-    status: statusFilter.length > 0 ? statusFilter : undefined,
-    search: search || undefined,
-  });
+  const { subscriptions, total, totalPages, isLoading, error } =
+    useSubscriptions({
+      page,
+      perPage: 20,
+      status: statusFilter.length > 0 ? statusFilter : undefined,
+      search: search || undefined,
+    });
+
+  // Clamp page when filters change total pages
+  useEffect(() => {
+    if (totalPages && page > totalPages) {
+      setPage(Math.max(1, totalPages));
+    }
+  }, [totalPages, page]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,8 +88,12 @@ export default function UserSubscriptionsPage() {
             {/* Search */}
             <form onSubmit={handleSearch} className="flex-1">
               <div className="relative">
+                <label htmlFor="subscription-search" className="sr-only">
+                  Search subscriptions
+                </label>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
+                  id="subscription-search"
                   type="text"
                   placeholder="Search by user name or email..."
                   value={searchInput}
@@ -90,20 +102,6 @@ export default function UserSubscriptionsPage() {
                 />
               </div>
             </form>
-
-            {/* Filter Toggle */}
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center gap-2 whitespace-nowrap"
-            >
-              <Filter className="h-5 w-5" />
-              Filters
-              {(statusFilter.length > 0 || search) && (
-                <span className="bg-primary text-white text-xs rounded-full px-2 py-0.5">
-                  {statusFilter.length + (search ? 1 : 0)}
-                </span>
-              )}
-            </button>
           </div>
 
           {/* Status Filters */}
@@ -135,6 +133,13 @@ export default function UserSubscriptionsPage() {
             )}
           </div>
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-300">
+            {(error as Error).message || "Failed to load subscriptions."}
+          </div>
+        )}
 
         {/* Results Count */}
         <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">

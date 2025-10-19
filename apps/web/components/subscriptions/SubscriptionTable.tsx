@@ -76,12 +76,17 @@ export function SubscriptionTable({
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "-";
-    return format(new Date(dateString), "MMM d, yyyy");
+    const date = new Date(dateString);
+    return Number.isNaN(date.getTime()) ? "-" : format(date, "MMM d, yyyy");
   };
 
   const getStripeCustomerUrl = (stripeCustomerId?: string | null) => {
     if (!stripeCustomerId) return null;
-    return `https://dashboard.stripe.com/customers/${stripeCustomerId}`;
+    const baseUrl =
+      process.env.NEXT_PUBLIC_STRIPE_MODE === "live"
+        ? "https://dashboard.stripe.com"
+        : "https://dashboard.stripe.com/test";
+    return `${baseUrl}/customers/${stripeCustomerId}`;
   };
 
   return (
@@ -111,7 +116,7 @@ export function SubscriptionTable({
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {subscriptions.map((subscription: any) => (
+            {subscriptions.map((subscription) => (
               <tr
                 key={subscription.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"

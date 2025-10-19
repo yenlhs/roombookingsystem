@@ -1,5 +1,6 @@
 import { Users, TrendingUp, CreditCard, Activity } from "lucide-react";
 import { useSubscriptionStats } from "../../lib/hooks/use-subscription-stats";
+import { formatCurrency } from "@workspace/utils";
 
 interface StatCardProps {
   title: string;
@@ -69,15 +70,6 @@ export function SubscriptionStatsCards() {
       </div>
     );
   }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

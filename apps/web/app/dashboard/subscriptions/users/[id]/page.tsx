@@ -6,6 +6,7 @@ import { AdminRoute } from "../../../../../components/admin/AdminRoute";
 import { StatusBadge } from "../../../../../components/subscriptions/StatusBadge";
 import { supabase, createAdminSubscriptionService } from "@workspace/supabase";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ChevronLeft,
   ExternalLink,
@@ -15,6 +16,34 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { format } from "date-fns";
+
+// Extended type for subscription with joined user data
+interface SubscriptionWithUser {
+  id: string;
+  user_id: string;
+  tier_id: string;
+  status: string;
+  current_period_start: string;
+  current_period_end: string;
+  cancel_at_period_end: boolean;
+  stripe_subscription_id?: string | null;
+  stripe_customer_id?: string | null;
+  created_at: string;
+  updated_at: string;
+  tier: {
+    name: string;
+    display_name: string;
+    price_monthly: number;
+  };
+  user?: {
+    id: string;
+    email: string;
+    full_name: string | null;
+    phone: string | null;
+    avatar_url: string | null;
+    created_at: string;
+  };
+}
 
 export default function SubscriptionDetailPage({
   params,
@@ -27,12 +56,17 @@ export default function SubscriptionDetailPage({
     data: subscription,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<SubscriptionWithUser>({
     queryKey: ["subscription-detail", id],
     queryFn: async () => {
       const service = createAdminSubscriptionService(supabase);
-      return await service.getSubscriptionByIdAdmin(id);
+      return (await service.getSubscriptionByIdAdmin(
+        id,
+      )) as SubscriptionWithUser;
     },
+    enabled: Boolean(id),
+    staleTime: 30_000,
+    retry: 1,
   });
 
   const formatDate = (dateString?: string | null) => {
@@ -49,7 +83,10 @@ export default function SubscriptionDetailPage({
     stripeId?: string | null,
   ) => {
     if (!stripeId) return null;
-    const baseUrl = "https://dashboard.stripe.com";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_STRIPE_MODE === "live"
+        ? "https://dashboard.stripe.com"
+        : "https://dashboard.stripe.com/test";
     return type === "customer"
       ? `${baseUrl}/customers/${stripeId}`
       : `${baseUrl}/subscriptions/${stripeId}`;
@@ -113,16 +150,18 @@ export default function SubscriptionDetailPage({
               </div>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  {(subscription as any).user?.avatar_url ? (
-                    <img
-                      src={(subscription as any).user.avatar_url}
-                      alt={(subscription as any).user?.full_name}
-                      className="h-12 w-12 rounded-full"
+                  {subscription.user?.avatar_url ? (
+                    <Image
+                      src={subscription.user.avatar_url}
+                      alt={subscription.user?.full_name || "User avatar"}
+                      width={48}
+                      height={48}
+                      className="rounded-full"
                     />
                   ) : (
                     <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                       <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
-                        {(subscription as any).user?.full_name
+                        {subscription.user?.full_name
                           ?.charAt(0)
                           ?.toUpperCase() || "U"}
                       </span>
@@ -130,20 +169,20 @@ export default function SubscriptionDetailPage({
                   )}
                   <div>
                     <div className="font-medium text-gray-900 dark:text-white">
-                      {(subscription as any).user?.full_name || "Unknown User"}
+                      {subscription.user?.full_name || "Unknown User"}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {(subscription as any).user?.email || "-"}
+                      {subscription.user?.email || "-"}
                     </div>
                   </div>
                 </div>
-                {(subscription as any).user?.phone && (
+                {subscription.user?.phone && (
                   <div>
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       Phone:{" "}
                     </span>
                     <span className="text-sm text-gray-900 dark:text-white">
-                      {(subscription as any).user.phone}
+                      {subscription.user.phone}
                     </span>
                   </div>
                 )}
@@ -152,7 +191,7 @@ export default function SubscriptionDetailPage({
                     User Since:{" "}
                   </span>
                   <span className="text-sm text-gray-900 dark:text-white">
-                    {formatDate((subscription as any).user?.created_at)}
+                    {formatDate(subscription.user?.created_at)}
                   </span>
                 </div>
               </div>
