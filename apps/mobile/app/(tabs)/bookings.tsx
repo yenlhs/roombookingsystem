@@ -275,7 +275,23 @@ export default function BookingsScreen() {
     if (filterStatus === "all") {
       // Exclude cancelled bookings from the default "All" view
       filtered = filtered.filter((booking) => booking.status !== "cancelled");
+    } else if (filterStatus === "confirmed") {
+      // "Upcoming" filter - show only future confirmed bookings
+      filtered = filtered.filter((booking) => {
+        const displayStatus = getDisplayStatus(booking);
+        return displayStatus === "Upcoming";
+      });
+    } else if (filterStatus === "completed") {
+      // "Past" filter - show completed bookings and past confirmed bookings
+      filtered = filtered.filter((booking) => {
+        const displayStatus = getDisplayStatus(booking);
+        return displayStatus === "Past";
+      });
+    } else if (filterStatus === "cancelled") {
+      // "Cancelled" filter - show cancelled bookings
+      filtered = filtered.filter((booking) => booking.status === "cancelled");
     } else {
+      // Fallback to direct status comparison
       filtered = filtered.filter((booking) => booking.status === filterStatus);
     }
 
