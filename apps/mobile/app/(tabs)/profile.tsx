@@ -21,12 +21,6 @@ import {
   type UpdateProfileInput,
 } from "@workspace/validation";
 import * as ImagePicker from "expo-image-picker";
-import {
-  testBookingConfirmation,
-  testBookingCancellation,
-  testBookingReminder,
-  testImmediateNotification,
-} from "../../lib/test-notifications";
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
@@ -343,76 +337,6 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             </View>
           )}
-        </View>
-
-        {/* Test Notifications Section (Development Only) */}
-        <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-4">
-          <Text className="text-xl font-bold text-gray-900 mb-2">
-            Test Notifications
-          </Text>
-          <Text className="text-sm text-gray-600 mb-4">
-            Test push notifications on iOS simulator using local notifications
-          </Text>
-
-          <View className="gap-3">
-            <TouchableOpacity
-              onPress={async () => {
-                await testImmediateNotification();
-                Alert.alert("Success", "Test notification sent!");
-              }}
-              className="bg-blue-600 rounded-lg py-3 items-center"
-            >
-              <Text className="text-white font-bold">
-                Send Test Notification
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={async () => {
-                await testBookingConfirmation();
-                Alert.alert(
-                  "Success",
-                  "Booking confirmation notification scheduled!",
-                );
-              }}
-              className="bg-green-600 rounded-lg py-3 items-center"
-            >
-              <Text className="text-white font-bold">
-                Test Booking Confirmed
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={async () => {
-                await testBookingCancellation();
-                Alert.alert("Success", "Cancellation notification scheduled!");
-              }}
-              className="bg-red-600 rounded-lg py-3 items-center"
-            >
-              <Text className="text-white font-bold">
-                Test Booking Cancelled
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={async () => {
-                await testBookingReminder();
-                Alert.alert("Success", "Reminder notification scheduled!");
-              }}
-              className="bg-orange-600 rounded-lg py-3 items-center"
-            >
-              <Text className="text-white font-bold">
-                Test Booking Reminder
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            <Text className="text-xs text-yellow-800">
-              💡 These are local notifications that work on simulator.
-              Notifications will appear after 2 seconds.
-            </Text>
-          </View>
         </View>
 
         {/* Sign Out Section */}
