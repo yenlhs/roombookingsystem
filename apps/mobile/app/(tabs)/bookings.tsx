@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
   ListRenderItem,
+  Pressable,
 } from "react-native";
 import Animated from "react-native-reanimated";
 import { useRouter } from "expo-router";
@@ -102,11 +103,13 @@ function BookingCard({
   index,
   onCancel,
   onEdit,
+  onView,
 }: {
   booking: BookingWithDetails;
   index: number;
   onCancel: (booking: BookingWithDetails) => void;
   onEdit: (booking: BookingWithDetails) => void;
+  onView: (booking: BookingWithDetails) => void;
 }) {
   const animatedStyle = useListItemAnimation(index);
 
@@ -114,59 +117,69 @@ function BookingCard({
 
   return (
     <Animated.View style={animatedStyle}>
-      <View className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200">
-        {/* Room Name & Status */}
-        <View className="flex-row justify-between items-start mb-3">
-          <View className="flex-1 mr-4">
-            <Text className="text-xl font-bold text-gray-900 mb-1">
-              {booking.room?.name || "Unknown Room"}
-            </Text>
-            <Text className="text-sm text-gray-600">
-              {formatDate(booking.booking_date)}
-            </Text>
-          </View>
-          <View
-            className={`px-3 py-1 rounded-full ${getStatusColor(displayStatus)}`}
-          >
-            <Text
-              className={`text-xs font-semibold ${getStatusTextColor(displayStatus)} uppercase`}
+      <View className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <Pressable
+          onPress={() => {
+            lightImpact();
+            onView(booking);
+          }}
+          className="p-5"
+          android_ripple={{ color: "#e5e7eb" }}
+        >
+          {/* Room Name & Status */}
+          <View className="flex-row justify-between items-start mb-3">
+            <View className="flex-1 mr-4">
+              <Text className="text-xl font-bold text-gray-900 mb-1">
+                {booking.room?.name || "Unknown Room"}
+              </Text>
+              <Text className="text-sm text-gray-600">
+                {formatDate(booking.booking_date)}
+              </Text>
+            </View>
+            <View
+              className={`px-3 py-1 rounded-full ${getStatusColor(displayStatus)}`}
             >
-              {displayStatus}
-            </Text>
-          </View>
-        </View>
-
-        {/* Time & Details */}
-        <View className="border-t border-gray-100 pt-3 space-y-2">
-          <View className="flex-row items-center">
-            <Text className="text-2xl mr-2">🕐</Text>
-            <Text className="text-sm text-gray-700 font-medium">
-              {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
-            </Text>
+              <Text
+                className={`text-xs font-semibold ${getStatusTextColor(displayStatus)} uppercase`}
+              >
+                {displayStatus}
+              </Text>
+            </View>
           </View>
 
-          {booking.room?.capacity && (
+          {/* Time & Details */}
+          <View className="border-t border-gray-100 pt-3 space-y-2">
             <View className="flex-row items-center">
-              <Text className="text-2xl mr-2">👥</Text>
+              <Text className="text-2xl mr-2">🕐</Text>
               <Text className="text-sm text-gray-700 font-medium">
-                Capacity: {booking.room.capacity} seats
+                {formatTime(booking.start_time)} -{" "}
+                {formatTime(booking.end_time)}
               </Text>
             </View>
-          )}
 
-          {booking.notes && (
-            <View className="flex-row items-start">
-              <Text className="text-2xl mr-2">📝</Text>
-              <Text className="text-sm text-gray-700 flex-1">
-                {booking.notes}
-              </Text>
-            </View>
-          )}
-        </View>
+            {booking.room?.capacity && (
+              <View className="flex-row items-center">
+                <Text className="text-2xl mr-2">👥</Text>
+                <Text className="text-sm text-gray-700 font-medium">
+                  Capacity: {booking.room.capacity} seats
+                </Text>
+              </View>
+            )}
+
+            {booking.notes && (
+              <View className="flex-row items-start">
+                <Text className="text-2xl mr-2">📝</Text>
+                <Text className="text-sm text-gray-700 flex-1">
+                  {booking.notes}
+                </Text>
+              </View>
+            )}
+          </View>
+        </Pressable>
 
         {/* Actions */}
         {isUpcoming(booking) && (
-          <View className="mt-3 pt-3 border-t border-gray-100 flex-row gap-2">
+          <View className="px-5 pb-5 pt-3 border-t border-gray-100 flex-row gap-2">
             <TouchableOpacity
               onPress={() => {
                 lightImpact();
@@ -191,7 +204,7 @@ function BookingCard({
         )}
 
         {booking.status === "cancelled" && booking.cancellation_reason && (
-          <View className="mt-3 pt-3 border-t border-gray-100">
+          <View className="px-5 pb-5 pt-3 border-t border-gray-100">
             <Text className="text-xs text-gray-500 mb-1">
               Cancellation Reason:
             </Text>
@@ -349,6 +362,10 @@ export default function BookingsScreen() {
     router.push(`/edit-booking/${booking.id}` as any);
   };
 
+  const handleViewBooking = (booking: BookingWithDetails) => {
+    router.push(`/booking-details/${booking.id}` as any);
+  };
+
   const renderBookingCard: ListRenderItem<BookingWithDetails> = ({
     item,
     index,
@@ -358,6 +375,7 @@ export default function BookingsScreen() {
       index={index}
       onCancel={handleCancelBooking}
       onEdit={handleEditBooking}
+      onView={handleViewBooking}
     />
   );
 
