@@ -46,7 +46,7 @@ export function HeroCarousel() {
   return (
     <div className="relative w-full h-full">
       {/* Main Image Display */}
-      <div className="relative w-full h-[600px] overflow-hidden rounded-lg border bg-gray-100">
+      <div className="relative w-full h-[500px] overflow-hidden rounded-lg bg-white">
         {SCREENSHOTS.map((screenshot, index) => (
           <div
             key={screenshot}
