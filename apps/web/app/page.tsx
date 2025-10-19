@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { HeroCarousel } from "@/components/hero-carousel";
 
 export default function Home() {
   return (
@@ -19,10 +20,10 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main content */}
-      <div className="flex flex-1 items-center justify-center p-8">
-        <div className="z-10 max-w-6xl w-full">
-          <div className="text-center mb-12">
+      {/* Hero Section */}
+      <section className="w-full bg-gradient-to-b from-gray-50 to-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
             <h1 className="text-5xl font-bold mb-4">Room Booking System</h1>
             <p className="text-xl text-muted-foreground mb-4">
               Admin Dashboard - Web Application
@@ -35,6 +36,16 @@ export default function Home() {
             </p>
           </div>
 
+          {/* Screenshot Carousel */}
+          <div className="max-w-5xl mx-auto">
+            <HeroCarousel />
+          </div>
+        </div>
+      </section>
+
+      {/* Main content */}
+      <div className="flex flex-1 items-center justify-center p-8">
+        <div className="z-10 max-w-6xl w-full">
           {/* Tech Stack Section */}
           <div className="mb-12">
             <h2 className="text-3xl font-bold text-center mb-8">Tech Stack</h2>
