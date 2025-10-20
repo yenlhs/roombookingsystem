@@ -44,7 +44,7 @@ function UpcomingBookingCard({
 }: {
   booking: BookingWithDetails;
   index: number;
-  onPress: () => void;
+  onPress: (booking: BookingWithDetails) => void;
 }) {
   const animatedStyle = useListItemAnimation(index);
 
@@ -53,7 +53,7 @@ function UpcomingBookingCard({
       <TouchableOpacity
         onPress={() => {
           lightImpact();
-          onPress();
+          onPress(booking);
         }}
         activeOpacity={0.7}
       >
@@ -168,9 +168,9 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  const handleBookingPress = () => {
-    // Navigate to bookings tab to see full details
-    router.push(`/(tabs)/bookings`);
+  const handleBookingPress = (booking: BookingWithDetails) => {
+    // Navigate to booking detail screen
+    router.push(`/booking-details/${booking.id}` as any);
   };
 
   return (
