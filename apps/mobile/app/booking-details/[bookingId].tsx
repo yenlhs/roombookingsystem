@@ -7,15 +7,15 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import {
   createBookingService,
   createNotificationService,
 } from "@workspace/supabase";
 import type { BookingWithDetails } from "@workspace/types";
-import { lightImpact, mediumImpact, warningFeedback } from "../../lib/haptics";
-import { Ionicons } from "@expo/vector-icons";
+import { lightImpact, mediumImpact } from "../../lib/haptics";
 
 // Helper functions
 const formatDate = (dateString: string): string => {
@@ -182,180 +182,191 @@ export default function BookingDetailsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-50">
-        <Stack.Screen options={{ title: "Booking Details" }} />
+      <SafeAreaView className="flex-1 items-center justify-center bg-slate-50">
         <ActivityIndicator size="large" color="#2563eb" />
         <Text className="text-gray-600 mt-4">Loading booking details...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !booking) {
     return (
-      <View className="flex-1 bg-slate-50">
-        <Stack.Screen options={{ title: "Booking Details" }} />
-        <View className="flex-1 items-center justify-center p-6">
-          <Text className="text-4xl mb-3">⚠️</Text>
-          <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
-            {error || "Booking not found"}
-          </Text>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="bg-blue-600 rounded-lg px-6 py-3 mt-4"
-            activeOpacity={0.7}
-          >
-            <Text className="text-white font-bold">Go Back</Text>
+      <SafeAreaView className="flex-1 bg-slate-50">
+        <View className="p-6">
+          {/* Back Button */}
+          <TouchableOpacity onPress={() => router.back()} className="mb-6">
+            <Text className="text-blue-600 font-semibold text-base">
+              ← Back
+            </Text>
           </TouchableOpacity>
+
+          {/* Error State */}
+          <View className="bg-white rounded-2xl p-8 items-center shadow-sm border border-gray-200">
+            <Text className="text-4xl mb-3">❌</Text>
+            <Text className="text-xl font-bold text-gray-900 mb-2 text-center">
+              Booking Not Found
+            </Text>
+            <Text className="text-sm text-gray-600 text-center mb-4">
+              {error ||
+                "The booking you are looking for does not exist or has been removed."}
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="bg-blue-600 rounded-lg px-6 py-3"
+            >
+              <Text className="text-white font-bold">Go Back</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   const displayStatus = getDisplayStatus(booking);
 
   return (
-    <View className="flex-1 bg-slate-50">
-      <Stack.Screen
-        options={{
-          title: "Booking Details",
-          headerBackTitle: "Back",
-        }}
-      />
-      <ScrollView className="flex-1 p-6">
-        {/* Room Name & Status Card */}
-        <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-4">
-          <View className="flex-row justify-between items-start mb-4">
-            <View className="flex-1 mr-4">
-              <Text className="text-2xl font-bold text-gray-900 mb-1">
-                {booking.room?.name || "Unknown Room"}
-              </Text>
-              <Text className="text-base text-gray-600">
-                {formatDate(booking.booking_date)}
-              </Text>
-            </View>
-            <View
-              className={`px-4 py-2 rounded-full ${getStatusColor(displayStatus)}`}
-            >
-              <Text
-                className={`text-sm font-semibold ${getStatusTextColor(displayStatus)} uppercase`}
-              >
-                {displayStatus}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Booking Details Card */}
-        <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-4">
-          <Text className="text-lg font-bold text-gray-900 mb-4">
-            Booking Information
-          </Text>
-
-          {/* Time */}
-          <View className="flex-row items-center mb-4 pb-4 border-b border-gray-100">
-            <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
-              <Ionicons name="time-outline" size={20} color="#2563eb" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
-                Time
-              </Text>
-              <Text className="text-base text-gray-900 font-medium">
-                {formatTime(booking.start_time)} -{" "}
-                {formatTime(booking.end_time)}
-              </Text>
-            </View>
-          </View>
-
-          {/* Room Capacity */}
-          {booking.room?.capacity && (
-            <View className="flex-row items-center mb-4 pb-4 border-b border-gray-100">
-              <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
-                <Ionicons name="people-outline" size={20} color="#2563eb" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
-                  Capacity
-                </Text>
-                <Text className="text-base text-gray-900 font-medium">
-                  {booking.room.capacity} seats
-                </Text>
-              </View>
-            </View>
-          )}
-
-          {/* Notes */}
-          {booking.notes && (
-            <View className="flex-row items-start mb-4 pb-4 border-b border-gray-100">
-              <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
-                <Ionicons
-                  name="document-text-outline"
-                  size={20}
-                  color="#2563eb"
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
-                  Notes
-                </Text>
-                <Text className="text-base text-gray-900">{booking.notes}</Text>
-              </View>
-            </View>
-          )}
-
-          {/* Booking ID */}
-          <View className="flex-row items-center">
-            <View className="w-10 h-10 bg-blue-100 rounded-full items-center justify-center mr-3">
-              <Ionicons name="receipt-outline" size={20} color="#2563eb" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
-                Booking ID
-              </Text>
-              <Text className="text-sm text-gray-700 font-mono">
-                {booking.id}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Cancellation Reason */}
-        {booking.status === "cancelled" && booking.cancellation_reason && (
-          <View className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-4">
-            <View className="flex-row items-center mb-2">
-              <Ionicons name="information-circle" size={20} color="#dc2626" />
-              <Text className="text-sm font-semibold text-red-800 ml-2">
-                Cancellation Reason
-              </Text>
-            </View>
-            <Text className="text-base text-red-900">
-              {booking.cancellation_reason}
+    <SafeAreaView className="flex-1 bg-slate-50">
+      <ScrollView className="flex-1">
+        <View className="p-6 pb-24">
+          {/* Back Button */}
+          <TouchableOpacity onPress={() => router.back()} className="mb-6">
+            <Text className="text-blue-600 font-semibold text-base">
+              ← Back
             </Text>
+          </TouchableOpacity>
+          {/* Booking Header Card */}
+          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-4">
+            <View className="flex-row justify-between items-start mb-4">
+              <View className="flex-1 mr-4">
+                <Text className="text-3xl font-bold text-gray-900 mb-2">
+                  {booking.room?.name || "Unknown Room"}
+                </Text>
+                <Text className="text-base text-gray-600 leading-relaxed">
+                  {formatDate(booking.booking_date)}
+                </Text>
+              </View>
+              <View
+                className={`px-4 py-2 rounded-full ${getStatusColor(displayStatus)}`}
+              >
+                <Text
+                  className={`text-xs font-semibold ${getStatusTextColor(displayStatus)} uppercase tracking-wide`}
+                >
+                  {displayStatus}
+                </Text>
+              </View>
+            </View>
           </View>
-        )}
 
-        {/* Action Buttons */}
-        {isUpcoming(booking) && (
-          <View className="flex-row gap-3 mb-6">
-            <TouchableOpacity
-              onPress={handleEditBooking}
-              className="flex-1 bg-blue-600 rounded-lg py-4 items-center"
-              activeOpacity={0.7}
-            >
-              <Text className="text-white font-bold text-base">
-                Edit Booking
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleCancelBooking}
-              className="flex-1 bg-white border-2 border-red-200 rounded-lg py-4 items-center"
-              activeOpacity={0.7}
-            >
-              <Text className="text-red-600 font-bold text-base">Cancel</Text>
-            </TouchableOpacity>
+          {/* Booking Details Card */}
+          <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-4">
+            <Text className="text-xl font-bold text-gray-900 mb-4">
+              Booking Information
+            </Text>
+
+            {/* Time */}
+            <View className="flex-row items-center py-4 border-b border-gray-100">
+              <View className="bg-green-50 rounded-full w-12 h-12 items-center justify-center mr-4">
+                <Text className="text-2xl">🕐</Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Time
+                </Text>
+                <Text className="text-base font-medium text-gray-900">
+                  {formatTime(booking.start_time)} -{" "}
+                  {formatTime(booking.end_time)}
+                </Text>
+              </View>
+            </View>
+
+            {/* Room Capacity */}
+            {booking.room?.capacity && (
+              <View className="flex-row items-center py-4 border-b border-gray-100">
+                <View className="bg-blue-50 rounded-full w-12 h-12 items-center justify-center mr-4">
+                  <Text className="text-2xl">👥</Text>
+                </View>
+                <View className="flex-1">
+                  <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                    Capacity
+                  </Text>
+                  <Text className="text-base font-medium text-gray-900">
+                    {booking.room.capacity} seats
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Notes */}
+            {booking.notes && (
+              <View className="flex-row items-start py-4 border-b border-gray-100">
+                <View className="bg-purple-50 rounded-full w-12 h-12 items-center justify-center mr-4">
+                  <Text className="text-2xl">📝</Text>
+                </View>
+                <View className="flex-1">
+                  <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                    Notes
+                  </Text>
+                  <Text className="text-base font-medium text-gray-900">
+                    {booking.notes}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Booking ID */}
+            <View className="flex-row items-center py-4">
+              <View className="bg-orange-50 rounded-full w-12 h-12 items-center justify-center mr-4">
+                <Text className="text-2xl">🎫</Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Booking ID
+                </Text>
+                <Text className="text-sm text-gray-700 font-mono">
+                  {booking.id}
+                </Text>
+              </View>
+            </View>
           </View>
-        )}
+
+          {/* Cancellation Reason */}
+          {booking.status === "cancelled" && booking.cancellation_reason && (
+            <View className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-4">
+              <View className="flex-row items-center mb-2">
+                <Text className="text-2xl mr-2">⚠️</Text>
+                <Text className="text-sm font-semibold text-red-800">
+                  Cancellation Reason
+                </Text>
+              </View>
+              <Text className="text-base text-red-900">
+                {booking.cancellation_reason}
+              </Text>
+            </View>
+          )}
+
+          {/* Action Buttons */}
+          {isUpcoming(booking) && (
+            <View className="flex-row gap-3 mb-6">
+              <TouchableOpacity
+                onPress={handleEditBooking}
+                className="flex-1 bg-blue-600 rounded-2xl py-4 items-center shadow-sm"
+                activeOpacity={0.7}
+              >
+                <Text className="text-white font-bold text-lg">
+                  Edit Booking
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleCancelBooking}
+                className="flex-1 bg-white border-2 border-red-200 rounded-2xl py-4 items-center shadow-sm"
+                activeOpacity={0.7}
+              >
+                <Text className="text-red-600 font-bold text-lg">Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
